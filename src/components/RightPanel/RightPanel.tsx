@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import TodosList from "@/features/todos/TodosList"
+import TodosList from "@/features/todos/components/TodosList"
 import { useState } from "react"
-import { AddTodoModal } from "@/components/RightPanel/AddTodoModal"
+import { AddTodoModal } from "@/features/todos/components/AddTodoModal"
 
 export function RightPanel({ className }: { className?: string }) {
 

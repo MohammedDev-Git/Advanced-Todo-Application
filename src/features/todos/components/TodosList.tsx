@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { selectTodos } from "./todosSlice";
+import { selectTodos } from "../todosSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTodo } from "@/features/todos/todosSlice";
 
@@ -15,8 +15,8 @@ const TodosList = () => {
                 todos.map((todo) => (
                     <div key={todo.id} className="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
                         <div className="flex items-start gap-3 mb-2">
-                            <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="mt-1 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded text-white" />
-                            <label htmlFor={todo.id} className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 text-indigo-500" : "text-indigo-900"}`}>
+                            <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="cursor-pointer mt-1 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded text-white" />
+                            <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 text-indigo-500" : "text-indigo-900"}`}>
                                 {todo.title}
                             </label>
                         </div>
