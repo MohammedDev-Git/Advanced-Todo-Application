@@ -11,27 +11,27 @@ import { Label } from "@/components/ui/label"
 import { useInput } from "@/hooks/useInput";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { nanoid } from "@reduxjs/toolkit";
-import { addTodo } from "@/features/todos/todosSlice";
-import { todoSchema } from "@/features/todos/schemas/todoSchema";
+import { editTodo } from "@/features/todos/todosSlice";
+import { todoSchema } from "../schemas/todoSchema";
 import type { addTodoError, todoObject } from "@/types";
 import { InputError } from "@/components/custom/InputError";
 
-interface InputTodoModalProps {
+interface EditTodoModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    editedTodo?: todoObject;
 }
 
-export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
+export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalProps) {
 
     const dispatch = useDispatch();
 
     const [zodErrors, setZodErrors] = useState<addTodoError | null>(null);
     const [errorKey, setErrorKey] = useState<number | null>(null);
 
-    const titleInput = useInput("");
-    const category1Input = useInput("");
-    const category2Input = useInput("");
+    const titleInput = useInput(editedTodo?.title || "");
+    const category1Input = useInput(editedTodo?.category[0] || "");
+    const category2Input = useInput(editedTodo?.category[1] || "");
 
     const resetAll = () => {
         setZodErrors(null);
@@ -42,11 +42,18 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
 
     useEffect(() => {
         if (open) {
-            resetAll();
+            titleInput.fillInitialState();
+            category1Input.fillInitialState();
+            category2Input.fillInitialState();
         }
-    }, [open, onOpenChange])
 
-    const handleAddTodo = () => {
+        if (zodErrors) {
+            setZodErrors(null);
+        }
+    }, [open, onOpenChange, editedTodo])
+
+    const handleEditTodo = () => {
+        if (!editedTodo) return;
 
         const formData = {
             title: titleInput.value,
@@ -54,35 +61,36 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
             category2: category2Input.value,
         }
 
-        const validationResult = todoSchema.safeParse(formData);
+        const validationResults = todoSchema.safeParse(formData);
 
-        if (!validationResult.success) {
-            const errors: addTodoError = validationResult.error.flatten().fieldErrors;
-            setErrorKey(pre => pre ? pre + 1 : 1);
+        if (!validationResults.success) {
+            const errors = validationResults?.error?.flatten().fieldErrors;
             if (errors) setZodErrors(errors);
+            setErrorKey((p) => p ? p + 1 : 1);
             return;
         }
 
-        const { title, category1, category2 } = validationResult?.data;
+        const { title, category1, category2 } = validationResults?.data;
 
-        const todo: todoObject = {
-            id: nanoid(),
+        const updatedTodo: todoObject = {
+            ...editedTodo,
             title,
             category: [category1, category2],
-            isCompleted: false,
-            createdAt: new Date().toISOString()
         }
 
-        dispatch(addTodo(todo));
-        resetAll();
         onOpenChange?.(false);
+
+        resetAll();
+
+        dispatch(editTodo(updatedTodo));
+
     }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add New Todo</DialogTitle>
+                    <DialogTitle>Edit Todo</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
@@ -120,7 +128,7 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleAddTodo}>Add Todo</Button>
+                    <Button onClick={handleEditTodo}>Edit Todo</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

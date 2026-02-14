@@ -3,22 +3,79 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { selectTodos } from "../todosSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTodo } from "@/features/todos/todosSlice";
+import { formatDistanceToNow } from 'date-fns';
+import { PencilIcon, TrashIcon } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Ellipsis } from "lucide-react"
+import type { todoObject } from "@/types";
 
-const TodosList = () => {
+type todoListProps = {
+    setEditedTodo: (editedTodo: todoObject) => void,
+    setEditTodoOpen: (open: boolean) => void,
+    setDeleteTodoOpen: (open: boolean) => void,
+    setDeletedTodoId: (id: string | undefined) => void,
+}
+
+const TodosList = ({
+    setEditedTodo,
+    setEditTodoOpen,
+    setDeleteTodoOpen,
+    setDeletedTodoId
+}: todoListProps) => {
 
     const todos = useSelector(selectTodos);
     const dispatch = useDispatch();
+
+    const optionsArr = [
+        { action: "edit", text: "Edit", icon: <PencilIcon /> },
+        { action: "delete", text: "Delete", icon: <TrashIcon /> }
+    ]
 
     return (
         <>
             {
                 todos.map((todo) => (
                     <div key={todo.id} className="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
-                        <div className="flex items-start gap-3 mb-2">
-                            <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="cursor-pointer mt-1 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded text-white" />
-                            <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 text-indigo-500" : "text-indigo-900"}`}>
-                                {todo.title}
-                            </label>
+                        <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-start gap-3">
+                                <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="cursor-pointer mt-1 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded text-white" />
+                                <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 text-indigo-500" : "text-indigo-900"}`}>
+                                    {todo.title}
+                                </label>
+                            </div>
+                            <div>
+                                <DropdownMenu >
+                                    <DropdownMenuTrigger className="border-0 outline-0">
+                                        <Ellipsis className="cursor-pointer" />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="bg-white mr-9">
+                                        <DropdownMenuGroup>
+                                            {
+                                                optionsArr.map((option, idx) => (
+                                                    <DropdownMenuItem onClick={() => {
+                                                        if (option.action === "edit") {
+                                                            setEditedTodo(todo);
+                                                            setEditTodoOpen(true);
+                                                        } else {
+                                                            setDeleteTodoOpen(true);
+                                                            setDeletedTodoId(todo.id);
+                                                        }
+                                                    }} key={idx} className="cursor-pointer">
+                                                        {option.icon}
+                                                        {option.text}
+                                                    </DropdownMenuItem>
+                                                ))
+                                            }
+                                        </DropdownMenuGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                         </div>
                         <div className="flex items-center justify-between pl-7">
                             <div className="flex gap-1">
@@ -28,7 +85,7 @@ const TodosList = () => {
                                 ))
                                 }
                             </div>
-                            <span className="text-[10px] text-muted-foreground">May 20, 2020{/* todo.createdAt */}</span>
+                            <span className="text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(todo.createdAt), { addSuffix: true })}</span>
                         </div>
                     </div>
                 ))

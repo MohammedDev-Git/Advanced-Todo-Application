@@ -11,5 +11,9 @@ export const useInput = (initialState: string) => {
         setValue("");
     }
 
-    return { value, onChange, reset };
+    const fillInitialState = () => {
+        setValue(initialState);
+    }
+
+    return { value, onChange, reset, fillInitialState };
 }

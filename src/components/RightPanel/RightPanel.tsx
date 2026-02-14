@@ -6,10 +6,18 @@ import { cn } from "@/lib/utils"
 import TodosList from "@/features/todos/components/TodosList"
 import { useState } from "react"
 import { AddTodoModal } from "@/features/todos/components/AddTodoModal"
+import { EditTodoModal } from "@/features/todos/components/EditTodoModal"
+import type { todoObject } from "@/types"
+import { DeleteTodoModal } from "@/features/todos/components/DeleteTodoModal"
 
 export function RightPanel({ className }: { className?: string }) {
 
-    const [open, setOpen] = useState(false);
+    const [addTodoOpen, setAddTodoOpen] = useState<boolean>(false);
+    const [editTodoOpen, setEditTodoOpen] = useState<boolean>(false);
+    const [deleteTodoOpen, setDeleteTodoOpen] = useState<boolean>(false);
+
+    const [editedTodo, setEditedTodo] = useState<todoObject | undefined>(undefined);
+    const [deletedTodoId, setDeletedTodoId] = useState<string | undefined>(undefined);
 
     return (
         <div className={cn("flex flex-col h-full bg-white border-l px-6 py-8 overflow-y-auto w-[320px] shrink-0", className)}>
@@ -18,15 +26,33 @@ export function RightPanel({ className }: { className?: string }) {
             <div className="mb-8">
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="font-bold text-lg text-foreground underline decoration-2 decoration-gray-300 underline-offset-4">My Todos</h2>
-                    <Button onClick={() => setOpen(true)} size="icon" variant="secondary" className="h-6 w-6 rounded bg-indigo-100 text-indigo-600 hover:bg-indigo-200 shadow-none">
+                    <Button onClick={() => setAddTodoOpen(true)} size="icon" variant="secondary" className="h-6 w-6 rounded bg-indigo-100 text-indigo-600 hover:bg-indigo-200 shadow-none">
                         <Plus className="h-4 w-4" />
                     </Button>
                 </div>
 
                 <div className="space-y-4">
-                    <TodosList />
+                    <TodosList
+                        setEditedTodo={setEditedTodo}
+                        setEditTodoOpen={setEditTodoOpen}
+                        setDeleteTodoOpen={setDeleteTodoOpen}
+                        setDeletedTodoId={setDeletedTodoId}
+                    />
                 </div>
-                <AddTodoModal open={open} onOpenChange={setOpen} />
+                <AddTodoModal
+                    open={addTodoOpen}
+                    onOpenChange={setAddTodoOpen}
+                />
+                <EditTodoModal
+                    open={editTodoOpen}
+                    onOpenChange={setEditTodoOpen}
+                    editedTodo={editedTodo}
+                />
+                <DeleteTodoModal
+                    open={deleteTodoOpen}
+                    onOpenChange={setDeleteTodoOpen}
+                    deletedTodoId={deletedTodoId}
+                />
             </div>
 
             {/* Notes Section */}
