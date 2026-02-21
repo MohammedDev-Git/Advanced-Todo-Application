@@ -4,10 +4,24 @@ export interface todoObject {
     category: (string | undefined)[];
     isCompleted: boolean;
     createdAt: string;
+    edited?: boolean;
 }
 
 export interface todoState {
     todos: todoObject[];
+}
+
+export interface noteObject {
+    id: string;
+    createdAt: string;
+    edited?:boolean;
+    title:string;
+    description: string;
+    category: string[];
+}
+
+export interface notesState {
+    notes: noteObject[]
 }
 
 export interface addTodoError {

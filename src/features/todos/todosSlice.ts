@@ -23,15 +23,20 @@ export const todosSlice = createSlice({
             if (editedTodo) {
                 editedTodo.title = updatedTodo.title;
                 editedTodo.category = updatedTodo.category;
+                editedTodo.createdAt = updatedTodo.createdAt;
+                editedTodo.edited = true;
             }
         },
         deleteTodo: (state: todoState, action: PayloadAction<string>) => {
             const deletedId = action.payload;
             state.todos = state.todos.filter((todo) => todo.id !== deletedId);
+        },
+        deleteAllTodos: (state: todoState) => {
+            state.todos = [];
         }
     }
 })
 
-export const { addTodo, toggleTodo, editTodo, deleteTodo } = todosSlice.actions
+export const { addTodo, toggleTodo, editTodo, deleteTodo, deleteAllTodos } = todosSlice.actions
 export const selectTodos = (state: RootState) => state.todos.todos;
 export default todosSlice.reducer

@@ -47,7 +47,7 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
     }, [open, onOpenChange])
 
     const handleAddTodo = () => {
-
+        console.log(1);
         const formData = {
             title: titleInput.value,
             category1: category1Input.value,
@@ -70,7 +70,8 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
             title,
             category: [category1, category2],
             isCompleted: false,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            edited: false,
         }
 
         dispatch(addTodo(todo));
@@ -80,11 +81,15 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-106.25">
                 <DialogHeader>
                     <DialogTitle>Add New Todo</DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handleAddTodo();
+                }}
+                    className="grid gap-4 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="title">Title</Label>
                         <Input
@@ -118,10 +123,10 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
                             <InputError message={zodErrors?.category2?.[0]} keyErr={errorKey} />
                         </div>
                     </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleAddTodo}>Add Todo</Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <Button type="submit">Add Todo</Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     )

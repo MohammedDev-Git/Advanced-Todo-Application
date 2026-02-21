@@ -2,6 +2,7 @@ import todosReducer from "@/features/todos/todosSlice"
 import { combineReducers, configureStore } from "@reduxjs/toolkit"
 import storage from "redux-persist/lib/storage"
 import { persistReducer, persistStore } from "redux-persist"
+import notesReducer from "@/features/notes/notesSlice";
 
 const persistConfig = {
     key: "root",
@@ -9,7 +10,8 @@ const persistConfig = {
 }
 
 const rootReducer = combineReducers({
-    todos: todosReducer
+    todos: todosReducer,
+    notes: notesReducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

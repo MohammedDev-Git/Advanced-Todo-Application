@@ -8,20 +8,18 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useDispatch } from "react-redux";
-import { deleteTodo } from "@/features/todos/todosSlice";
+import { deleteAllTodos } from "../todosSlice";
 
 interface deleteModalProps {
     open: boolean;
-    deletedTodoId: string | undefined;
     onOpenChange?: (open: boolean) => void;
 }
 
-
-export function DeleteTodoModal({ open, onOpenChange, deletedTodoId }: deleteModalProps) {
+export function DeleteAllTodosModal({ open, onOpenChange }: deleteModalProps) {
     const dispatch = useDispatch();
 
-    const handleDeleteTodo = (id: string | undefined) => {
-        if (id) dispatch(deleteTodo(id));
+    const handleDeleteAll = () => {
+        dispatch(deleteAllTodos());
         onOpenChange?.(false);
     }
 
@@ -29,14 +27,14 @@ export function DeleteTodoModal({ open, onOpenChange, deletedTodoId }: deleteMod
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-106.25">
                 <DialogHeader>
-                    <DialogTitle>Delete Todo</DialogTitle>
+                    <DialogTitle>Delete All Todos</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to delete this todo? This action cannot be undone.
+                        Are you sure you want to delete all todos? This action cannot be undone.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange?.(false)}>Cancel</Button>
-                    <Button variant="destructive" onClick={() => handleDeleteTodo(deletedTodoId)}>Delete</Button>
+                    <Button variant="destructive" onClick={() => handleDeleteAll()}>Delete All</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

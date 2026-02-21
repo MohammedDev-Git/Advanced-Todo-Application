@@ -1,0 +1,67 @@
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
+import { Ellipsis,  PencilIcon, TrashIcon } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import { selectNotes } from '../notesSlice'
+import type { noteObject } from '@/types'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+
+const NotesList = () => {
+    const notes = useSelector(selectNotes);
+    console.log(notes);
+
+    const optionsArr = [
+        { action: "edit", text: "Edit", icon: <PencilIcon /> },
+        { action: "delete", text: "Delete", icon: <TrashIcon /> }
+    ]
+
+    return (
+        <>
+            {
+                notes && notes.length > 0 ?
+                    notes.map((note: noteObject) => (
+                        <Card key={note.id} className="border-0 shadow-sm p-4 bg-white ring-1 ring-slate-100 rounded-2xl">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-[10px] text-slate-400 font-medium">{note.createdAt}</span>
+                                <DropdownMenu >
+                                    <DropdownMenuTrigger className="border-0 outline-0">
+                                        <Ellipsis className="cursor-pointer" />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="bg-white mr-9">
+                                        <DropdownMenuGroup>
+                                            {
+                                                optionsArr.map((option, idx) => (
+                                                    <DropdownMenuItem onClick={() => {
+                                                        if (option.action === "edit") {
+                                                            // c
+                                                        } else {
+                                                            // c
+                                                        }
+                                                    }} key={idx} className="cursor-pointer">
+                                                        {option.icon}
+                                                        {option.text}
+                                                    </DropdownMenuItem>
+                                                ))
+                                            }
+                                        </DropdownMenuGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                            <h4 className="font-bold text-sm text-slate-800 mb-1">{note.title}</h4>
+                            <p className="text-[10px] text-slate-500 leading-relaxed mb-3">
+                                {note.description}
+                            </p>
+                            <div className="flex gap-2">
+                                <Badge variant="secondary" className="bg-pink-100 text-pink-700 hover:bg-pink-100 h-5 px-2 text-[10px] rounded-full">{note.category[0]}</Badge>
+                                <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 h-5 px-2 text-[10px] rounded-full">{note.category[1]}</Badge>
+                            </div>
+                        </Card>
+                    ))
+                    :
+                    <div>no notes</div>
+            }
+        </>
+    )
+}
+
+export default NotesList

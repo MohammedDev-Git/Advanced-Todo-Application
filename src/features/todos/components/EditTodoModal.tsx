@@ -76,6 +76,8 @@ export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalP
             ...editedTodo,
             title,
             category: [category1, category2],
+            edited: true,
+            createdAt: new Date().toISOString(),
         }
 
         onOpenChange?.(false);
@@ -88,11 +90,15 @@ export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalP
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-106.25">
                 <DialogHeader>
                     <DialogTitle>Edit Todo</DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    handleEditTodo();
+                }}
+                    className="grid gap-4 py-4">
                     <div className="grid gap-2">
                         <Label htmlFor="title">Title</Label>
                         <Input
@@ -126,10 +132,10 @@ export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalP
                             <InputError message={zodErrors?.category2?.[0]} keyErr={errorKey} />
                         </div>
                     </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleEditTodo}>Edit Todo</Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <Button type="submit">EditTodo</Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     )
