@@ -14,15 +14,12 @@ import { useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { addTodo } from "@/features/todos/todosSlice";
 import { todoSchema } from "@/features/todos/schemas/todoSchema";
-import type { addTodoError, todoObject } from "@/types";
+import type { addTodoError, ModalProps, todoObject } from "@/types";
 import { InputError } from "@/components/custom/InputError";
 
-interface InputTodoModalProps {
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-}
 
-export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
+
+export function AddTodoModal({ open, onOpenChange }: ModalProps) {
 
     const dispatch = useDispatch();
 
@@ -95,6 +92,7 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
                         <Input
                             id="title"
                             placeholder="Enter todo title"
+                            className="focus-visible:ring-2 focus-visible:ring-primary transition-all"
                             {...titleInput}
                         />
                         <InputError message={zodErrors?.title?.[0]} keyErr={errorKey} />
@@ -106,6 +104,7 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
                                 <Input
                                     id="category1"
                                     placeholder="e.g. Backend"
+                                    className="focus-visible:ring-2 focus-visible:ring-primary transition-all"
                                     {...category1Input}
                                 />
                                 <InputError message={zodErrors?.category1?.[0]} keyErr={errorKey} />
@@ -117,6 +116,7 @@ export function AddTodoModal({ open, onOpenChange }: InputTodoModalProps) {
                                 <Input
                                     id="category2"
                                     placeholder="e.g. Design"
+                                    className="focus-visible:ring-2 focus-visible:ring-primary transition-all"
                                     {...category2Input}
                                 />
                             </div>

@@ -22,6 +22,7 @@ export interface noteObject {
 
 export interface notesState {
     notes: noteObject[]
+    tempCategories: string[];
 }
 
 export interface addTodoError {
@@ -47,4 +48,9 @@ export interface NoDataProps {
     message: string;
     image?: boolean;
     src?: string;
+}
+
+export interface ModalProps {
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }

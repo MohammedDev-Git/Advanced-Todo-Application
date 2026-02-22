@@ -15,16 +15,21 @@ const initialState: notesState = {
     loremloremlorem`,
             category: ["cat1", "cat2", "cat3", "cat4"],
         },
-    ]
+    ],
+    tempCategories: [""]
 }
 
 const notesSlice = createSlice({
     name: "notes",
     initialState,
     reducers: {
-
+        deleteAllNotes: (state: notesState) => {
+            state.notes = [];
+        }
     }
 })
 
 export const selectNotes = (state: RootState) => state.notes.notes;
+export const selectTempCategories = (state: RootState) => state.notes.tempCategories;
+export const { deleteAllNotes } = notesSlice.actions;
 export default notesSlice.reducer;

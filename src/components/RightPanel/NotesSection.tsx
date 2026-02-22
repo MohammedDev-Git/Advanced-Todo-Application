@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash } from "lucide-react";
 import NotesList from "@/features/notes/components/NotesList";
 import { useState } from "react";
+import { AddNoteModal } from "@/features/notes/components/AddNoteModal";
+import { DeleteAllNotesModal } from "@/features/notes/components/DeleteAllNotesModal";
 
 const NotesSection = () => {
 
     // for modal
     const [addNoteOpen, setAddNoteOpen] = useState<boolean>(false);
+    const [deleteAllOpen, setDeleteAllOpen] = useState<boolean>(false);
 
     const notes = useSelector(selectNotes);
     return (
@@ -25,13 +28,16 @@ const NotesSection = () => {
 
                     {
                         notes && notes.length > 0 ?
-                            <Button size="icon" variant="secondary" className="h-6 w-6 rounded bg-red-100 text-red-600 hover:bg-red-200 shadow-none">
+                            <Button
+                                onClick={() => {
+                                    setDeleteAllOpen(true);
+                                }}
+                                size="icon" variant="secondary" className="h-6 w-6 rounded bg-red-100 text-red-600 hover:bg-red-200 shadow-none">
                                 <Trash className="h-4 w-4" />
                             </Button>
                             :
                             null
                     }
-
                     <Button onClick={() => { setAddNoteOpen(true); }} size="icon" variant="secondary" className="h-6 w-6 rounded bg-indigo-100 text-indigo-600 hover:bg-indigo-200 shadow-none">
                         <Plus className="h-4 w-4" />
                     </Button>
@@ -41,6 +47,17 @@ const NotesSection = () => {
             <div className="space-y-4">
                 <NotesList setAddNoteOpen={setAddNoteOpen} />
             </div>
+
+            <AddNoteModal
+                open={addNoteOpen}
+                onOpenChange={setAddNoteOpen}
+            />
+
+            <DeleteAllNotesModal
+                open={deleteAllOpen}
+                onOpenChange={setDeleteAllOpen}
+            />
+
         </section >
     )
 }

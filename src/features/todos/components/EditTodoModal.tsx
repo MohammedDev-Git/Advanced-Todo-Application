@@ -12,7 +12,7 @@ import { useInput } from "@/hooks/useInput";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { editTodo } from "@/features/todos/todosSlice";
-import { todoSchema } from "../schemas/todoSchema";
+import { todoSchema } from "@/features/todos/schemas/todoSchema";
 import type { addTodoError, todoObject } from "@/types";
 import { InputError } from "@/components/custom/InputError";
 
