@@ -6,6 +6,7 @@ import Members from "@/pages/Members/Members";
 import Settings from "@/pages/Settings/Settings";
 import Profile from "@/pages/Profile/Profile";
 import NotFound from "@/pages/NotFound/NotFound";
+import Project from "@/pages/Projects/Project/Project";
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +14,15 @@ export const router = createBrowserRouter([
         element: <RootLayout />,
         children: [
             { index: true, element: <Dashboard /> },
-            { path: "projects", element: <Projects /> },
+            {
+                path: "projects",
+                children: [
+                    { index: true, element: <Projects /> },
+                    { path: ":id", element: <Project /> },
+                ]
+
+            },
+
             { path: "members", element: <Members /> },
             { path: "profile", element: <Profile /> },
             { path: "settings", element: <Settings /> },

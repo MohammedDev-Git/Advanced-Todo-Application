@@ -1,14 +1,16 @@
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
-import { Ellipsis,  PencilIcon, TrashIcon } from 'lucide-react'
+import { Ellipsis, PencilIcon, TrashIcon } from 'lucide-react'
 import { useSelector } from 'react-redux'
-import { selectNotes } from '../notesSlice'
+import { selectNotes } from '@/features/notes/notesSlice'
 import type { noteObject } from '@/types'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
-const NotesList = () => {
+import sadNote from "@/assets/images/sadNote.png"
+import NoData from '@/components/custom/NoData'
+
+const NotesList = ({ setAddNoteOpen }: { setAddNoteOpen: (open: boolean) => void }) => {
     const notes = useSelector(selectNotes);
-    console.log(notes);
 
     const optionsArr = [
         { action: "edit", text: "Edit", icon: <PencilIcon /> },
@@ -58,7 +60,12 @@ const NotesList = () => {
                         </Card>
                     ))
                     :
-                    <div>no notes</div>
+                    <NoData
+                        src={sadNote}
+                        message="No Notes? put your thoughts!"
+                        image={true}
+                        setAddOpen={setAddNoteOpen}
+                    />
             }
         </>
     )

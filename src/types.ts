@@ -14,8 +14,8 @@ export interface todoState {
 export interface noteObject {
     id: string;
     createdAt: string;
-    edited?:boolean;
-    title:string;
+    edited?: boolean;
+    title: string;
     description: string;
     category: string[];
 }
@@ -39,4 +39,12 @@ export interface editTodoError {
 export interface InputErrorProps {
     message?: string;
     keyErr: number | null;
+}
+
+export interface NoDataProps {
+    setAddOpen: (open: boolean) => void,
+    animationData?: any;
+    message: string;
+    image?: boolean;
+    src?: string;
 }

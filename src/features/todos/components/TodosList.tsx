@@ -16,7 +16,7 @@ import { Ellipsis } from "lucide-react"
 import type { todoObject } from "@/types";
 
 import sadSwing from "@/assets/lottie/SadSwing.json";
-import Lottie from "lottie-react";
+import NoData from "@/components/custom/NoData";
 
 type todoListProps = {
     setEditedTodo: (editedTodo: todoObject) => void,
@@ -95,19 +95,11 @@ const TodosList = ({
                         </div>
                     ))
                     :
-                    <>
-                        <div
-                            onClick={() => setAddTodoOpen(true)}
-                            className="cursor-pointer flex flex-col items-center justify-center w-60 mx-auto border-2 border-dotted border-primary rounded-4xl">
-                            <div className="h-25 w-25">
-                                <Lottie
-                                    animationData={sadSwing}
-                                    loop={true}
-                                />
-                            </div>
-                            <p className="text-primary text-center text-sm mb-5">You don't have any todos :&#40;</p>
-                        </div>
-                    </>
+                    <NoData
+                        setAddOpen={setAddTodoOpen}
+                        animationData={sadSwing}
+                        message="No Todos yet? start grinding!"
+                    />
             }
         </>
     )
