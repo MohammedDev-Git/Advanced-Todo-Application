@@ -54,3 +54,9 @@ export interface ModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
 }
+
+export interface deleteModalProps {
+    open: boolean;
+    deletedId: string | undefined;
+    onOpenChange?: (open: boolean) => void;
+}

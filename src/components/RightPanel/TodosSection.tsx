@@ -65,7 +65,7 @@ const TodosSection = () => {
             <DeleteTodoModal
                 open={deleteTodoOpen}
                 onOpenChange={setDeleteTodoOpen}
-                deletedTodoId={deletedTodoId}
+                deletedId={deletedTodoId}
             />
 
             <DeleteAllTodosModal

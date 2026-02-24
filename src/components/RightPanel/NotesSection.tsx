@@ -6,12 +6,15 @@ import NotesList from "@/features/notes/components/NotesList";
 import { useState } from "react";
 import { AddNoteModal } from "@/features/notes/components/AddNoteModal";
 import { DeleteAllNotesModal } from "@/features/notes/components/DeleteAllNotesModal";
+import { DeleteNoteModal } from "@/features/notes/components/DeleteNoteModal";
 
 const NotesSection = () => {
 
     // for modal
     const [addNoteOpen, setAddNoteOpen] = useState<boolean>(false);
     const [deleteAllOpen, setDeleteAllOpen] = useState<boolean>(false);
+    const [deleteNoteOpen, setDeleteNoteOpen] = useState<boolean>(false);
+    const [deletedID, setDeletedID] = useState<string | undefined>(undefined);
 
     const notes = useSelector(selectNotes);
     return (
@@ -45,7 +48,11 @@ const NotesSection = () => {
             </div>
 
             <div className="space-y-4">
-                <NotesList setAddNoteOpen={setAddNoteOpen} />
+                <NotesList
+                    setAddNoteOpen={setAddNoteOpen}
+                    setDeleteNoteOpen={setDeleteNoteOpen}
+                    setDeletedID={setDeletedID}
+                />
             </div>
 
             <AddNoteModal
@@ -56,6 +63,12 @@ const NotesSection = () => {
             <DeleteAllNotesModal
                 open={deleteAllOpen}
                 onOpenChange={setDeleteAllOpen}
+            />
+
+            <DeleteNoteModal
+                open={deleteNoteOpen}
+                onOpenChange={setDeleteNoteOpen}
+                deletedId={deletedID}
             />
 
         </section >

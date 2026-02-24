@@ -9,7 +9,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import sadNote from "@/assets/images/sadNote.png"
 import NoData from '@/components/custom/NoData'
 
-const NotesList = ({ setAddNoteOpen }: { setAddNoteOpen: (open: boolean) => void }) => {
+type notesProps = {
+    setAddNoteOpen: (open: boolean) => void,
+    setDeleteNoteOpen: (open: boolean) => void,
+    setDeletedID: (id: string | undefined) => void,
+}
+
+const NotesList = ({ setAddNoteOpen, setDeleteNoteOpen, setDeletedID }: notesProps) => {
     const notes = useSelector(selectNotes);
 
     const optionsArr = [
@@ -37,7 +43,8 @@ const NotesList = ({ setAddNoteOpen }: { setAddNoteOpen: (open: boolean) => void
                                                         if (option.action === "edit") {
                                                             // c
                                                         } else {
-                                                            // c
+                                                            setDeleteNoteOpen(true);
+                                                            setDeletedID(note.id);
                                                         }
                                                     }} key={idx} className="cursor-pointer">
                                                         {option.icon}
