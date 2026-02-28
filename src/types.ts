@@ -1,3 +1,6 @@
+import type z from "zod";
+import type { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
+
 export interface todoObject {
     id: string;
     title: string;
@@ -37,9 +40,14 @@ export interface editTodoError {
     category2?: string[];
 }
 
+export type noteAddError = z.inferFormattedError<typeof noteSchema>
+
+export type catSizeError = z.inferFormattedError<typeof tempCategoriesSchema>
+
 export interface InputErrorProps {
     message?: string;
     keyErr: number | null;
+    className?: string;
 }
 
 export interface NoDataProps {

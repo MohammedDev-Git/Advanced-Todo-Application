@@ -17,6 +17,7 @@ const NotesSection = () => {
     const [deletedID, setDeletedID] = useState<string | undefined>(undefined);
 
     const notes = useSelector(selectNotes);
+
     return (
         <section>
             <div className="flex items-center justify-between mb-6">
@@ -32,9 +33,7 @@ const NotesSection = () => {
                     {
                         notes && notes.length > 0 ?
                             <Button
-                                onClick={() => {
-                                    setDeleteAllOpen(true);
-                                }}
+                                onClick={() => { setDeleteAllOpen(true); }}
                                 size="icon" variant="secondary" className="h-6 w-6 rounded bg-red-100 text-red-600 hover:bg-red-200 shadow-none">
                                 <Trash className="h-4 w-4" />
                             </Button>

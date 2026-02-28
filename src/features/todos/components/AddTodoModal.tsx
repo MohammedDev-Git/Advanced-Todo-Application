@@ -44,7 +44,6 @@ export function AddTodoModal({ open, onOpenChange }: ModalProps) {
     }, [open, onOpenChange])
 
     const handleAddTodo = () => {
-        console.log(1);
         const formData = {
             title: titleInput.value,
             category1: category1Input.value,
@@ -56,7 +55,9 @@ export function AddTodoModal({ open, onOpenChange }: ModalProps) {
         if (!validationResult.success) {
             const errors: addTodoError = validationResult.error.flatten().fieldErrors;
             setErrorKey(pre => pre ? pre + 1 : 1);
-            if (errors) setZodErrors(errors);
+            if (errors) {
+                setZodErrors(errors);
+            }
             return;
         }
 
