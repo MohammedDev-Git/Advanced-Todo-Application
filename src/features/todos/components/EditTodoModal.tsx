@@ -19,7 +19,7 @@ import { InputError } from "@/components/custom/InputError";
 interface EditTodoModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    editedTodo?: todoObject;
+    editedTodo?: todoObject | undefined;
 }
 
 export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalProps) {
@@ -46,11 +46,7 @@ export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalP
             category1Input.fillInitialState();
             category2Input.fillInitialState();
         }
-
-        if (zodErrors) {
-            setZodErrors(null);
-        }
-    }, [open, onOpenChange, editedTodo])
+    }, [open, editedTodo])
 
     const handleEditTodo = () => {
         if (!editedTodo) return;

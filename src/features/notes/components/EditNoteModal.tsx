@@ -9,18 +9,22 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { catSizeError, ModalProps, noteAddError, noteObject } from "@/types";
+import type { catSizeError, noteAddError, noteObject } from "@/types";
 import { useInput } from "@/hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { addNote, addTempCategory, removeTempCategory, resetTempCategory, selectTempCategories, updateTempCategory } from "@/features/notes/notesSlice";
+import { addTempCategory, editNote, removeTempCategory, resetTempCategory, selectTempCategories, setTempCategory, updateTempCategory } from "@/features/notes/notesSlice";
 import { useEffect, useState } from "react";
 import { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
 import { InputError } from "@/components/custom/InputError";
-import { nanoid } from "@reduxjs/toolkit";
 import { format, parseISO } from "date-fns";
 
+interface EditNoteModalProps {
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    editedNote?: noteObject | undefined;
+}
 
-export function AddNoteModal({ open, onOpenChange }: ModalProps) {
+export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalProps) {
 
     const dispatch = useDispatch();
 
@@ -29,12 +33,34 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
     const [keyError, setKeyError] = useState<number>(0);
     const [keyCatError, setKeyCatError] = useState<number>(0);
 
-    const title = useInput("");
-    const details = useInput("");
+    const title = useInput(editedNote?.title || "");
+    const details = useInput(editedNote?.description || "");
+    const tempCategoryArr = useSelector(selectTempCategories);
 
-    const tempCategoryArr: string[] = useSelector(selectTempCategories);
+    useEffect(() => {
+        if (open) {
+            title.fillInitialState();
+            details.fillInitialState();
+            if (editedNote) {
+                dispatch(setTempCategory(editedNote.category))
+            }
+        }
 
-    const handleAddNote = () => {
+        if (zodError) {
+            setZodError(null);
+        }
+
+        if (categorySizeError) {
+            setCategorySizeError(null);
+        }
+
+    }, [open, editedNote])
+
+    const handleEditNote = () => {
+        if (!editedNote || !tempCategoryArr) {
+            return;
+        }
+
         const formData = {
             noteTitle: title.value,
             noteDetails: details.value,
@@ -58,15 +84,15 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
         const filteredCategoryArr = tempCategoryArr.filter((cat) => cat !== "");
 
         const note: noteObject = {
-            id: nanoid(),
+            ...editedNote,
             category: filteredCategoryArr.length === 0 ? [""] : filteredCategoryArr,
             title: noteTitle,
             description: noteDetails,
-            edited: false,
+            edited: true,
             createdAt: formattedDate,
         }
 
-        dispatch(addNote(note));
+        dispatch(editNote(note));
 
         resetAllInputs();
         onOpenChange?.(false);
@@ -81,6 +107,10 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
     }
 
     const handleAddCategory = () => {
+        if (!tempCategoryArr) {
+            return;
+        }
+
         setKeyCatError((pre) => pre + 1);
         const catSize = { tempCategoriesSize: tempCategoryArr.length + 1 }
         const validationResult = tempCategoriesSchema.safeParse(catSize);
@@ -97,10 +127,6 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
         setZodError(null);
     }
 
-    useEffect(() => {
-        resetAllInputs();
-    }, [open, onOpenChange])
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-120 max-h-120 custom-scrollbar overflow-y-scroll rounded-[2rem] border-none shadow-2xl p-0">
@@ -116,7 +142,7 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
 
                     <form onSubmit={(e) => {
                         e.preventDefault();
-                        handleAddNote();
+                        handleEditNote();
                     }} className="grid gap-6 py-4">
                         {/* Title Field */}
                         <div className="grid gap-2">

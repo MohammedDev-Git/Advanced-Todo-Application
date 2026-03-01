@@ -57,6 +57,7 @@ const TodosSection = () => {
                 open={addTodoOpen}
                 onOpenChange={setAddTodoOpen}
             />
+            
             <EditTodoModal
                 open={editTodoOpen}
                 onOpenChange={setEditTodoOpen}

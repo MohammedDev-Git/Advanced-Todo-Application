@@ -12,10 +12,12 @@ import NoData from '@/components/custom/NoData'
 type notesProps = {
     setAddNoteOpen: (open: boolean) => void,
     setDeleteNoteOpen: (open: boolean) => void,
+    setEditNoteOpen: (open: boolean) => void,
+    setEditedNote: (editedNote: noteObject) => void,
     setDeletedID: (id: string | undefined) => void,
 }
 
-const NotesList = ({ setAddNoteOpen, setDeleteNoteOpen, setDeletedID }: notesProps) => {
+const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNoteOpen, setDeletedID }: notesProps) => {
     const notes = useSelector(selectNotes);
 
     const badgeColors = [
@@ -39,7 +41,9 @@ const NotesList = ({ setAddNoteOpen, setDeleteNoteOpen, setDeletedID }: notesPro
                     notes.map((note: noteObject) => (
                         <Card key={note.id} className="border-0 shadow-sm p-4 bg-white ring-1 ring-slate-100 rounded-2xl">
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-[10px] text-slate-400 font-medium">{note.createdAt}</span>
+                                <span className="text-[10px] text-slate-400 font-medium">
+                                    {`${note.edited ? "Edited" : "Created"}` + ` at ${note.createdAt}`}
+                                </span>
                                 <DropdownMenu >
                                     <DropdownMenuTrigger className="border-0 outline-0">
                                         <Ellipsis className="cursor-pointer" />
@@ -50,7 +54,8 @@ const NotesList = ({ setAddNoteOpen, setDeleteNoteOpen, setDeletedID }: notesPro
                                                 optionsArr.map((option, idx) => (
                                                     <DropdownMenuItem onClick={() => {
                                                         if (option.action === "edit") {
-                                                            // c
+                                                            setEditNoteOpen(true);
+                                                            setEditedNote(note);
                                                         } else {
                                                             setDeleteNoteOpen(true);
                                                             setDeletedID(note.id);
@@ -74,8 +79,9 @@ const NotesList = ({ setAddNoteOpen, setDeleteNoteOpen, setDeletedID }: notesPro
                                     note?.category?.map((cat, idx) => {
                                         const colorStyle = badgeColors[idx];
                                         return (
+                                            cat &&
                                             <Badge key={idx} variant="secondary" className={`${colorStyle.bg} ${colorStyle.text} ${colorStyle.hover} h-5 px-2 text-[10px] rounded-full`}>
-                                                {cat || "Unknown Category"}
+                                                {cat}
                                             </Badge>
                                         )
                                     })

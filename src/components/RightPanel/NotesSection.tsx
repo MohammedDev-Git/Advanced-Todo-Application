@@ -7,14 +7,18 @@ import { useState } from "react";
 import { AddNoteModal } from "@/features/notes/components/AddNoteModal";
 import { DeleteAllNotesModal } from "@/features/notes/components/DeleteAllNotesModal";
 import { DeleteNoteModal } from "@/features/notes/components/DeleteNoteModal";
+import { EditNoteModal } from "@/features/notes/components/EditNoteModal";
+import type { noteObject } from "@/types";
 
 const NotesSection = () => {
 
-    // for modal
+    // All Note Modals
     const [addNoteOpen, setAddNoteOpen] = useState<boolean>(false);
     const [deleteAllOpen, setDeleteAllOpen] = useState<boolean>(false);
     const [deleteNoteOpen, setDeleteNoteOpen] = useState<boolean>(false);
+    const [editNoteOpen, setEditNoteOpen] = useState<boolean>(false);
     const [deletedID, setDeletedID] = useState<string | undefined>(undefined);
+    const [editedNote, setEditedNote] = useState<noteObject|undefined>(undefined);
 
     const notes = useSelector(selectNotes);
 
@@ -51,12 +55,20 @@ const NotesSection = () => {
                     setAddNoteOpen={setAddNoteOpen}
                     setDeleteNoteOpen={setDeleteNoteOpen}
                     setDeletedID={setDeletedID}
+                    setEditNoteOpen={setEditNoteOpen}
+                    setEditedNote={setEditedNote}
                 />
             </div>
 
             <AddNoteModal
                 open={addNoteOpen}
                 onOpenChange={setAddNoteOpen}
+            />
+
+            <EditNoteModal
+                open={editNoteOpen}
+                onOpenChange={setEditNoteOpen}
+                editedNote={editedNote}
             />
 
             <DeleteAllNotesModal

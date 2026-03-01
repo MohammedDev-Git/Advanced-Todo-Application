@@ -1,6 +1,6 @@
 import type { RootState } from "@/app/store";
 import type { noteObject, notesState } from "@/types";
-import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface updateTempProps {
     text: string;
@@ -8,19 +8,7 @@ interface updateTempProps {
 }
 
 const initialState: notesState = {
-    notes: [
-        {
-            id: nanoid(),
-            createdAt: new Date().toISOString(),
-            edited: false,
-            title: "note 1",
-            description: `loremloremlorem 
-    loremloremlorem loremloremlor
-    emloremlorem 
-    loremloremlorem`,
-            category: ["cat1", "cat2", "cat3", "cat4"],
-        },
-    ],
+    notes: [],
     tempCategories: [""]
 }
 
@@ -32,6 +20,17 @@ const notesSlice = createSlice({
             state.notes.push(action.payload);
             console.log(action.payload);
         },
+        editNote: (state: notesState, action: PayloadAction<noteObject>) => {
+            const updatedNote = action.payload;
+            const editedNote = state.notes.find((note: noteObject) => note.id === updatedNote.id);
+            if (editedNote) {
+                editedNote.title = updatedNote.title;
+                editedNote.category = updatedNote.category;
+                editedNote.createdAt = updatedNote.createdAt;
+                editedNote.description = updatedNote.description;
+                editedNote.edited = true;
+            }
+        },
         deleteAllNotes: (state: notesState) => {
             state.notes = [];
         },
@@ -40,6 +39,9 @@ const notesSlice = createSlice({
         },
         addTempCategory: (state: notesState) => {
             state.tempCategories.push("");
+        },
+        setTempCategory: (state: notesState, action: PayloadAction<string[]>) => {
+            state.tempCategories = [...action.payload];
         },
         removeTempCategory: (state: notesState, action: PayloadAction<number | undefined>) => {
             state.tempCategories.splice(Number(action.payload), 1);
@@ -61,6 +63,8 @@ export const { deleteAllNotes,
     removeTempCategory,
     resetTempCategory,
     updateTempCategory,
-    addNote
+    addNote,
+    editNote,
+    setTempCategory,
 } = notesSlice.actions;
 export default notesSlice.reducer;

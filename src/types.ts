@@ -15,7 +15,7 @@ export interface todoState {
 }
 
 export interface noteObject {
-    id: string;
+    id: string | undefined;
     createdAt: string;
     edited?: boolean;
     title: string;
