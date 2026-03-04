@@ -42,11 +42,11 @@ export function StatusCalendar() {
     const monthYearString = currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })
 
     return (
-        <div className="bg-white rounded-3xl px-5 py-3 flex flex-col h-[340px]">
+        <div className="bg-white dark:bg-card rounded-3xl p-6 xl:px-4 xl:py-4 flex flex-col h-full min-h-[250px]">
             <h3 className="text-lg font-bold mb-3 text-primary">Status</h3>
 
             <div className="flex flex-col justify-center flex-1">
-                <div className="bg-white rounded-2xl px-3 py-10 shadow-sm border border-slate-100 flex flex-col justify-center">
+                <div className="bg-white dark:bg-card rounded-2xl px-3 py-10 shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-center">
 
                     <div className="flex items-center justify-between mb-4">
                         <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-400" onClick={prevWeek}>
@@ -66,12 +66,12 @@ export function StatusCalendar() {
 
                             return (
                                 <div key={index} className="flex flex-col items-center gap-2">
-                                    <span className="text-xs text-slate-500 font-medium">{dayName}</span>
+                                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{dayName}</span>
                                     <div className={cn(
                                         "h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all cursor-pointer",
                                         active
-                                            ? "bg-primary text-white shadow-lg shadow-indigo-200 scale-110"
-                                            : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                                            ? "bg-primary text-white shadow-lg scale-110"
+                                            : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                                     )}>
                                         {dayNumber}
                                     </div>

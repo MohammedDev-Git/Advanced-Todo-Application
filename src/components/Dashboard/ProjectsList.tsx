@@ -52,7 +52,7 @@ const projects = [
     }
 ]
 
-export function ProjectsList({ title="Projects" }: { title?: string }) {
+export function ProjectsList({ title = "Projects" }: { title?: string }) {
     return (
         <div className="col-span-3 mt-4">
             <div className="flex items-center justify-between mb-4">
@@ -68,17 +68,17 @@ export function ProjectsList({ title="Projects" }: { title?: string }) {
                 className="w-full"
             >
                 <div className="absolute right-12 -top-12 flex gap-1">
-                    <CarouselPrevious className="relative left-0 top-0 translate-y-0 h-8 w-8 border-none hover:bg-slate-100 text-primary/70 hover:text-primary" />
-                    <CarouselNext className="relative right-0 bottom-0 top-0 translate-y-0 h-8 w-8 border-none hover:bg-slate-100 text-primary/70 hover:text-primary" />
+                    <CarouselPrevious className="relative left-0 top-0 translate-y-0 h-8 w-8 border-none hover:bg-slate-100 dark:hover:bg-slate-800 text-primary/70 hover:text-primary" />
+                    <CarouselNext className="relative right-0 bottom-0 top-0 translate-y-0 h-8 w-8 border-none hover:bg-slate-100 dark:hover:bg-slate-800 text-primary/70 hover:text-primary" />
                 </div>
 
                 <CarouselContent className="-ml-6">
                     {projects.map((project) => (
                         <CarouselItem key={project.id} className="pl-6 md:basis-1/2 lg:basis-1/2">
-                            <Card className="border-0 shadow-none bg-white rounded-3xl p-2 select-none">
+                            <Card className="border-0 shadow-none bg-white dark:bg-card rounded-3xl p-2 select-none">
                                 <div className="p-4">
                                     {/* Image/Preview Mock */}
-                                    <div className="h-32 w-full bg-slate-100 rounded-xl mb-4 relative overflow-hidden group">
+                                    <div className="h-32 w-full bg-slate-100 dark:bg-slate-800 rounded-xl mb-4 relative overflow-hidden group">
                                         <img
                                             src={project.image}
                                             alt={project.title}
@@ -87,22 +87,22 @@ export function ProjectsList({ title="Projects" }: { title?: string }) {
                                     </div>
 
                                     <h4 className="font-bold text-base text-primary line-clamp-1">{project.title}</h4>
-                                    <p className="text-xs text-slate-400 mb-4">{project.category}</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">{project.category}</p>
 
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm font-semibold">
                                             <span>Progress</span>
                                             <span className={cn("text-blue-500", project.progress < 50 && "text-orange-500")}>{project.progress}%</span>
                                         </div>
-                                        <Progress value={project.progress} className={cn("bg-slate-100 h-2", `text-${project.color}-500`)} />
+                                        <Progress value={project.progress} className={cn("bg-slate-100 dark:bg-slate-700 h-2", `text-${project.color}-500`)} />
 
                                         <div className="flex items-center justify-between mt-4">
                                             <div className="flex -space-x-2">
                                                 {project.avatars.map((bgClass, idx) => (
-                                                    <div key={idx} className={cn("w-6 h-6 rounded-full border-2 border-white", bgClass)} />
+                                                    <div key={idx} className={cn("w-6 h-6 rounded-full border-2 border-white dark:border-slate-700", bgClass)} />
                                                 ))}
                                             </div>
-                                            <div className="flex items-center gap-1 text-slate-500 text-xs font-medium">
+                                            <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-xs font-medium">
                                                 <span className="h-3 w-3 rounded-full border border-slate-400 flex items-center justify-center pt-1px">🕒</span>
                                                 {project.daysLeft} Days Left
                                             </div>

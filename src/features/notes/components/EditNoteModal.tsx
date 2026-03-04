@@ -135,7 +135,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
 
                 <div className="p-8">
                     <DialogHeader className="mb-6">
-                        <DialogTitle className="text-2xl font-bold tracking-tight text-slate-800">
+                        <DialogTitle className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-200">
                             Create New Note
                         </DialogTitle>
                     </DialogHeader>
@@ -146,7 +146,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                     }} className="grid gap-6 py-4">
                         {/* Title Field */}
                         <div className="grid gap-2">
-                            <Label htmlFor="title" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                            <Label htmlFor="title" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">
                                 Note Title
                             </Label>
                             <div className="relative">
@@ -154,7 +154,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                 <Input
                                     id="title"
                                     placeholder="e.g. Task 1 is a priority"
-                                    className="pl-10 h-12 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
+                                    className="pl-10 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
                                     {...title}
                                 />
                             </div>
@@ -162,13 +162,13 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                            <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">
                                 Details
                             </Label>
                             <textarea
                                 id="description"
                                 placeholder="Write more details about this note..."
-                                className="flex min-h-25 w-full rounded-xl border-none bg-slate-50 px-4 py-3 text-sm ring-offset-background placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all resize-none"
+                                className="flex min-h-25 w-full rounded-xl border-none bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm ring-offset-background placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all resize-none"
                                 {...details}
                             />
                             <InputError keyErr={keyError} message={zodError?.noteDetails?._errors[0]} />
@@ -188,7 +188,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                                 <Button
                                                     type="button"
                                                     size="sm"
-                                                    className="h-6 w-6 rounded-full p-0 bg-slate-100 text-slate-600 hover:bg-red-400 hover:text-white"
+                                                    className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-400 hover:text-white"
                                                     onClick={() => {
                                                         dispatch(resetTempCategory());
                                                         setCategorySizeError(null);
@@ -202,7 +202,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                         <Button
                                             type="button"
                                             size="sm"
-                                            className="h-6 w-6 rounded-full p-0 bg-slate-100 text-slate-600 hover:bg-primary hover:text-white"
+                                            className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white"
                                             onClick={() => {
                                                 handleAddCategory();
                                             }}
@@ -221,7 +221,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                             <Tags className="absolute left-3 top-4 h-4 w-4 text-slate-400" />
                                             <Input
                                                 placeholder={`Category ${idx + 1}`}
-                                                className="pl-10 h-12 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
+                                                className="pl-10 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
                                                 value={cat}
                                                 onChange={(e) => {
                                                     dispatch(updateTempCategory({ text: e.target.value, idx }))
@@ -231,7 +231,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                                 tempCategoryArr && tempCategoryArr.length > 1 ?
                                                     <Button
                                                         type="button"
-                                                        className="bg-transparent hover:bg-transparent cursor-pointer absolute right-3 top-2 text-slate-300 hover:text-destructive transition-colors"
+                                                        className="bg-transparent hover:bg-transparent cursor-pointer absolute right-3 top-2 text-slate-300 dark:text-slate-400 hover:text-destructive transition-colors"
                                                         onClick={() => {
                                                             dispatch(removeTempCategory(idx))
                                                             setZodError(null);
@@ -253,7 +253,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                         <DialogFooter className="mt-8">
                             <Button
                                 type="submit"
-                                className="w-full h-14 bg-slate-900 hover:bg-primary text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 transition-all text-base"
+                                className="w-full h-14 bg-slate-900 dark:bg-slate-700 hover:bg-primary text-white dark:text-slate-200 font-bold rounded-2xl transition-all text-base"
                             >
                                 Add a Note
                             </Button>

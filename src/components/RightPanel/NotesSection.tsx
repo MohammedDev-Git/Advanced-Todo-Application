@@ -18,7 +18,7 @@ const NotesSection = () => {
     const [deleteNoteOpen, setDeleteNoteOpen] = useState<boolean>(false);
     const [editNoteOpen, setEditNoteOpen] = useState<boolean>(false);
     const [deletedID, setDeletedID] = useState<string | undefined>(undefined);
-    const [editedNote, setEditedNote] = useState<noteObject|undefined>(undefined);
+    const [editedNote, setEditedNote] = useState<noteObject | undefined>(undefined);
 
     const notes = useSelector(selectNotes);
 
@@ -28,9 +28,9 @@ const NotesSection = () => {
                 <div className="flex items-center gap-2">
                     {/* Pencil Icon */}
                     <div className="grid place-items-center rotate-45">
-                        <div className="w-3 h-1 bg-slate-400 rounded-full" />
+                        <div className="w-3 h-1 bg-slate-400 dark:bg-slate-500 rounded-full" />
                     </div>
-                    <h2 className="font-bold text-lg text-primary underline decoration-2 decoration-gray-300 underline-offset-4">Notes</h2>
+                    <h2 className="font-bold text-lg text-primary underline decoration-2 decoration-gray-300 dark:decoration-gray-600 underline-offset-4">Notes</h2>
                 </div>
                 <div className="flex justify-center items-center gap-2">
 
@@ -38,13 +38,13 @@ const NotesSection = () => {
                         notes && notes.length > 0 ?
                             <Button
                                 onClick={() => { setDeleteAllOpen(true); }}
-                                size="icon" variant="secondary" className="h-6 w-6 rounded bg-red-100 text-red-600 hover:bg-red-200 shadow-none">
+                                size="icon" variant="secondary" className="h-6 w-6 rounded bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800 shadow-none">
                                 <Trash className="h-4 w-4" />
                             </Button>
                             :
                             null
                     }
-                    <Button onClick={() => { setAddNoteOpen(true); }} size="icon" variant="secondary" className="h-6 w-6 rounded bg-indigo-100 text-indigo-600 hover:bg-indigo-200 shadow-none">
+                    <Button onClick={() => { setAddNoteOpen(true); }} size="icon" variant="secondary" className="h-6 w-6 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800 shadow-none">
                         <Plus className="h-4 w-4" />
                     </Button>
                 </div>

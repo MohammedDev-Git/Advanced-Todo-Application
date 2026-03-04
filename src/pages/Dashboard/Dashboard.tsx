@@ -9,7 +9,7 @@ export default function Dashboard() {
         <div className="animate-page">
 
             {/* Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-6 gap-6 items-stretch">
                 {/* Activity Graphic - Full width on LG, 2/3 on XL */}
                 <div className="col-span-1 lg:col-span-2 xl:col-span-4">
                     <TasksActivityChart />

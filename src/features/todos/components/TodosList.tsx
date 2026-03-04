@@ -47,11 +47,11 @@ const TodosList = ({
             {
                 todos && todos.length > 0 ?
                     todos.map((todo) => (
-                        <div key={todo.id} className="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                        <div key={todo.id} className="bg-indigo-50/50 dark:bg-indigo-900/20 p-3 rounded-xl border border-indigo-100 dark:border-indigo-700">
                             <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center gap-3">
                                     <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="cursor-pointer mt-1 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded text-white" />
-                                    <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 text-indigo-500" : "text-indigo-900"}`}>
+                                    <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 dark:decoration-gray-500 text-indigo-500 dark:text-indigo-300" : "text-indigo-900 dark:text-indigo-200"}`}>
                                         {todo.title}
                                     </label>
                                 </div>
@@ -60,7 +60,7 @@ const TodosList = ({
                                         <DropdownMenuTrigger className="border-0 outline-0">
                                             <Ellipsis className="cursor-pointer" />
                                         </DropdownMenuTrigger>
-                                        <DropdownMenuContent className="bg-white mr-9">
+                                        <DropdownMenuContent className="bg-white dark:bg-card mr-9">
                                             <DropdownMenuGroup>
                                                 {
                                                     optionsArr.map((option, idx) => (

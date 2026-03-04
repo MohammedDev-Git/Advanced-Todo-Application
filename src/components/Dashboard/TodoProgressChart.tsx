@@ -1,46 +1,105 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { selectTodos } from "@/features/todos/todosSlice"
+import {
+    Label,
+    PolarGrid,
+    PolarRadiusAxis,
+    RadialBar,
+    RadialBarChart,
+} from "recharts"
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import {
+    ChartContainer,
+    type ChartConfig,
+} from "@/components/ui/chart"
+import { format } from "date-fns"
 import { useSelector } from "react-redux"
+import { selectTodos } from "@/features/todos/todosSlice"
+
+const chartConfig = {
+    Todos: {
+        label: "Todos",
+    },
+    safari: {
+        label: "Safari",
+        color: "var(--chart-1)",
+    },
+} satisfies ChartConfig
 
 export function TodoProgressChart() {
+    const currentDate = format(new Date().toISOString(), "eeee - d MMMM yyyy");
 
-    const todos = useSelector(selectTodos);
-
-    const completedTodos = todos.filter((todo) => todo.isCompleted);
-
-    let percentage = Number(((completedTodos.length / todos.length) * 100).toFixed(0));
-
-    if (isNaN(Number(percentage))) {
-        percentage = 0;
-    }
+    const todosCount = useSelector(selectTodos).length;
+    const completedTodosCount = useSelector(selectTodos).filter((todo) => todo.isCompleted).length;
+    const chartData = [
+        { browser: "safari", Todos: completedTodosCount, fill: "var(--color-safari)" },
+    ]
 
     return (
-        <Card className="col-span-1 border-0 shadow-none bg-foreground text-primary-foreground rounded-3xl overflow-hidden relative">
-            <CardHeader className="pb-0 relative px-6">
-                <CardTitle className="text-base font-semibold text-white text-center">Todo Progress</CardTitle>
+        <Card className="border-0 shadow-none bg-white dark:bg-card rounded-3xl p-6 xl:px-4 xl:py-4 h-full flex flex-col">
+            <CardHeader className="p-0 pb-6 xl:pb-4 xl:px-2 items-center text-center">
+                <CardTitle className="text-base font-semibold">Todo Progress</CardTitle>
+                <CardDescription className="text-xs">{currentDate}</CardDescription>
             </CardHeader>
-            <CardContent className="h-40 relative p-0">
-                <div className="absolute inset-0 flex items-center justify-center gap-4 pl-0">
-                    {/* Circular Indicator */}
-                    <div className="relative h-24 w-24 shrink-0">
-                        <svg className="h-full w-full -rotate-90" viewBox="0 0 128 128">
-                            <circle cx="64" cy="64" r="56" fill="none" stroke="#2D3A52" strokeWidth="10" />
-                            <circle cx="64" cy="64" r="56" fill="none" stroke="#6366F1" strokeWidth="10" strokeDasharray="351.6" strokeDashoffset={355 - (Number(percentage) * (355 / 100))} strokeLinecap="round" />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-lg font-bold">
-                                {percentage}%
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Stats Text */}
-                    <div className="flex flex-col whitespace-nowrap">
-                        <span className="text-lg font-bold">{completedTodos.length}/{todos.length}</span>
-                        <span className="text-xs text-slate-400">Tasks</span>
-                    </div>
-                </div>
+            <CardContent className="flex-1 w-full p-0 relative min-h-[250px]">
+                <ChartContainer
+                    config={chartConfig}
+                    className="absolute inset-0 w-full h-full pb-6"
+                >
+                    <RadialBarChart
+                        data={chartData}
+                        startAngle={90}
+                        endAngle={90 - 360 * (completedTodosCount / (todosCount || 1))}
+                        innerRadius={60}
+                        outerRadius={80}
+                    >
+                        <PolarGrid
+                            gridType="circle"
+                            radialLines={false}
+                            stroke="none"
+                            className="first:fill-muted last:fill-background"
+                            polarRadius={[66, 54]}
+                        />
+                        <RadialBar dataKey="Todos" background cornerRadius={10} />
+                        <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
+                            <Label
+                                content={({ viewBox }) => {
+                                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                        return (
+                                            <text
+                                                x={viewBox.cx}
+                                                y={viewBox.cy}
+                                                textAnchor="middle"
+                                                dominantBaseline="middle"
+                                            >
+                                                <tspan
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    className="fill-foreground text-4xl font-bold"
+                                                >
+                                                    {chartData[0].Todos.toLocaleString()}/{todosCount}
+                                                </tspan>
+                                                <tspan
+                                                    x={viewBox.cx}
+                                                    y={(viewBox.cy || 0) + 24}
+                                                    className="fill-muted-foreground"
+                                                >
+                                                    Todos
+                                                </tspan>
+                                            </text>
+                                        )
+                                    }
+                                }}
+                            />
+                        </PolarRadiusAxis>
+                    </RadialBarChart>
+                </ChartContainer>
             </CardContent>
-        </Card>
+        </Card >
     )
 }

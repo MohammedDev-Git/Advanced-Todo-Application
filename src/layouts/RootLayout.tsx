@@ -22,19 +22,19 @@ const RootLayout = () => {
         <>
             <div className="flex h-screen overflow-hidden bg-background font-sans text-foreground">
                 {/* Left Sidebar - Fixed Width */}
-                <aside className="w-[250px] shrink-0 hidden md:block border-r h-full">
+                <aside className="w-62.5 shrink-0 hidden md:block border-r dark:border-slate-700 h-full">
                     <Sidebar />
                 </aside>
 
                 {/* Main Content Area - Flex Grow */}
-                <div ref={scrollContainerRef} className="flex-1 flex flex-col min-w-0 bg-gray-50/50 overflow-y-auto scrollbar-hide">
-                    <header className="shrink-0 px-8 bg-gray-50/50 sticky top-0 z-50 backdrop-blur-sm">
+                <div ref={scrollContainerRef} className="flex-1 flex flex-col min-w-0 bg-gray-50/50 dark:bg-gray-900/50 overflow-y-auto scrollbar-hide">
+                    <header className="shrink-0 px-8 bg-gray-50/50 dark:bg-gray-900/50 sticky top-0 z-50 backdrop-blur-sm">
                         <Header />
                     </header>
 
                     <main className="flex-1 pb-4">
                         <div className="max-w-5xl mx-auto md:mx-0 w-full">
-                            <div className="px-4 sm:px-8">
+                            <div className="px-4 sm:px-8 pt-5">
                                 <Outlet />
                             </div>
                             {/* Right Panel for Mobile/Tablet */}
@@ -46,7 +46,7 @@ const RootLayout = () => {
                 </div>
 
                 {/* Right Sidebar - Fixed Width */}
-                <aside className="w-[320px] shrink-0 hidden xl:block border-l h-full bg-white">
+                <aside className="w-[320px] shrink-0 hidden xl:block border-l dark:border-slate-700 h-full bg-white dark:bg-card">
                     <RightPanel />
                 </aside>
             </div>

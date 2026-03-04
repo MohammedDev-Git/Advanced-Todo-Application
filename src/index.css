@@ -31,7 +31,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
+  --color-chart-1: var(--primary);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
@@ -72,7 +72,9 @@
 }
 
 @keyframes up-down {
-  0%,100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
 
@@ -103,7 +105,7 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-1: var(--primary);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
@@ -139,7 +141,7 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-1: var(--primary);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
@@ -185,7 +187,7 @@
     width: 10px;
   }
 
-  .custom-scrollbar::-webkit-scrollbar-track{
+  .custom-scrollbar::-webkit-scrollbar-track {
     background-color: transparent;
   }
 

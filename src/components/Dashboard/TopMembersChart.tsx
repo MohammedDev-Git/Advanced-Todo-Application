@@ -1,71 +1,64 @@
-import { ResponsiveBar } from '@nivo/bar'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ChartContainer, type ChartConfig, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useSelector } from 'react-redux'
+import { selectTodos } from '@/features/todos/todosSlice'
 
-const data = [
-    {
-        "member": "Ali",
-        "tasks": 30,
-        "tasksColor": "#60A5FA"
+const chartConfig = {
+    tasks: {
+        label: "Tasks",
     },
-    {
-        "member": "Emad",
-        "tasks": 45,
-        "tasksColor": "#34D399"
-    },
-    {
-        "member": "Omar",
-        "tasks": 20,
-        "tasksColor": "#818CF8"
-    },
-    {
-        "member": "Ahmed",
-        "tasks": 40,
-        "tasksColor": "#34D399"
-    }
-]
+} satisfies ChartConfig
 
 export function TopMembersChart() {
+    const completedTodosCount = useSelector(selectTodos).filter((todo) => todo.isCompleted).length;
+
+    const chartData = [
+        { member: "Ali", tasks: completedTodosCount, color: "#60A5FA" },
+        { member: "Emad", tasks: 10, color: "#34D399" },
+        { member: "Omar", tasks: 6, color: "#818CF8" },
+        { member: "Ahmed", tasks: 1, color: "#34D399" }
+    ]
+
     return (
-        <Card className="col-span-1 border-0 shadow-none bg-white rounded-3xl h-[340px]">
-            <CardHeader className="pb-2 pt-6 px-6">
+        <Card className="col-span-1 border-0 shadow-none bg-white dark:bg-card rounded-3xl p-6 xl:px-4 xl:py-4 h-full flex flex-col">
+            <CardHeader className="p-0 pb-6 xl:pb-4 xl:px-2">
                 <CardTitle className="text-base font-semibold">Top Members Tasks</CardTitle>
             </CardHeader>
-            <CardContent className="h-[240px] w-full p-0">
-                <ResponsiveBar
-                    data={data}
-                    keys={['tasks']}
-                    indexBy="member"
-                    margin={{ top: 10, right: 10, bottom: 40, left: 30 }}
-                    padding={0.6}
-                    colors={({ data }) => String(data.tasksColor)}
-                    theme={{
-                        axis: {
-                            ticks: {
-                                text: {
-                                    fill: '#94a3b8',
-                                    fontSize: 11
-                                }
-                            }
-                        }
-                    }}
-                    axisTop={null}
-                    axisRight={null}
-                    axisBottom={{
-                        tickSize: 0,
-                        tickPadding: 12,
-                        tickRotation: 0,
-                    }}
-                    axisLeft={{
-                        tickSize: 0,
-                        tickPadding: 10,
-                        tickRotation: 0,
-                        tickValues: [0, 10, 20, 30, 40],
-                    }}
-                    enableGridY={false}
-                    enableLabel={false}
-                    role="application"
-                    borderRadius={6}
-                />
+            <CardContent className="flex-1 w-full p-0 relative min-h-[250px]">
+                <ChartContainer config={chartConfig} className="absolute inset-0 w-full h-full pb-0 pr-6">
+                    <BarChart
+                        data={chartData}
+                        margin={{ top: 20, right: 0, bottom: 20, left: -20 }}
+                        barSize={32}
+                    >
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                        <XAxis
+                            dataKey="member"
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={10}
+                            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                        />
+                        <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={10}
+                            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                            ticks={[0, 5, 10]}
+                            domain={[0, 10]}
+                        />
+                        <ChartTooltip cursor={{ fill: 'transparent' }} content={<ChartTooltipContent hideLabel />} />
+                        <Bar
+                            dataKey="tasks"
+                            radius={[6, 6, 6, 6]}
+                        >
+                            {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ChartContainer>
             </CardContent>
         </Card>
     )

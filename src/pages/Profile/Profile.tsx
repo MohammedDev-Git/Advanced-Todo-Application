@@ -7,7 +7,7 @@ export default function Profile() {
     return (
         <div className="flex flex-col gap-8 p-0 animate-page max-w-7xl mx-auto w-full">
             {/* Header Section */}
-            <div className="relative w-full rounded-3xl overflow-hidden p-6 md:p-10 min-h-[300px] flex flex-col justify-end bg-linear-to-r from-[#FF4C9D] via-[#FF8C95] to-[#A3D9FF]">
+            <div className="relative w-full rounded-3xl overflow-hidden p-6 md:p-10 min-h-75 flex flex-col justify-end bg-linear-to-r from-[#FF4C9D] via-[#FF8C95] to-[#A3D9FF]">
                 {/* Top Actions (optional placeholder for aesthetics, assumed from context) */}
 
                 <div className="flex flex-col lg:flex-row justify-between items-start md:items-center lg:items-end gap-6 z-10">
@@ -74,9 +74,9 @@ export default function Profile() {
                         </div>
 
                         <div className="flex flex-wrap gap-2  justify-start lg:justify-start">
-                            <span className="px-3 py-1 rounded-lg bg-pink-100 text-pink-600 text-xs font-bold">Profitable</span>
-                            <span className="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-600 text-xs font-bold">Ai</span>
-                            <span className="px-3 py-1 rounded-lg bg-blue-100 text-blue-600 text-xs font-bold">1 Person</span>
+                            <span className="px-3 py-1 rounded-lg bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300 text-xs font-bold">Profitable</span>
+                            <span className="px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300 text-xs font-bold">Ai</span>
+                            <span className="px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs font-bold">1 Person</span>
                         </div>
                     </div>
 
