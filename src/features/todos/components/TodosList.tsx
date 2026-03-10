@@ -16,7 +16,13 @@ import { Ellipsis } from "lucide-react"
 import type { todoObject } from "@/types";
 
 import sadSwing from "@/assets/lottie/SadSwing.json";
+import sadSwingGreen from "@/assets/lottie/SadSwingGreen.json";
+import sadSwingOrange from "@/assets/lottie/SadSwingOrange.json";
+import sadSwingPink from "@/assets/lottie/SadSwingPink.json";
+import sadSwingRed from "@/assets/lottie/SadSwingRed.json";
+import sadSwingCyan from "@/assets/lottie/SadSwingCyan.json";
 import NoData from "@/components/custom/NoData";
+import { useThemeContext } from "@/contexts/theme/ThemeProvider";
 
 type todoListProps = {
     setEditedTodo: (editedTodo: todoObject) => void,
@@ -42,16 +48,18 @@ const TodosList = ({
         { action: "delete", text: "Delete", icon: <TrashIcon /> }
     ]
 
+    const { theme } = useThemeContext();
+
     return (
         <>
             {
                 todos && todos.length > 0 ?
                     todos.map((todo) => (
-                        <div key={todo.id} className="bg-indigo-50/50 dark:bg-indigo-900/20 p-3 rounded-xl border border-indigo-100 dark:border-indigo-700">
+                        <div key={todo.id} className="transition-all bg-primary/10 p-3 rounded-xl border border-primary/50">
                             <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center gap-3">
-                                    <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="cursor-pointer mt-1 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500 rounded text-white" />
-                                    <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${todo.isCompleted ? "line-through decoration-gray-800 dark:decoration-gray-500 text-indigo-500 dark:text-indigo-300" : "text-indigo-900 dark:text-indigo-200"}`}>
+                                    <Checkbox id={todo.id} checked={todo.isCompleted} onCheckedChange={() => dispatch(toggleTodo(todo.id))} className="cursor-pointer mt-1 data-[state=checked]:bg-primary data-[state=checked]:border-primary rounded text-white" />
+                                    <label htmlFor={todo.id} className={`cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary ${todo.isCompleted ? "opacity-60 line-through dark:decoration-gray-50 decoration-gray-500" : ""}`}>
                                         {todo.title}
                                     </label>
                                 </div>
@@ -97,7 +105,7 @@ const TodosList = ({
                     :
                     <NoData
                         setAddOpen={setAddTodoOpen}
-                        animationData={sadSwing}
+                        animationData={theme === "first" ? sadSwing : theme === "second" ? sadSwingGreen : theme === "third" ? sadSwingOrange : theme === "fourth" ? sadSwingPink : theme === "fifth" ? sadSwingRed : sadSwingCyan}
                         message="No Todos yet? start grinding!"
                     />
             }

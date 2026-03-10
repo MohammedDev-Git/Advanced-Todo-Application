@@ -27,14 +27,14 @@ export const ProjectsSection = () => {
 
             <div className="space-y-6">
                 {projects.map((project, index) => (
-                    <div key={index} className="group p-4 md:p-6 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-indigo-100 dark:hover:border-indigo-800 transition-all">
+                    <div key={index} className="group p-4 md:p-6 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-primary/20 dark:hover:border-primary/50 transition-all">
                         <div className="flex justify-between items-start mb-3">
-                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 group-hover:text-indigo-600 transition-colors">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
                                 {project.title}
                             </h3>
                             <div className="flex gap-3 text-gray-400 dark:text-gray-500">
-                                <Github size={20} className="cursor-pointer hover:text-gray-600 dark:hover:text-gray-400" />
-                                <ExternalLink size={20} className="cursor-pointer hover:text-gray-600 dark:hover:text-gray-400" />
+                                <Github size={20} className="cursor-pointer hover:text-primary transition-colors" />
+                                <ExternalLink size={20} className="cursor-pointer hover:text-primary transition-colors" />
                             </div>
                         </div>
                         <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-5">
@@ -42,7 +42,7 @@ export const ProjectsSection = () => {
                         </p>
                         <div className="flex flex-wrap gap-2">
                             {project.tags.map(tag => (
-                                <span key={tag} className="px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 text-xs font-medium rounded-md border border-gray-100 dark:border-slate-700">
+                                <span key={tag} className="hover:border-primary dark:hover:border-primary transition-all px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 text-xs font-medium rounded-md border border-gray-100 dark:border-slate-700">
                                     {tag}
                                 </span>
                             ))}

@@ -33,7 +33,7 @@ export function MemberCard({ member }: MemberCardProps) {
 
                     <Button
                         variant="ghost"
-                        className="text-indigo-600 dark:text-indigo-400 font-bold hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 px-0"
+                        className="text-primary font-bold hover:bg-primary/50 px-2"
                     >
                         View Profile
                     </Button>

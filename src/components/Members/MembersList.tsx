@@ -12,7 +12,7 @@ const members: null[] = [null, null, null, null, null];
 export function MembersList({ title = "Members" }: { title?: string }) {
     return (
         <div className="col-span-3 mt-4">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-start gap-5 mb-4">
                 <h3 className="text-xl font-bold text-primary">{title}</h3>
             </div>
 

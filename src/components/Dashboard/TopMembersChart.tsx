@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, type ChartConfig, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useSelector } from 'react-redux'
 import { selectTodos } from '@/features/todos/todosSlice'
+import type { todoObject } from "@/types"
+import { useThemeContext } from "@/contexts/theme/ThemeProvider"
 
 const chartConfig = {
     tasks: {
@@ -11,13 +13,24 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function TopMembersChart() {
-    const completedTodosCount = useSelector(selectTodos).filter((todo) => todo.isCompleted).length;
+    const completedTodosCount = useSelector(selectTodos).filter((todo: todoObject) => todo.isCompleted).length;
+
+    const { theme } = useThemeContext();
+
+    const colorsObject = {
+        first: "#546fff",
+        second: "#00bc7d",
+        third: "#fe9a00",
+        fourth: "#faa4f6",
+        fifth: "#ee95ac",
+        sixth: "#3cb0fd"
+    }
 
     const chartData = [
-        { member: "Ali", tasks: completedTodosCount, color: "#60A5FA" },
-        { member: "Emad", tasks: 10, color: "#34D399" },
-        { member: "Omar", tasks: 6, color: "#818CF8" },
-        { member: "Ahmed", tasks: 1, color: "#34D399" }
+        { member: "Emad", tasks: 10, color: colorsObject[theme] },
+        { member: "Omar", tasks: 6, color: colorsObject[theme] },
+        { member: "Ahmed", tasks: 4, color: colorsObject[theme] },
+        { member: "Ali (You)", tasks: completedTodosCount, color: colorsObject[theme] }
     ]
 
     return (
@@ -25,7 +38,7 @@ export function TopMembersChart() {
             <CardHeader className="p-0 pb-6 xl:pb-4 xl:px-2">
                 <CardTitle className="text-base font-semibold">Top Members Tasks</CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 w-full p-0 relative min-h-[250px]">
+            <CardContent className="flex-1 w-full p-0 relative min-h-62.5">
                 <ChartContainer config={chartConfig} className="absolute inset-0 w-full h-full pb-0 pr-6">
                     <BarChart
                         data={chartData}
@@ -53,9 +66,11 @@ export function TopMembersChart() {
                             dataKey="tasks"
                             radius={[6, 6, 6, 6]}
                         >
-                            {chartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
+                            {chartData.map((entry, index) => {
+                                return (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                )
+                            })}
                         </Bar>
                     </BarChart>
                 </ChartContainer>

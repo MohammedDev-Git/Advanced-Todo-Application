@@ -11,7 +11,7 @@ export function Header() {
             </div>
             <div className="flex items-center gap-3">
                 <Button size="icon-lg" variant="ghost" className="rounded-full relative">
-                    <Bell className="size-7 text-info" />
+                    <Bell className="size-7 text-primary" />
                     <span className="absolute top-2 right-2.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-700" />
                 </Button>
                 <Avatar className="h-10 w-10 border-2 border-white dark:border-slate-700 shadow-sm cursor-pointer">

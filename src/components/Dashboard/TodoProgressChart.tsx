@@ -46,7 +46,7 @@ export function TodoProgressChart() {
                 <CardTitle className="text-base font-semibold">Todo Progress</CardTitle>
                 <CardDescription className="text-xs">{currentDate}</CardDescription>
             </CardHeader>
-            <CardContent className="flex-1 w-full p-0 relative min-h-[250px]">
+            <CardContent className="flex-1 w-full p-0 relative min-h-62.5">
                 <ChartContainer
                     config={chartConfig}
                     className="absolute inset-0 w-full h-full pb-6"

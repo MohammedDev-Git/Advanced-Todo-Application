@@ -68,3 +68,5 @@ export interface deleteModalProps {
     deletedId: string | undefined;
     onOpenChange?: (open: boolean) => void;
 }
+
+export type ThemeType = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';

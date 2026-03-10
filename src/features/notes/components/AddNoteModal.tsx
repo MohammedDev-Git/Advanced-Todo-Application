@@ -104,8 +104,6 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-120 max-h-120 custom-scrollbar overflow-y-scroll rounded-[2rem] border-none p-0">
-                {/* Header Decor */}
-                <div className="h-2 w-full bg-linear-to-r from-blue-500 to-blue-600 via-primary-500" />
 
                 <div className="p-8">
                     <DialogHeader className="mb-6">

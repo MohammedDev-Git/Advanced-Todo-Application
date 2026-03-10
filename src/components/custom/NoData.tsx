@@ -22,10 +22,13 @@ const NoData = ({ setAddOpen, animationData, message, image = false, src }: NoDa
                             <img src={src} className="w-20 h-20" />
                         </div>
                         :
-                        <Lottie
-                            animationData={animationData}
-                            loop={true}
-                        />
+                        <div className="relative">
+                            <Lottie
+                                animationData={animationData}
+                                loop={true}
+                            />
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[calc(100%+50px)] h-2 bg-white dark:bg-card transition-all rounded-full"></div>
+                        </div>
                 }
             </div>
             <p className="text-primary text-center text-sm mb-5">{message}</p>

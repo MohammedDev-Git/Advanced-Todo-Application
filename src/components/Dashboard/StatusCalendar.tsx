@@ -9,7 +9,7 @@ export function StatusCalendar() {
     const getDaysInWeek = (date: Date) => {
         const result = []
         const current = new Date(date)
-        current.setDate(current.getDate() - current.getDay()) // Set to Sunday
+        current.setDate(current.getDate() - current.getDay())
 
         for (let i = 0; i < 7; i++) {
             result.push(new Date(current))

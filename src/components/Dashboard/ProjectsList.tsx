@@ -92,7 +92,7 @@ export function ProjectsList({ title = "Projects" }: { title?: string }) {
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm font-semibold">
                                             <span>Progress</span>
-                                            <span className={cn("text-blue-500", project.progress < 50 && "text-orange-500")}>{project.progress}%</span>
+                                            <span className={cn("text-primary")}>{project.progress}%</span>
                                         </div>
                                         <Progress value={project.progress} className={cn("bg-slate-100 dark:bg-slate-700 h-2", `text-${project.color}-500`)} />
 

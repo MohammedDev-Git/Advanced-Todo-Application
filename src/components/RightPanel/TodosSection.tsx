@@ -37,7 +37,7 @@ const TodosSection = () => {
                             :
                             null
                     }
-                    <Button onClick={() => setAddTodoOpen(true)} size="icon" variant="secondary" className="h-6 w-6 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800 shadow-none">
+                    <Button onClick={() => setAddTodoOpen(true)} size="icon" className="h-6 w-6 rounded bg-primary text-white hover:bg-primary/80 shadow-none">
                         <Plus className="h-4 w-4" />
                     </Button>
                 </div>

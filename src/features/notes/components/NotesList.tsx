@@ -7,7 +7,14 @@ import type { noteObject } from '@/types'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 import sadNote from "@/assets/images/sadNote.png"
+import sadNoteGreen from "@/assets/images/sadNoteGreen.png"
+import sadNoteOrange from "@/assets/images/sadNoteOrange.png"
+import sadNotePink from "@/assets/images/sadNotePink.png"
+import sadNoteRed from "@/assets/images/sadNoteRed.png"
+import sadNoteCyan from "@/assets/images/sadNoteCyan.png"
+
 import NoData from '@/components/custom/NoData'
+import { useThemeContext } from '@/contexts/theme/ThemeProvider'
 
 type notesProps = {
     setAddNoteOpen: (open: boolean) => void,
@@ -19,6 +26,8 @@ type notesProps = {
 
 const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNoteOpen, setDeletedID }: notesProps) => {
     const notes = useSelector(selectNotes);
+
+    const { theme } = useThemeContext();
 
     const badgeColors = [
         { bg: "bg-pink-100 dark:bg-pink-900", text: "text-pink-700 dark:text-pink-300", hover: "hover:bg-pink-200 dark:hover:bg-pink-800" },
@@ -39,7 +48,7 @@ const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNo
             {
                 notes && notes.length > 0 ?
                     notes.map((note: noteObject) => (
-                        <Card key={note.id} className="border-0 shadow-sm p-4 bg-white dark:bg-card ring-1 ring-slate-100 dark:ring-slate-700 rounded-2xl">
+                        <Card key={note.id} className="transition-all border-0 shadow-sm p-4 bg-primary/10 ring-1 ring-primary/50 rounded-2xl">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                                     {`${note.edited ? "Edited" : "Created"}` + ` at ${note.createdAt}`}
@@ -91,7 +100,15 @@ const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNo
                     ))
                     :
                     <NoData
-                        src={sadNote}
+                        src={
+                            theme === "first" ? sadNote :
+                                theme === "second" ? sadNoteGreen :
+                                    theme === "third" ? sadNoteOrange :
+                                        theme === "fourth" ? sadNotePink :
+                                            theme === "fifth" ? sadNoteRed :
+                                                sadNoteCyan
+
+                        }
                         message="No Notes? put your thoughts!"
                         image={true}
                         setAddOpen={setAddNoteOpen}

@@ -7,7 +7,7 @@ export default function Profile() {
     return (
         <div className="flex flex-col gap-8 p-0 animate-page max-w-7xl mx-auto w-full">
             {/* Header Section */}
-            <div className="relative w-full rounded-3xl overflow-hidden p-6 md:p-10 min-h-75 flex flex-col justify-end bg-linear-to-r from-[#FF4C9D] via-[#FF8C95] to-[#A3D9FF]">
+            <div className="relative w-full rounded-3xl overflow-hidden p-6 md:p-10 min-h-75 flex flex-col justify-end bg-linear-to-br from-primary/70 via-primary/50 to-primary/20">
                 {/* Top Actions (optional placeholder for aesthetics, assumed from context) */}
 
                 <div className="flex flex-col lg:flex-row justify-between items-start md:items-center lg:items-end gap-6 z-10">
@@ -29,24 +29,24 @@ export default function Profile() {
                         </div>
 
                         <div className="flex flex-col gap-1 text-white">
-                            <h1 className="text-3xl font-bold tracking-tight">Cloth</h1>
-                            <p className="text-white/80 font-medium text-sm">Small and Consices headline</p>
+                            <h1 className="text-3xl font-bold tracking-tight text-black/80 dark:text-white">Cloth</h1>
+                            <p className=" font-medium text-sm text-black/80 dark:text-white">Small and Consices headline</p>
                         </div>
                     </div>
 
                     {/* Right: Stats */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 md:gap-12 text-white/90 w-full md:w-auto mt-4 md:mt-0">
                         <div className="flex flex-col gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-black/40 mix-blend-overlay">Created</span>
-                            <span className="font-semibold text-sm sm:text-base">Mar 23, 10:34 PM</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white mix-blend-overlay">Created</span>
+                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">Mar 23, 10:34 PM</span>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-black/40 mix-blend-overlay">Deadline</span>
-                            <span className="font-semibold text-sm sm:text-base">Jun 02, 04:01 PM</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white  mix-blend-overlay">Deadline</span>
+                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">Jun 02, 04:01 PM</span>
                         </div>
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-black/40 mix-blend-overlay">Tracked Time</span>
-                            <span className="font-semibold text-sm sm:text-base">10H 32M</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white  mix-blend-overlay">Tracked Time</span>
+                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">10H 32M</span>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@ export const InfoCard = () => {
                     {skills.map((skill) => (
                         <span
                             key={skill}
-                            className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 text-xs font-medium rounded-full border border-indigo-100 dark:border-indigo-700 hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-colors"
+                            className="px-3 py-1 bg-primary/20 dark:bg-primary/20 text-primary dark:text-primary text-xs font-medium rounded-full border border-primary/20 dark:border-primary/20 hover:bg-primary/10 dark:hover:bg-primary/10 transition-colors"
                         >
                             {skill}
                         </span>
@@ -37,7 +37,7 @@ export const InfoCard = () => {
                     {languages.map((lang) => (
                         <div key={lang.name} className="flex justify-between items-center">
                             <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{lang.name}</span>
-                            <span className="text-xs text-indigo-500 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900 px-2 py-0.5 rounded-md font-semibold">
+                            <span className="text-xs text-primary dark:text-primary bg-primary/20 dark:bg-primary/20 px-2 py-0.5 hover:bg-primary/20 dark:hover:bg-primary/20 rounded-md font-semibold">
                                 {lang.level}
                             </span>
                         </div>
@@ -50,19 +50,19 @@ export const InfoCard = () => {
             <div className="pt-6">
                 <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4">Social Media</h3>
                 <div className="grid grid-cols-2 gap-3">
-                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-primary/10 dark:hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary/50">
                         <Github size={18} />
                         <span className="text-xs font-medium">GitHub</span>
                     </a>
-                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-primary/10 dark:hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary/50">
                         <Linkedin size={18} />
                         <span className="text-xs font-medium">LinkedIn</span>
                     </a>
-                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-primary/10 dark:hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary/50">
                         <Globe size={18} />
                         <span className="text-xs font-medium">Portfolio</span>
                     </a>
-                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <a href="#" className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-primary/10 dark:hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary/50">
                         <Mail size={18} />
                         <span className="text-xs font-medium">Email</span>
                     </a>

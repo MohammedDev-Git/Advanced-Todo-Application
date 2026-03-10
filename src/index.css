@@ -18,6 +18,12 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-first: var(--first);
+  --color-second: var(--second);
+  --color-third: var(--third);
+  --color-fourth: var(--fourth);
+  --color-fifth: var(--fifth);
+  --color-sixth: var(--sixth);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -46,6 +52,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --animate-shake: shake 1s ease-in-out;
   --animate-up-down: up-down 4s ease-in-out infinite;
+  --animate-fade-in: fade-in 1s ease-in-out;
 }
 
 @keyframes shake {
@@ -83,6 +90,16 @@
   }
 }
 
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -92,6 +109,12 @@
   --popover: oklch(28.306% 0.00292 16.724);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.6031 0.214963 270.5418);
+  --first: #546fff;
+  --second: #00bc7d;
+  --third: #fe9a00;
+  --fourth: #faa4f6;
+  --fifth: #ee95ac;
+  --sixth: #3cb0fd;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -120,6 +143,30 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+.first {
+  --primary: var(--first);
+}
+
+.second {
+  --primary: var(--second);
+}
+
+.third {
+  --primary: var(--third);
+}
+
+.fourth {
+  --primary: var(--fourth);
+}
+
+.fifth {
+  --primary: var(--fifth);
+}
+
+.sixth {
+  --primary: var(--sixth);
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -127,7 +174,12 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.6031 0.214963 270.5418);
+  --first: oklch(0.6031 0.214963 270.5418);
+  --second: oklch(0.696 0.17 162.48);
+  --third: oklch(0.769 0.188 70.08);
+  --fourth: oklch(70.186% 0.3069 330.715);
+  --fifth: oklch(0.645 0.246 16.439);
+  --sixth: oklch(72.738% 0.15097 242.609);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -174,7 +226,7 @@
   }
 
   .prism-shape {
-    clip-path: polygon(0% 0%, 100% 20%, 100% 100%, 20% 100%, 0% 80%);
+    clip-path: polygon(0% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 80%);
   }
 
   .member-card-shape {
