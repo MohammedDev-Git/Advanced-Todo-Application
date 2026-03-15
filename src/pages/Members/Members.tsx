@@ -1,4 +1,4 @@
-import AddMemberModal from '@/components/Members/AddMemberModal';
+import AddMemberModal from '@/components/Members/MemberModal/AddMemberModal';
 import { MembersList } from '@/components/Members/MembersList';
 import { Search, MoreHorizontal, Plus } from 'lucide-react';
 import { useState } from 'react';

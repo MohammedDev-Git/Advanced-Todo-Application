@@ -28,6 +28,20 @@ export interface notesState {
     tempCategories: string[];
 }
 
+export interface MemberObject {
+
+}
+
+export interface MemberProject {
+
+}
+
+export interface MembersState {
+    members: MemberObject[],
+    tempProjects: MemberProject[],
+    tempStack: string[],
+}
+
 export interface addTodoError {
     title?: string[];
     category1?: string[];
@@ -70,3 +84,4 @@ export interface deleteModalProps {
 }
 
 export type ThemeType = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
+

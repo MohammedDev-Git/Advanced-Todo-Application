@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit"
 import storage from "redux-persist/lib/storage"
 import { persistReducer, persistStore } from "redux-persist"
 import notesReducer from "@/features/notes/notesSlice";
+import membersReducer from "@/features/members/membersSlice";
 
 const persistConfig = {
     key: "root",
@@ -12,6 +13,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
     todos: todosReducer,
     notes: notesReducer,
+    members: membersReducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
