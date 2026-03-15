@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
 import { InputError } from "@/components/custom/InputError";
 import { format, parseISO } from "date-fns";
+import { Textarea } from "@/components/ui/textarea";
 
 interface EditNoteModalProps {
     open?: boolean;
@@ -152,7 +153,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                 <Input
                                     id="title"
                                     placeholder="e.g. Task 1 is a priority"
-                                    className="pl-10 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
+                                    className="pl-10 h-12"
                                     {...title}
                                 />
                             </div>
@@ -163,10 +164,10 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                             <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">
                                 Details
                             </Label>
-                            <textarea
+                            <Textarea
                                 id="description"
                                 placeholder="Write more details about this note..."
-                                className="flex min-h-25 w-full rounded-xl border-none bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm ring-offset-background placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all resize-none"
+                                className="flex min-h-25 max-h-25 w-full text-sm"
                                 {...details}
                             />
                             <InputError keyErr={keyError} message={zodError?.noteDetails?._errors[0]} />
@@ -219,7 +220,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                             <Tags className="absolute left-3 top-4 h-4 w-4 text-slate-400" />
                                             <Input
                                                 placeholder={`Category ${idx + 1}`}
-                                                className="pl-10 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
+                                                className="pl-10 h-12"
                                                 value={cat}
                                                 onChange={(e) => {
                                                     dispatch(updateTempCategory({ text: e.target.value, idx }))

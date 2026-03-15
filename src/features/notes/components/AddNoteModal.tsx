@@ -18,6 +18,7 @@ import { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteS
 import { InputError } from "@/components/custom/InputError";
 import { nanoid } from "@reduxjs/toolkit";
 import { format, parseISO } from "date-fns";
+import { Textarea } from "@/components/ui/textarea";
 
 
 export function AddNoteModal({ open, onOpenChange }: ModalProps) {
@@ -126,7 +127,7 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
                                 <Input
                                     id="title"
                                     placeholder="e.g. Task 1 is a priority"
-                                    className="pl-10 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
+                                    className="pl-10 h-12"
                                     {...title}
                                 />
                             </div>
@@ -137,10 +138,10 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
                             <Label htmlFor="description" className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 ml-1">
                                 Details
                             </Label>
-                            <textarea
+                            <Textarea
                                 id="description"
                                 placeholder="Write more details about this note..."
-                                className="flex min-h-25 w-full rounded-xl border-none bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm ring-offset-background placeholder:text-slate-400 dark:placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary transition-all resize-none"
+                                className="flex min-h-25 w-full rounded-xl px-4 py-3 text-sm"
                                 {...details}
                             />
                             <InputError keyErr={keyError} message={zodError?.noteDetails?._errors[0]} />
@@ -193,7 +194,7 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
                                             <Tags className="absolute left-3 top-4 h-4 w-4 text-slate-400" />
                                             <Input
                                                 placeholder={`Category ${idx + 1}`}
-                                                className="pl-10 h-12 bg-slate-50 dark:bg-slate-800 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary transition-all"
+                                                className="pl-10 h-12"
                                                 value={cat}
                                                 onChange={(e) => {
                                                     dispatch(updateTempCategory({ text: e.target.value, idx }))

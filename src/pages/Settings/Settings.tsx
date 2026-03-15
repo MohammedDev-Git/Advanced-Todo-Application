@@ -51,7 +51,12 @@ const Settings = () => {
                             </div>
 
                             <div className="pt-8">
-                                <Button className="transition-none w-full text-white bg-primary hover:opacity-90 py-7 rounded-xl text-lg font-bold shadow-lg shadow-primary/20">
+                                <Button
+                                    onClick={() => {
+                                        setTheme("first");
+                                        setLight();
+                                    }}
+                                    className="transition-none w-full text-white bg-primary hover:opacity-90 py-7 rounded-xl text-lg font-bold shadow-lg shadow-primary/20">
                                     Reset Default
                                 </Button>
                             </div>

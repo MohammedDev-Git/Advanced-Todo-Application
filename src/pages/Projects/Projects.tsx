@@ -1,5 +1,6 @@
 import { Search, MoreHorizontal, Plus } from 'lucide-react';
 import { ProjectsList } from '@/components/Dashboard/ProjectsList';
+import ProgressModal from '@/components/projects/ProgressModal';
 
 export default function Projects() {
 
@@ -52,6 +53,8 @@ export default function Projects() {
             <button className="animate-fade-in cursor-pointer sticky bottom-4 left-4 z-40 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center">
                 <Plus className="h-6 w-6 text-white" />
             </button>
+
+            <ProgressModal />
         </div>
     );
 };

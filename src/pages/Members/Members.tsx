@@ -1,5 +1,7 @@
+import AddMemberModal from '@/components/Members/AddMemberModal';
 import { MembersList } from '@/components/Members/MembersList';
 import { Search, MoreHorizontal, Plus } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Members() {
 
@@ -8,6 +10,8 @@ export default function Members() {
         { label: 'Member2', color: 'bg-emerald-500' },
         { label: 'Member3', color: 'bg-amber-500' }
     ]
+
+    const [open, setOpen] = useState<boolean>(false);
 
     return (
         <div className="space-y-12 animate-page">
@@ -49,9 +53,14 @@ export default function Members() {
             </section>
 
             {/* Floating Action Button */}
-            <button className="animate-fade-in cursor-pointer sticky bottom-4 left-4 z-40 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center">
+            <button
+                onClick={() => setOpen(true)}
+                className="animate-fade-in cursor-pointer sticky bottom-4 left-4 z-40 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center">
                 <Plus className="h-6 w-6 text-white" />
             </button>
+
+            <AddMemberModal open={open} onOpenChange={setOpen} />
+
         </div>
     );
 };
