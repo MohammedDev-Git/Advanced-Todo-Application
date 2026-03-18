@@ -129,7 +129,7 @@ export function EditTodoModal({ open, onOpenChange, editedTodo }: EditTodoModalP
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit">EditTodo</Button>
+                        <Button type="submit">Edit Todo</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

@@ -119,7 +119,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         } else {
                             onOpenChange?.(false);
                         }
-                    }} variant="ghost">{progress > 1 ? "Previous" : "Cancel"}</Button>
+                    }} variant="ghost">{progress > 1 ? "Previous" : "Cancel"}
+                    </Button>
                     <Button
                         onClick={() => {
                             setProgress(prog => {

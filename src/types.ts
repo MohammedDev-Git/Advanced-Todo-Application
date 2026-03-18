@@ -38,8 +38,11 @@ export interface MemberProject {
 
 export interface MembersState {
     members: MemberObject[],
-    tempProjects: MemberProject[],
-    tempStack: string[],
+    form: {
+        tempProjects: MemberProject[],
+        tempStack: string[],
+        tempLinks: string[],
+    }
 }
 
 export interface addTodoError {

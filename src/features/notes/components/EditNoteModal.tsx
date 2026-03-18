@@ -252,9 +252,9 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                         <DialogFooter className="mt-8">
                             <Button
                                 type="submit"
-                                className="w-full h-14 bg-slate-900 dark:bg-slate-700 hover:bg-primary text-white dark:text-slate-200 font-bold rounded-2xl transition-all text-base"
+                                className="w-full h-14 bg-slate-900 dark:bg-slate-700 dark:hover:bg-primary hover:bg-primary text-white dark:text-slate-200 font-bold rounded-2xl transition-all text-base"
                             >
-                                Add a Note
+                                Edit Note
                             </Button>
                         </DialogFooter>
                     </form>

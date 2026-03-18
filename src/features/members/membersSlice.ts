@@ -4,8 +4,11 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
     members: [],
-    tempProjects: [{}],
-    tempStack: [""],
+    form: {
+        tempProjects: [{}],
+        tempStack: [""],
+        tempLinks: [""],
+    }
 }
 
 const memebersSlice = createSlice({
@@ -16,22 +19,37 @@ const memebersSlice = createSlice({
             console.log("member added");
         },
         addTempProject: (state: MembersState) => {
-            state.tempProjects.push({});
+            state.form.tempProjects.push({});
         },
         removeTempProject: (state: MembersState, action: PayloadAction<number>) => {
-            state.tempProjects.splice(action.payload, 1);
+            state.form.tempProjects.splice(action.payload, 1);
         },
         addTempStack: (state: MembersState) => {
-            state.tempStack.push("");
+            state.form.tempStack.push("");
         },
         removeTempStack: (state: MembersState, action: PayloadAction<number>) => {
-            state.tempStack.splice(action.payload, 1);
+            state.form.tempStack.splice(action.payload, 1);
+        },
+        addTempLink: (state: MembersState) => {
+            state.form.tempLinks.push("");
+        },
+        removeTempLink: (state: MembersState, action: PayloadAction<number>) => {
+            state.form.tempLinks.splice(action.payload, 1);
         },
     }
 })
 
-export const { addMember, addTempProject, removeTempProject, addTempStack, removeTempStack } = memebersSlice.actions;
+export const {
+    addMember,
+    addTempProject,
+    removeTempProject,
+    addTempStack,
+    removeTempStack,
+    addTempLink,
+    removeTempLink
+} = memebersSlice.actions;
 export const selectMembers = (state: RootState) => state.members.members;
-export const selectTempProjects = (state: RootState) => state.members.tempProjects;
-export const selectTempStack = (state: RootState) => state.members.tempStack;
+export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;
+export const selectTempStack = (state: RootState) => state.members.form.tempStack;
+export const selectTempLinks = (state: RootState) => state.members.form.tempLinks;
 export default memebersSlice.reducer;
