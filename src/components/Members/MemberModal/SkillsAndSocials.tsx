@@ -112,7 +112,7 @@ const SkillsAndSocials = () => {
                 <div className="relative grid grid-cols-3 gap-5 items-center">
                     {
                         tempStack.map((tech, idx) => (
-                            <div className="relative">
+                            <div key={idx} className="relative">
                                 <Input key={idx} placeholder={`eg. ${placeholdersStackArr[idx]}`} />
                                 {
                                     tempStack.length > 1 &&
@@ -157,7 +157,7 @@ const SkillsAndSocials = () => {
 
                 {
                     tempLinks.map((link, idx) => (
-                        <div className="relative mt-3">
+                        <div key={idx} className="relative mt-3">
                             <div className="relative">
                                 <Share2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input placeholder={`https://www.${placeholdersLinksArr[idx]}.com/`} className="pl-10 " />

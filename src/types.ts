@@ -1,5 +1,6 @@
 import type z from "zod";
 import type { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
+import type { personalDetailsSchema } from "@/features/members/schemas/personalDetailsSchema";
 
 export interface todoObject {
     id: string;
@@ -28,8 +29,20 @@ export interface notesState {
     tempCategories: string[];
 }
 
-export interface MemberObject {
+export interface TempPersonalDetails {
+    name?: string,
+    role?: string,
+    email?: string,
+    phone?: string,
+}
 
+export interface TempDescription {
+    text?: string
+}
+
+export interface MemberObject {
+    personalDetails: TempPersonalDetails;
+    description: TempDescription;
 }
 
 export interface MemberProject {
@@ -42,7 +55,8 @@ export interface MembersState {
         tempProjects: MemberProject[],
         tempStack: string[],
         tempLinks: string[],
-    }
+    },
+    tempMember: MemberObject,
 }
 
 export interface addTodoError {
@@ -57,9 +71,11 @@ export interface editTodoError {
     category2?: string[];
 }
 
-export type noteAddError = z.inferFormattedError<typeof noteSchema>
+export type NoteAddError = z.inferFormattedError<typeof noteSchema>
 
-export type catSizeError = z.inferFormattedError<typeof tempCategoriesSchema>
+export type CatSizeError = z.inferFormattedError<typeof tempCategoriesSchema>
+
+export type PersonalDetailsError = z.inferFormattedError<typeof personalDetailsSchema>;
 
 export interface InputErrorProps {
     message?: string;

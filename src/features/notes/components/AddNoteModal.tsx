@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { catSizeError, ModalProps, noteAddError, noteObject } from "@/types";
+import type { CatSizeError, ModalProps, NoteAddError, noteObject } from "@/types";
 import { useInput } from "@/hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote, addTempCategory, removeTempCategory, resetTempCategory, selectTempCategories, updateTempCategory } from "@/features/notes/notesSlice";
@@ -25,8 +25,8 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
 
     const dispatch = useDispatch();
 
-    const [zodError, setZodError] = useState<noteAddError | null>(null);
-    const [categorySizeError, setCategorySizeError] = useState<catSizeError | null>(null);
+    const [zodError, setZodError] = useState<NoteAddError | null>(null);
+    const [categorySizeError, setCategorySizeError] = useState<CatSizeError | null>(null);
     const [keyError, setKeyError] = useState<number>(0);
     const [keyCatError, setKeyCatError] = useState<number>(0);
 
@@ -45,7 +45,7 @@ export function AddNoteModal({ open, onOpenChange }: ModalProps) {
         const validationResult = noteSchema.safeParse(formData);
 
         if (!validationResult.success) {
-            const error: noteAddError = validationResult.error.format();
+            const error: NoteAddError = validationResult.error.format();
             setKeyError((pre) => pre + 1);
             if (error) {
                 setZodError(error);

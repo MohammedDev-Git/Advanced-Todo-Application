@@ -14,9 +14,9 @@ import type { ModalProps } from "@/types";
 
 
 import { useDispatch } from "react-redux";
-import { addTempProject } from "@/features/members/membersSlice";
-import PersonalDetails from "@/components/Members/MemberModal/PersonalDetails";
-import Description from "@/components/Members/MemberModal/Description";
+import { addTempProject,resetAllTemps } from "@/features/members/membersSlice";
+import PersonalDetails, { type PersonalDetailsRef } from "@/components/Members/MemberModal/PersonalDetails";
+import Description, { type DescriptionRef } from "@/components/Members/MemberModal/Description";
 import ProjectsContribution from "@/components/Members/MemberModal/ProjectsContribution";
 import SkillsAndSocials from "@/components/Members/MemberModal/SkillsAndSocials";
 
@@ -27,12 +27,22 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
     const [progress, setProgress] = useState<number>(1);
 
     const modalRef = useRef<HTMLDivElement | null>(null);
+
+
+
     useEffect(() => {
         if (open) {
             setProgress(1);
+        } else {
+            dispatch(resetAllTemps());
         }
-
     }, [open]);
+
+    useEffect(() => {
+        if (progress > 4) {
+            onOpenChange?.(false);
+        }
+    }, [progress])
 
     const playModalRefAnimation = () => {
         modalRef?.current?.classList.remove("animate-scale-in-out!");
@@ -44,6 +54,9 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
     const handleAddTempProject = () => {
         dispatch(addTempProject());
     }
+
+    const personalDetailsRef = useRef<PersonalDetailsRef | null>(null);
+    const detailsRef = useRef<DescriptionRef | null>(null);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -58,7 +71,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                     e.preventDefault();
                     playModalRefAnimation();
                 }}
-                className={`w-full custom-scrollbar max-w-[340px] md:max-w-xl lg:max-w-2xl shadow-2xl border-muted-foreground/10 max-h-148 overflow-y-auto`}>
+                className={`w-full custom-scrollbar max-w-[340px] md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 overflow-y-auto`}>
                 <CardHeader className="space-y-4">
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-medium text-muted-foreground">
@@ -95,11 +108,11 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
 
                 <CardContent className="space-y-4">
                     {progress === 1 && (
-                        <PersonalDetails />
+                        <PersonalDetails ref={personalDetailsRef} />
                     )}
 
                     {progress === 2 && (
-                        <Description />
+                        <Description ref={detailsRef} />
                     )}
 
                     {progress === 3 && (
@@ -123,12 +136,17 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                     </Button>
                     <Button
                         onClick={() => {
-                            setProgress(prog => {
-                                if (prog === 4) {
-                                    onOpenChange?.(false);
-                                }
-                                return prog + 1;
-                            });
+
+                            const condition =
+                                (progress === 1 && personalDetailsRef.current?.handleStepOne())
+                                ||
+                                (progress === 2 && detailsRef.current?.handleStepTwo())
+
+
+                            if (condition) {
+                                setProgress(pre => pre + 1);
+                            }
+
                         }}
                         className="gap-2 text-white">
                         {progress === 4 ? 'Submit' : 'Next Step'}
