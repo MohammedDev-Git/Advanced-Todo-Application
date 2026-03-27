@@ -46,7 +46,8 @@ export interface MemberObject {
 }
 
 export interface MemberProject {
-
+    tempCategory: string[]
+    id: string;
 }
 
 export interface MembersState {
@@ -104,3 +105,7 @@ export interface deleteModalProps {
 
 export type ThemeType = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
 
+export interface NestedCategory {
+    projectId: string,
+    catIdx: number
+}

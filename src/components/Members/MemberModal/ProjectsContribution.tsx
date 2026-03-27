@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { removeTempProject, selectTempProjects } from "@/features/members/membersSlice"
-import { Code2, Globe, X } from "lucide-react"
+import { addTempProjectCategory, removeTempProject, removeTempProjectCategory, selectTempProjects } from "@/features/members/membersSlice"
+import type { NestedCategory } from "@/types"
+import { Code2, Globe, Plus, X } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
 
 const ProjectsContribution = () => {
@@ -14,6 +15,14 @@ const ProjectsContribution = () => {
 
     const handleRemoveTempProject = (idx: number) => {
         dispatch(removeTempProject(idx));
+    }
+
+    const handleAddTempProjectCategory = (id: string) => {
+        dispatch(addTempProjectCategory(id));
+    }
+
+    const handleRemoveTempProjectCategory = (object: NestedCategory) => {
+        dispatch(removeTempProjectCategory(object));
     }
 
     return (
@@ -42,8 +51,45 @@ const ProjectsContribution = () => {
                                 className=" min-h-20 max-h-20" />
                         </div>
                         <div className="grid gap-1.5">
-                            <Label htmlFor="p-cat">Project Category</Label>
-                            <Input id="p-cat" placeholder="E-commerce / SaaS" />
+                            <div className="flex justify-between items-center">
+                                <Label>Project Category</Label>
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary dark:hover:text-white hover:text-white"
+                                    onClick={() => {
+                                        console.log("added");
+                                        handleAddTempProjectCategory(project.id);
+                                    }}
+                                >
+                                    <Plus />
+                                </Button>
+                            </div>
+                            <div
+                                className="mt-2 border-2 border-primary/50 border-dotted p-5 rounded-2xl flex flex-col justify-center gap-4">
+                                {
+                                    project.tempCategory.map(() => (
+                                        <div className="relative">
+                                            <Input placeholder="E-commerce / SaaS" />
+                                            {
+                                                project.tempCategory.length > 1 &&
+                                                <Button
+                                                    onClick={() => {
+                                                        handleRemoveTempProjectCategory(
+                                                            { projectId: project.id, catIdx: idx }
+                                                        );
+                                                    }}
+                                                    className="absolute translate-x-1/2 -translate-y-1/2 top-0 right-0 w-5 h-5 rounded-full">
+
+                                                    <X className="h-2 w-2 text-white" />
+                                                </Button>
+                                            }
+                                        </div>
+
+                                    ))
+                                }
+                            </div>
+
                         </div>
                         <div className="grid gap-1.5">
                             <Label htmlFor="p-source">Source Code Link</Label>

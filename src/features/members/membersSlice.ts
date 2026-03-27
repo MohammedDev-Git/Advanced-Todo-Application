@@ -1,12 +1,17 @@
 import type { RootState } from "@/app/store";
-import type { MembersState, TempPersonalDetails } from "@/types";
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { MembersState, NestedCategory, TempPersonalDetails } from "@/types";
+import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import type { DescriptionType } from "@/features/members/schemas/descriptionSchema";
 
 const initialState = {
     members: [],
     form: {
-        tempProjects: [{}],
+        tempProjects: [
+            {
+                tempCategory: [""],
+                id: nanoid(),
+            }
+        ],
         tempStack: [""],
         tempLinks: [""],
     },
@@ -31,7 +36,16 @@ const memebersSlice = createSlice({
             console.log("member added");
         },
         addTempProject: (state: MembersState) => {
-            state.form.tempProjects.push({});
+            state.form.tempProjects.push({ id: nanoid(), tempCategory: [""] });
+        },
+        addTempProjectCategory: (state: MembersState, action: PayloadAction<string>) => {
+            const chosenProject = state.form.tempProjects.find(project => project.id === action.payload);
+            chosenProject?.tempCategory.push("");
+        },
+        removeTempProjectCategory: (state: MembersState, action: PayloadAction<NestedCategory>) => {
+            const { projectId, catIdx } = action.payload;
+            const chosenProject = state.form.tempProjects.find(project => project.id === projectId);
+            chosenProject?.tempCategory.splice(catIdx, 1);
         },
         removeTempProject: (state: MembersState, action: PayloadAction<number>) => {
             state.form.tempProjects.splice(action.payload, 1);
@@ -66,23 +80,9 @@ const memebersSlice = createSlice({
             }
         },
         resetAllTemps: (state: MembersState) => {
-            state.form = {
-                tempProjects: [{}],
-                tempStack: [""],
-                tempLinks: [""],
-            }
+            state.form = initialState.form;
 
-            state.tempMember = {
-                personalDetails: {
-                    name: "",
-                    role: "",
-                    email: "",
-                    phone: "",
-                },
-                description: {
-                    text: "",
-                },
-            }
+            state.tempMember = initialState.tempMember;
         }
     }
 })
@@ -97,7 +97,9 @@ export const {
     removeTempLink,
     addTempPersonalDetails,
     addTempDescription,
-    resetAllTemps
+    resetAllTemps,
+    addTempProjectCategory,
+    removeTempProjectCategory
 } = memebersSlice.actions;
 export const selectMembers = (state: RootState) => state.members.members;
 export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;

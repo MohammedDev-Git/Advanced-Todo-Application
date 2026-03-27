@@ -14,7 +14,7 @@ import type { ModalProps } from "@/types";
 
 
 import { useDispatch } from "react-redux";
-import { addTempProject,resetAllTemps } from "@/features/members/membersSlice";
+import { addTempProject, resetAllTemps } from "@/features/members/membersSlice";
 import PersonalDetails, { type PersonalDetailsRef } from "@/components/Members/MemberModal/PersonalDetails";
 import Description, { type DescriptionRef } from "@/components/Members/MemberModal/Description";
 import ProjectsContribution from "@/components/Members/MemberModal/ProjectsContribution";
@@ -71,8 +71,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                     e.preventDefault();
                     playModalRefAnimation();
                 }}
-                className={`w-full custom-scrollbar max-w-[340px] md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 overflow-y-auto`}>
-                <CardHeader className="space-y-4">
+                className={`w-full custom-scrollbar max-w-[300px] md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 overflow-y-auto`}>
+                <CardHeader className="space-y-4 px-0 md:px-6">
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-medium text-muted-foreground">
                             <span>Step {progress} of 4</span>
@@ -106,7 +106,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                     </div>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 px-0 md:px-6">
                     {progress === 1 && (
                         <PersonalDetails ref={personalDetailsRef} />
                     )}
@@ -125,7 +125,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
 
                 </CardContent>
 
-                <CardFooter className="flex justify-between border-t p-6 mt-2">
+                <CardFooter className="flex justify-between border-t px-0 md:px-6 mt-2">
                     <Button onClick={() => {
                         if (progress > 1) {
                             setProgress(pre => pre - 1);
@@ -141,6 +141,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                                 (progress === 1 && personalDetailsRef.current?.handleStepOne())
                                 ||
                                 (progress === 2 && detailsRef.current?.handleStepTwo())
+                                ||
+                                (progress === 3)
 
 
                             if (condition) {

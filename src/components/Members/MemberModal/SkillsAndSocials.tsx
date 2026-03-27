@@ -23,14 +23,14 @@ const SkillsAndSocials = () => {
 
     const placeholdersStackArr = [
         "GSAP",
+        "ThreeJS",
         "React",
         "TypeScript",
         "Tailwind",
         "JavaScript",
         "Redux",
         "Strapi",
-        "HTML",
-        "CSS",
+        "Nodejs",
     ]
 
     const placeholdersLinksArr = [
@@ -60,11 +60,11 @@ const SkillsAndSocials = () => {
         <div className="space-y-6">
             <div className="rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-4 space-y-4">
                 <Label className="text-primary font-bold">Member Languages</Label>
-                <div className="flex justify-between items-center border-2 p-4 mt-2 rounded-xl">
-                    <div className="flex gap-8 flex-1">
-                        <div className="grid justify-start gap-1.5">
+                <div className="flex flex-col relative lg:flex-row justify-between items-start lg:items-center border-2 p-4 mt-2 rounded-xl gap-4 lg:gap-0">
+                    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 flex-1 w-full">
+                        <div className="grid gap-1.5 w-full lg:w-auto">
                             <Select>
-                                <SelectTrigger className="w-full max-w-48">
+                                <SelectTrigger className="w-full lg:w-48">
                                     <SelectValue placeholder="Select a Language" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -83,9 +83,9 @@ const SkillsAndSocials = () => {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="grid justify-start gap-1.5">
+                        <div className="grid gap-1.5 w-full lg:w-auto">
                             <Select>
-                                <SelectTrigger className="w-full max-w-48">
+                                <SelectTrigger className="w-full lg:w-48">
                                     <SelectValue placeholder="Select a Level" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -101,7 +101,7 @@ const SkillsAndSocials = () => {
                             </Select>
                         </div>
                     </div>
-                    <Button className="opacity-50 cursor-not-allowed hover:bg-primary">
+                    <Button className="size-6 lg:size-8 absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 lg:translate-y-0 lg:translate-x-0 lg:relative opacity-50 cursor-not-allowed hover:bg-primary self-end lg:self-auto shrink-0">
                         <X className="w-8 h-2 text-white" />
                     </Button>
                 </div>
@@ -109,7 +109,7 @@ const SkillsAndSocials = () => {
 
             <div className="grid gap-1.5">
                 <Label>Tech Stack</Label>
-                <div className="relative grid grid-cols-3 gap-5 items-center">
+                <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-center">
                     {
                         tempStack.map((tech, idx) => (
                             <div key={idx} className="relative">
