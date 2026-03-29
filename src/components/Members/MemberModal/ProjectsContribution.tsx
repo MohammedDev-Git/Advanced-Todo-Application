@@ -58,7 +58,6 @@ const ProjectsContribution = () => {
                                     size="sm"
                                     className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary dark:hover:text-white hover:text-white"
                                     onClick={() => {
-                                        console.log("added");
                                         handleAddTempProjectCategory(project.id);
                                     }}
                                 >
@@ -68,15 +67,15 @@ const ProjectsContribution = () => {
                             <div
                                 className="mt-2 border-2 border-primary/50 border-dotted p-5 rounded-2xl flex flex-col justify-center gap-4">
                                 {
-                                    project.tempCategory.map(() => (
-                                        <div className="relative">
-                                            <Input placeholder="E-commerce / SaaS" />
+                                    project.tempCategory.map((cat,index) => (
+                                        <div key={index} className="relative">
+                                            <Input placeholder={`Category ${index+1}`} />
                                             {
                                                 project.tempCategory.length > 1 &&
                                                 <Button
                                                     onClick={() => {
                                                         handleRemoveTempProjectCategory(
-                                                            { projectId: project.id, catIdx: idx }
+                                                            { projectId: project.id, catIdx: index }
                                                         );
                                                     }}
                                                     className="absolute translate-x-1/2 -translate-y-1/2 top-0 right-0 w-5 h-5 rounded-full">

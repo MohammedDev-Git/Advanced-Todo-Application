@@ -24,15 +24,14 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
 
     const dispatch = useDispatch();
 
-    const [progress, setProgress] = useState<number>(1);
+    const [progress, setProgress] = useState<number>(3);
 
     const modalRef = useRef<HTMLDivElement | null>(null);
-
-
+    const closeRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (open) {
-            setProgress(1);
+            setProgress(3);
         } else {
             dispatch(resetAllTemps());
         }
@@ -45,10 +44,16 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
     }, [progress])
 
     const playModalRefAnimation = () => {
-        modalRef?.current?.classList.remove("animate-scale-in-out!");
+        modalRef?.current?.classList.remove("animate-shake!");
+        closeRef?.current?.classList.remove("bg-primary/90");
         setTimeout(() => {
-            modalRef?.current?.classList.add("animate-scale-in-out!");
+            modalRef?.current?.classList.add("animate-shake!");
+            closeRef?.current?.classList.add("bg-primary/90");
         }, 10);
+
+        setTimeout(() => {
+            closeRef?.current?.classList.remove("bg-primary/90");
+        }, 1000);
     }
 
     const handleAddTempProject = () => {
@@ -71,61 +76,64 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                     e.preventDefault();
                     playModalRefAnimation();
                 }}
-                className={`w-full custom-scrollbar max-w-[300px] md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 overflow-y-auto`}>
-                <CardHeader className="space-y-4 px-0 md:px-6">
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-xs font-medium text-muted-foreground">
-                            <span>Step {progress} of 4</span>
+                className={`w-full max-w-[300px] md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 p-2 md:p-6`}>
+                <div className="space-y-2 px-2 md:px-6">
+                    <div className="flex justify-between text-xs font-medium text-muted-foreground">
+                        <span>Step {progress} of 4</span>
+                    </div>
+                    <Progress value={progress * (100 / 4)} className="h-2" />
+                </div>
+                <div className="custom-scrollbar max-h-100 overflow-y-auto">
+
+                    <CardHeader className="space-y-4 px-2 md:px-6">
+                        <div className="flex justify-between items-center">
+                            <DialogTitle className="space-y-1">
+                                <CardTitle className="text-2xl">Add a Member</CardTitle>
+                                <CardDescription>
+                                    {progress === 1 && "Personal Details"}
+                                    {progress === 2 && ""}
+                                    {progress === 3 && "Project Contribution"}
+                                    {progress === 4 && "Skills & Socials"}
+                                </CardDescription>
+                            </DialogTitle>
+                            {
+                                progress === 3 &&
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary dark:hover:text-white hover:text-white"
+                                    onClick={() => {
+                                        handleAddTempProject();
+                                    }}
+                                >
+                                    <Plus />
+                                </Button>
+                            }
                         </div>
-                        <Progress value={progress * (100 / 4)} className="h-2" />
-                    </div>
+                    </CardHeader>
 
-                    <div className="flex justify-between items-center">
-                        <DialogTitle className="space-y-1">
-                            <CardTitle className="text-2xl">Add a Member</CardTitle>
-                            <CardDescription>
-                                {progress === 1 && "Personal Details"}
-                                {progress === 2 && ""}
-                                {progress === 3 && "Project Contribution"}
-                                {progress === 4 && "Skills & Socials"}
-                            </CardDescription>
-                        </DialogTitle>
-                        {
-                            progress === 3 &&
-                            <Button
-                                type="button"
-                                size="sm"
-                                className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary dark:hover:text-white hover:text-white"
-                                onClick={() => {
-                                    handleAddTempProject();
-                                }}
-                            >
-                                <Plus />
-                            </Button>
-                        }
-                    </div>
-                </CardHeader>
+                    <CardContent className="space-y-4 px-2 md:px-6">
+                        {progress === 1 && (
+                            <PersonalDetails ref={personalDetailsRef} />
+                        )}
 
-                <CardContent className="space-y-4 px-0 md:px-6">
-                    {progress === 1 && (
-                        <PersonalDetails ref={personalDetailsRef} />
-                    )}
+                        {progress === 2 && (
+                            <Description ref={detailsRef} />
+                        )}
 
-                    {progress === 2 && (
-                        <Description ref={detailsRef} />
-                    )}
+                        {progress === 3 && (
+                            <ProjectsContribution />
+                        )}
 
-                    {progress === 3 && (
-                        <ProjectsContribution />
-                    )}
+                        {progress === 4 && (
+                            <SkillsAndSocials />
+                        )}
 
-                    {progress === 4 && (
-                        <SkillsAndSocials />
-                    )}
+                    </CardContent>
+                </div>
 
-                </CardContent>
 
-                <CardFooter className="flex justify-between border-t px-0 md:px-6 mt-2">
+                <CardFooter className="flex justify-between border-t px-2 md:px-6 mt-2 pt-4!">
                     <Button onClick={() => {
                         if (progress > 1) {
                             setProgress(pre => pre - 1);
@@ -155,6 +163,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         {progress === 4 ? <Check className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                     </Button>
                 </CardFooter>
+                <div ref={closeRef} className="absolute right-3 top-3 transition-all rounded-2xl w-6 h-6" />
             </DialogContent>
         </Dialog>
     );
