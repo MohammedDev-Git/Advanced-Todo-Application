@@ -1,15 +1,26 @@
 import type { RootState } from "@/app/store";
-import type { MembersState, NestedCategory, TempPersonalDetails } from "@/types";
+import type {
+    MemberProject,
+    MembersState,
+    NestedCategory,
+    TempPersonalDetails,
+    TempProjectErrorData
+} from "@/types";
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import type { DescriptionType } from "@/features/members/schemas/descriptionSchema";
 
-const initialState = {
+const initialState: MembersState = {
     members: [],
     form: {
         tempProjects: [
             {
-                tempCategory: [""],
                 id: nanoid(),
+                category: [""],
+                title: "",
+                description: "",
+                sourceCode: "",
+                liveCode: "",
+                errors: null,
             }
         ],
         tempStack: [""],
@@ -25,7 +36,14 @@ const initialState = {
         description: {
             text: "",
         },
+        projects: []
     },
+}
+
+export interface ChangeInputData {
+    text: string;
+    projectIdx: number;
+    catIdx?: number;
 }
 
 const memebersSlice = createSlice({
@@ -36,16 +54,49 @@ const memebersSlice = createSlice({
             console.log("member added");
         },
         addTempProject: (state: MembersState) => {
-            state.form.tempProjects.push({ id: nanoid(), tempCategory: [""] });
+            const emptyProject = {
+                id: nanoid(),
+                category: [""],
+                title: "",
+                description: "",
+                sourceCode: "",
+                liveCode: "",
+                errors: null,
+            }
+            state.form.tempProjects.push(emptyProject);
         },
-        addTempProjectCategory: (state: MembersState, action: PayloadAction<string>) => {
-            const chosenProject = state.form.tempProjects.find(project => project.id === action.payload);
-            chosenProject?.tempCategory.push("");
+        removeAllTempProjects: (state: MembersState) => {
+
+            const emptyProject = {
+                id: nanoid(),
+                category: [""],
+                title: "",
+                description: "",
+                sourceCode: "",
+                liveCode: "",
+                errors: null,
+            }
+
+            state.form.tempProjects = [emptyProject];
+        },
+        addTempProjectCategory: (state: MembersState, action: PayloadAction<number>) => {
+            const chosenProject = state.form.tempProjects[action.payload];
+            chosenProject?.category.push("");
         },
         removeTempProjectCategory: (state: MembersState, action: PayloadAction<NestedCategory>) => {
-            const { projectId, catIdx } = action.payload;
-            const chosenProject = state.form.tempProjects.find(project => project.id === projectId);
-            chosenProject?.tempCategory.splice(catIdx, 1);
+            const { projectIdx, catIdx } = action.payload;
+            const chosenProject = state.form.tempProjects[projectIdx];
+            chosenProject?.category.splice(catIdx, 1);
+        },
+        removeAllTempProjectCategory: (state: MembersState, action: PayloadAction<number>) => {
+            const chosenProject = state.form.tempProjects[action.payload];
+            chosenProject.category = [""];
+        },
+        resetProjectCategoryErrors: (state: MembersState, action: PayloadAction<number>) => {
+            const chosenProject = state.form.tempProjects[action.payload];
+            if (chosenProject.errors) {
+                chosenProject.errors.category = undefined;
+            }
         },
         removeTempProject: (state: MembersState, action: PayloadAction<number>) => {
             state.form.tempProjects.splice(action.payload, 1);
@@ -79,10 +130,54 @@ const memebersSlice = createSlice({
                 currentDescription.text = description.text;
             }
         },
+        changeProjectTitle: (state: MembersState, action: PayloadAction<ChangeInputData>) => {
+            const { text, projectIdx } = action.payload;
+            const updatedProject = state.form.tempProjects[projectIdx];
+            updatedProject.title = text;
+        },
+        changeProjectDescription: (state: MembersState, action: PayloadAction<ChangeInputData>) => {
+            const { text, projectIdx } = action.payload;
+            const updatedProject = state.form.tempProjects[projectIdx];
+            updatedProject.description = text;
+        },
+        changeProjectSourceCode: (state: MembersState, action: PayloadAction<ChangeInputData>) => {
+            const { text, projectIdx } = action.payload;
+            const updatedProject = state.form.tempProjects[projectIdx];
+            updatedProject.sourceCode = text;
+        },
+        changeProjectLiveCode: (state: MembersState, action: PayloadAction<ChangeInputData>) => {
+            const { text, projectIdx } = action.payload;
+            const updatedProject = state.form.tempProjects[projectIdx];
+            updatedProject.liveCode = text;
+        },
+        changeTempProjectCategory: (state: MembersState, action: PayloadAction<ChangeInputData>) => {
+            const { text, projectIdx, catIdx } = action.payload;
+            const updatedProject = state.form.tempProjects[projectIdx];
+            if (catIdx !== undefined) {
+                updatedProject.category[catIdx] = text;
+            }
+        },
+        addTempError: (state: MembersState, action: PayloadAction<TempProjectErrorData>) => {
+            const { error, projectIdx } = action.payload;
+            const erroredProject = state.form.tempProjects[projectIdx];
+            erroredProject.errors = { ...error };
+        },
+        removeTempError: (state: MembersState, action: PayloadAction<number>) => {
+            const projectIdx = action.payload;
+            const chosenProject = state.form.tempProjects[projectIdx];
+            chosenProject.errors = null;
+        },
+        addTempMemberProjects: (state: MembersState, action: PayloadAction<MemberProject[]>) => {
+            state.tempMember.projects = [...action.payload]
+        },
         resetAllTemps: (state: MembersState) => {
             state.form = initialState.form;
-
             state.tempMember = initialState.tempMember;
+        },
+        resetAllErrors: (state: MembersState) => {
+            state.form.tempProjects.map((project) => {
+                project.errors = null;
+            })
         }
     }
 })
@@ -91,6 +186,7 @@ export const {
     addMember,
     addTempProject,
     removeTempProject,
+    removeAllTempProjects,
     addTempStack,
     removeTempStack,
     addTempLink,
@@ -99,7 +195,18 @@ export const {
     addTempDescription,
     resetAllTemps,
     addTempProjectCategory,
-    removeTempProjectCategory
+    removeTempProjectCategory,
+    resetProjectCategoryErrors,
+    changeProjectTitle,
+    changeProjectDescription,
+    changeProjectSourceCode,
+    changeProjectLiveCode,
+    changeTempProjectCategory,
+    addTempError,
+    removeTempError,
+    addTempMemberProjects,
+    removeAllTempProjectCategory,
+    resetAllErrors,
 } = memebersSlice.actions;
 export const selectMembers = (state: RootState) => state.members.members;
 export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;

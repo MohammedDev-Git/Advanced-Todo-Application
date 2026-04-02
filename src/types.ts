@@ -1,6 +1,7 @@
 import type z from "zod";
 import type { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
 import type { personalDetailsSchema } from "@/features/members/schemas/personalDetailsSchema";
+import type { projectContributionSchema } from "./features/members/schemas/projectContributionSchema";
 
 export interface todoObject {
     id: string;
@@ -43,17 +44,26 @@ export interface TempDescription {
 export interface MemberObject {
     personalDetails: TempPersonalDetails;
     description: TempDescription;
+    projects: MemberProject[];
+}
+
+export interface TempMemberProject extends MemberProject {
+    errors: TempProjectError | null;
 }
 
 export interface MemberProject {
-    tempCategory: string[]
+    category: string[]
     id: string;
+    title: string;
+    description: string;
+    sourceCode: string;
+    liveCode: string;
 }
 
 export interface MembersState {
     members: MemberObject[],
     form: {
-        tempProjects: MemberProject[],
+        tempProjects: TempMemberProject[],
         tempStack: string[],
         tempLinks: string[],
     },
@@ -77,6 +87,13 @@ export type NoteAddError = z.inferFormattedError<typeof noteSchema>
 export type CatSizeError = z.inferFormattedError<typeof tempCategoriesSchema>
 
 export type PersonalDetailsError = z.inferFormattedError<typeof personalDetailsSchema>;
+
+export type TempProjectError = z.inferFormattedError<typeof projectContributionSchema>;
+
+export type TempProjectErrorData = {
+    error: TempProjectError,
+    projectIdx: number,
+}
 
 export interface InputErrorProps {
     message?: string;
@@ -106,6 +123,6 @@ export interface deleteModalProps {
 export type ThemeType = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
 
 export interface NestedCategory {
-    projectId: string,
+    projectIdx: number,
     catIdx: number
 }

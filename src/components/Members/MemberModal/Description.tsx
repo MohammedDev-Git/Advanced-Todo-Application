@@ -16,7 +16,7 @@ const Description = ({ }, ref: Ref<DescriptionRef>) => {
 
     const storedDescription = useSelector(selectDescription);
 
-    const descriptionInput = useInput(storedDescription.text);
+    const descriptionInput = useInput(storedDescription.text || "");
 
     const descriptionError = useError(undefined);
 
@@ -62,5 +62,7 @@ const Description = ({ }, ref: Ref<DescriptionRef>) => {
         </div>
     )
 }
+
+Description.displayName = "Description";
 
 export default forwardRef(Description)

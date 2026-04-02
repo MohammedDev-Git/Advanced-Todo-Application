@@ -20,10 +20,10 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
 
     const storedPersonalDetails = useSelector(selectPersonalDetails);
 
-    const nameInput = useInput(storedPersonalDetails.name);
-    const roleInput = useInput(storedPersonalDetails.role);
-    const emailInput = useInput(storedPersonalDetails.email);
-    const phoneInput = useInput(storedPersonalDetails.phone);
+    const nameInput = useInput(storedPersonalDetails.name || "");
+    const roleInput = useInput(storedPersonalDetails.role || "");
+    const emailInput = useInput(storedPersonalDetails.email || "");
+    const phoneInput = useInput(storedPersonalDetails.phone || "");
 
     const nameError = useError(undefined);
     const roleError = useError(undefined);

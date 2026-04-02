@@ -8,39 +8,49 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { ChevronRight, Check, Plus } from "lucide-react";
+import { ChevronRight, Check, Plus, Trash } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { ModalProps } from "@/types";
 
-
-import { useDispatch } from "react-redux";
-import { addTempProject, resetAllTemps } from "@/features/members/membersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addTempProject, removeAllTempProjects, resetAllErrors, resetAllTemps, selectTempProjects } from "@/features/members/membersSlice";
 import PersonalDetails, { type PersonalDetailsRef } from "@/components/Members/MemberModal/PersonalDetails";
 import Description, { type DescriptionRef } from "@/components/Members/MemberModal/Description";
-import ProjectsContribution from "@/components/Members/MemberModal/ProjectsContribution";
+import ProjectsContribution, { type ProjectsContributionRef } from "@/components/Members/MemberModal/ProjectsContribution";
 import SkillsAndSocials from "@/components/Members/MemberModal/SkillsAndSocials";
+
+type DivElementType = HTMLDivElement | null;
 
 const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
 
     const dispatch = useDispatch();
 
-    const [progress, setProgress] = useState<number>(3);
+    const [progress, setProgress] = useState<number>(4);
 
-    const modalRef = useRef<HTMLDivElement | null>(null);
-    const closeRef = useRef<HTMLDivElement | null>(null);
+    const modalRef = useRef<DivElementType>(null);
+    const closeRef = useRef<DivElementType>(null);
+
+    const tempProjects = useSelector(selectTempProjects);
 
     useEffect(() => {
+
         if (open) {
-            setProgress(3);
+            setProgress(4);
         } else {
             dispatch(resetAllTemps());
         }
     }, [open]);
 
+    const prevProgress = useRef<number>(progress);
+
     useEffect(() => {
+        if (prevProgress.current === 2 && progress === 3) {
+            dispatch(resetAllErrors());
+        }
         if (progress > 4) {
             onOpenChange?.(false);
         }
+        prevProgress.current = progress;
     }, [progress])
 
     const playModalRefAnimation = () => {
@@ -56,12 +66,9 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
         }, 1000);
     }
 
-    const handleAddTempProject = () => {
-        dispatch(addTempProject());
-    }
-
     const personalDetailsRef = useRef<PersonalDetailsRef | null>(null);
     const detailsRef = useRef<DescriptionRef | null>(null);
+    const projectsContributionRef = useRef<ProjectsContributionRef | null>(null);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -98,16 +105,34 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                             </DialogTitle>
                             {
                                 progress === 3 &&
-                                <Button
-                                    type="button"
-                                    size="sm"
-                                    className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary dark:hover:text-white hover:text-white"
-                                    onClick={() => {
-                                        handleAddTempProject();
-                                    }}
-                                >
-                                    <Plus />
-                                </Button>
+                                <div className="flex justify-center items-center gap-2">
+                                    {
+                                        tempProjects.length > 1 &&
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-red-400 hover:bg-red-400 dark:hover:text-white hover:text-white"
+                                            onClick={() => {
+                                                dispatch(removeAllTempProjects())
+                                            }}
+                                        >
+                                            <Trash />
+                                        </Button>
+                                    }
+                                    {
+                                        tempProjects.length < 10 &&
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary dark:hover:text-white hover:text-white"
+                                            onClick={() => {
+                                                dispatch(addTempProject())
+                                            }}
+                                        >
+                                            <Plus />
+                                        </Button>
+                                    }
+                                </div>
                             }
                         </div>
                     </CardHeader>
@@ -122,7 +147,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         )}
 
                         {progress === 3 && (
-                            <ProjectsContribution />
+                            <ProjectsContribution ref={projectsContributionRef} />
                         )}
 
                         {progress === 4 && (
@@ -150,7 +175,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                                 ||
                                 (progress === 2 && detailsRef.current?.handleStepTwo())
                                 ||
-                                (progress === 3)
+                                (progress === 3 && projectsContributionRef.current?.handleStepThree())
 
 
                             if (condition) {
@@ -158,7 +183,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                             }
 
                         }}
-                        className="gap-2 text-white">
+                        className="gap-2 text-white"
+                    >
                         {progress === 4 ? 'Submit' : 'Next Step'}
                         {progress === 4 ? <Check className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                     </Button>

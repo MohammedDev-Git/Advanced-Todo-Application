@@ -188,7 +188,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                                     <Button
                                                         type="button"
                                                         size="sm"
-                                                        className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-400 hover:text-white"
+                                                        className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-400 dark:hover:bg-red-400 hover:text-white"
                                                         onClick={() => {
                                                             dispatch(resetTempCategory());
                                                             setCategorySizeError(null);
@@ -202,7 +202,7 @@ export function EditNoteModal({ open, onOpenChange, editedNote }: EditNoteModalP
                                             <Button
                                                 type="button"
                                                 size="sm"
-                                                className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white"
+                                                className="h-6 w-6 rounded-full p-0 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:hover:bg-primary hover:bg-primary hover:text-white"
                                                 onClick={() => {
                                                     handleAddCategory();
                                                 }}
