@@ -58,7 +58,12 @@ const ProjectsContribution = ({ }, ref: Ref<ProjectsContributionRef>) => {
         })
 
         if (allValid) {
-            dispatch(addTempMemberProjects(tempProjects));
+            const result = tempProjects.map((project) => {
+                const newProject = { ...project };
+                newProject.category = newProject.category.filter((cat) => cat.trim() !== "");
+                return newProject;
+            })
+            dispatch(addTempMemberProjects(result));
             return true;
         } else {
             return false;

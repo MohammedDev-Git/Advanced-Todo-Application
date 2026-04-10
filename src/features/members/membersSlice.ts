@@ -23,6 +23,7 @@ const initialState: MembersState = {
                 errors: null,
             }
         ],
+        tempLanguages: [{ lang: "", level: "", id: nanoid() }],
         tempStack: [""],
         tempLinks: [""],
     },
@@ -178,7 +179,46 @@ const memebersSlice = createSlice({
             state.form.tempProjects.map((project) => {
                 project.errors = null;
             })
-        }
+        },
+        updateLanguageText: (state: MembersState, action: PayloadAction<{ language: string, id: string }>) => {
+            const { language, id } = action.payload;
+            const languagesArr = state.form.tempLanguages;
+            const chosenRow = languagesArr.find((row) => row.id === id);
+            if (chosenRow) {
+                chosenRow.lang = language;
+            }
+        },
+        updateLanguageLevel: (state: MembersState, action: PayloadAction<{ level: string, id: string }>) => {
+            const { level, id } = action.payload;
+            const languagesArr = state.form.tempLanguages;
+            const chosenRow = languagesArr.find((row) => row.id === id);
+            if (chosenRow) {
+                chosenRow.level = level;
+            }
+        },
+        addLanguageObject: (state: MembersState) => {
+            const languagesArr = state.form.tempLanguages;
+
+            if (languagesArr.length < 4) {
+                const emptyLanguageObject = { lang: "", level: "", id: nanoid() };
+                languagesArr.push(emptyLanguageObject);
+            }
+        },
+        removeLanguageRow: (state: MembersState, action: PayloadAction<string>) => {
+            const languagesArr = state.form.tempLanguages;
+            const chosenRow = languagesArr.find((row) => row.id === action.payload);
+            const isFull = languagesArr.find((row) => row.lang === "" || row.level === "") === undefined;
+            if (chosenRow) {
+                const idx = languagesArr.indexOf(chosenRow);
+                languagesArr.splice(idx, 1);
+                if (languagesArr.length === 3 && isFull) {
+                    const emptyLanguageObject = { lang: "", level: "", id: nanoid() };
+                    languagesArr.push(emptyLanguageObject);
+                }
+            }
+
+
+        },
     }
 })
 
@@ -207,6 +247,10 @@ export const {
     addTempMemberProjects,
     removeAllTempProjectCategory,
     resetAllErrors,
+    updateLanguageText,
+    updateLanguageLevel,
+    addLanguageObject,
+    removeLanguageRow,
 } = memebersSlice.actions;
 export const selectMembers = (state: RootState) => state.members.members;
 export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;
@@ -214,4 +258,5 @@ export const selectTempStack = (state: RootState) => state.members.form.tempStac
 export const selectTempLinks = (state: RootState) => state.members.form.tempLinks;
 export const selectPersonalDetails = (state: RootState) => state.members.tempMember.personalDetails;
 export const selectDescription = (state: RootState) => state.members.tempMember.description;
+export const selectLanguages = (state: RootState) => state.members.form.tempLanguages;
 export default memebersSlice.reducer;

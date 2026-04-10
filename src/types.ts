@@ -60,10 +60,17 @@ export interface MemberProject {
     liveCode: string;
 }
 
+export interface LanguageObject {
+    lang: string,
+    level: string,
+    id: string,
+}
+
 export interface MembersState {
     members: MemberObject[],
     form: {
         tempProjects: TempMemberProject[],
+        tempLanguages: LanguageObject[]
         tempStack: string[],
         tempLinks: string[],
     },

@@ -1,15 +1,7 @@
+import LanguageInput from "@/components/custom/LanguageInput"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { addTempLink, addTempStack, removeTempLink, removeTempStack, selectTempLinks, selectTempStack } from "@/features/members/membersSlice"
 import { Plus, Share2, X } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
@@ -59,52 +51,8 @@ const SkillsAndSocials = () => {
     return (
         <div className="space-y-6">
             <div className="rounded-lg border-2 border-dashed border-primary/50 bg-primary/10 p-4 space-y-4">
-                <Label className="text-primary font-bold">Member Languages</Label>
-                <div className="flex flex-col relative lg:flex-row justify-between items-start lg:items-center border-2 p-4 mt-2 rounded-xl gap-4 lg:gap-0">
-                    <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 flex-1 w-full">
-                        <div className="grid gap-1.5 w-full lg:w-auto">
-                            <Select>
-                                <SelectTrigger className="w-full lg:w-48">
-                                    <SelectValue placeholder="Select a Language" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Languages</SelectLabel>
-                                        <SelectItem value="arabic">Arabic</SelectItem>
-                                        <SelectItem value="english">English</SelectItem>
-                                        <SelectItem value="french">French</SelectItem>
-                                        <SelectItem value="german">German</SelectItem>
-                                        <SelectItem value="spanish">Spanish</SelectItem>
-                                        <SelectItem value="italian">Italian</SelectItem>
-                                        <SelectItem value="chinese">Chinese</SelectItem>
-                                        <SelectItem value="japanese">Japanese</SelectItem>
-                                        <SelectItem value="turkish">Turkish</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-1.5 w-full lg:w-auto">
-                            <Select>
-                                <SelectTrigger className="w-full lg:w-48">
-                                    <SelectValue placeholder="Select a Level" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Level</SelectLabel>
-                                        <SelectItem value="beginner">Beginner</SelectItem>
-                                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                                        <SelectItem value="professional">Professional</SelectItem>
-                                        <SelectItem value="advanced">Advanced</SelectItem>
-                                        <SelectItem value="native">Native</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    <Button className="size-6 lg:size-8 absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 lg:translate-y-0 lg:translate-x-0 lg:relative opacity-50 cursor-not-allowed hover:bg-primary self-end lg:self-auto shrink-0">
-                        <X className="w-8 h-2 text-white" />
-                    </Button>
-                </div>
+                <Label className="text-primary font-bold">Member Languages (Max 4)</Label>
+                <LanguageInput />
             </div>
 
             <div className="grid gap-1.5">
