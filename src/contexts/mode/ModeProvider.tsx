@@ -38,7 +38,7 @@ export const useModeContext = () => {
     const context = useContext(ModeContext);
 
     if (!context) {
-        throw new Error("Mode Context is not founc");
+        throw new Error("Mode Context is not found");
     }
 
     return context;

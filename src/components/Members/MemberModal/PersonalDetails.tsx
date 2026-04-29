@@ -25,17 +25,17 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
     const emailInput = useInput(storedPersonalDetails.email || "");
     const phoneInput = useInput(storedPersonalDetails.phone || "");
 
-    const nameError = useError(undefined);
-    const roleError = useError(undefined);
-    const emailError = useError(undefined);
-    const phoneError = useError(undefined);
+    const nameError = useError("");
+    const roleError = useError("");
+    const emailError = useError("");
+    const phoneError = useError("");
 
     const [renderKey, setRenderKey] = useState<number>(0);
 
     const inputData = [
         {
             id: "name",
-            label: "Full Name",
+            label: "Full Name (Required)",
             placeholder: "Ahmed Ali",
             type: "text",
             icon: <User className="size-4" />,
@@ -44,7 +44,7 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
         },
         {
             id: "role",
-            label: "Role",
+            label: "Role (Required)",
             placeholder: "Frontend Developer",
             type: "text",
             icon: <BriefcaseBusiness className="size-4" />,
@@ -53,7 +53,7 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
         },
         {
             id: "email",
-            label: "Email Address",
+            label: "Email Address (Required)",
             placeholder: "example@gmail.com",
             type: "email",
             icon: <Mail className="size-4" />,
@@ -72,7 +72,7 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
     ]
 
     const getValueOf = (id: string) => {
-        return inputData.find((data) => data.id === id)?.value;
+        return inputData.find((data) => data.id === id)?.value.trim();
     }
 
     const handleStepOne = () => {

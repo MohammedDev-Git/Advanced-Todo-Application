@@ -8,7 +8,7 @@ type MemberCardProps = {
         name?: string;
         role?: string;
         bio?: string;
-        tasks?: number;
+        projects?: number;
         rating?: number;
         image?: string;
     };
@@ -50,7 +50,7 @@ export function MemberCard({ member }: MemberCardProps) {
                         <div className="bg-slate-100 dark:bg-slate-700 p-2 rounded-xl">
                             <FileText className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                         </div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member.tasks} Task</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member.projects} Projects</span>
                     </div>
 
                     <div className="flex items-center gap-2">

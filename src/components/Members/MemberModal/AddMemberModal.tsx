@@ -17,7 +17,7 @@ import { addTempProject, removeAllTempProjects, resetAllErrors, resetAllTemps, s
 import PersonalDetails, { type PersonalDetailsRef } from "@/components/Members/MemberModal/PersonalDetails";
 import Description, { type DescriptionRef } from "@/components/Members/MemberModal/Description";
 import ProjectsContribution, { type ProjectsContributionRef } from "@/components/Members/MemberModal/ProjectsContribution";
-import SkillsAndSocials from "@/components/Members/MemberModal/SkillsAndSocials";
+import SkillsAndSocials, { type SkillsAndSocialsRef } from "@/components/Members/MemberModal/SkillsAndSocials";
 
 type DivElementType = HTMLDivElement | null;
 
@@ -25,7 +25,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
 
     const dispatch = useDispatch();
 
-    const [progress, setProgress] = useState<number>(4);
+    const [progress, setProgress] = useState<number>(1);
 
     const modalRef = useRef<DivElementType>(null);
     const closeRef = useRef<DivElementType>(null);
@@ -35,7 +35,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
     useEffect(() => {
 
         if (open) {
-            setProgress(4);
+            setProgress(1);
         } else {
             dispatch(resetAllTemps());
         }
@@ -69,6 +69,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
     const personalDetailsRef = useRef<PersonalDetailsRef | null>(null);
     const detailsRef = useRef<DescriptionRef | null>(null);
     const projectsContributionRef = useRef<ProjectsContributionRef | null>(null);
+    const SkillsAndSocialsRef = useRef<SkillsAndSocialsRef | null>(null);
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -151,7 +152,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         )}
 
                         {progress === 4 && (
-                            <SkillsAndSocials />
+                            <SkillsAndSocials ref={SkillsAndSocialsRef} />
                         )}
 
                     </CardContent>
@@ -176,7 +177,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                                 (progress === 2 && detailsRef.current?.handleStepTwo())
                                 ||
                                 (progress === 3 && projectsContributionRef.current?.handleStepThree())
-
+                                ||
+                                (progress === 4 && SkillsAndSocialsRef.current?.handleStepFour())
 
                             if (condition) {
                                 setProgress(pre => pre + 1);

@@ -2,6 +2,7 @@ import type z from "zod";
 import type { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
 import type { personalDetailsSchema } from "@/features/members/schemas/personalDetailsSchema";
 import type { projectContributionSchema } from "./features/members/schemas/projectContributionSchema";
+import type { skillsSocialsSchema } from "./features/members/schemas/skillsSocialsSchema";
 
 export interface todoObject {
     id: string;
@@ -41,10 +42,22 @@ export interface TempDescription {
     text?: string
 }
 
+
+export interface RatingObject {
+    user: string,
+    rate: number;
+}
+
 export interface MemberObject {
+    id: string;
     personalDetails: TempPersonalDetails;
     description: TempDescription;
     projects: MemberProject[];
+    skillsAndSocials: SkillsAndSocialsObject;
+    rating: {
+        avgRating: number,
+        ratedBy: RatingObject[],
+    },
 }
 
 export interface TempMemberProject extends MemberProject {
@@ -66,13 +79,33 @@ export interface LanguageObject {
     id: string,
 }
 
+export interface TempStackAndLinksObject {
+    tempStack: string[],
+    tempLinks: string[],
+}
+
+export interface stackAndLinksObject {
+    stack: string[],
+    social: string[],
+}
+
+export interface SkillsAndSocialsObject {
+    languages: LanguageObject[];
+    stackAndLinks: stackAndLinksObject;
+}
+
+export interface TempSkillsAndSocialsObject {
+    tempLanguages: LanguageObject[];
+    tempStackAndLinks: TempStackAndLinksObject;
+}
+
+
 export interface MembersState {
     members: MemberObject[],
     form: {
         tempProjects: TempMemberProject[],
-        tempLanguages: LanguageObject[]
-        tempStack: string[],
-        tempLinks: string[],
+        tempSkillsAndSocials: TempSkillsAndSocialsObject,
+
     },
     tempMember: MemberObject,
 }
@@ -96,6 +129,8 @@ export type CatSizeError = z.inferFormattedError<typeof tempCategoriesSchema>
 export type PersonalDetailsError = z.inferFormattedError<typeof personalDetailsSchema>;
 
 export type TempProjectError = z.inferFormattedError<typeof projectContributionSchema>;
+
+export type SkillsAndSocialsError = z.inferFormattedError<typeof skillsSocialsSchema>
 
 export type TempProjectErrorData = {
     error: TempProjectError,

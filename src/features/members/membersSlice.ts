@@ -3,11 +3,13 @@ import type {
     MemberProject,
     MembersState,
     NestedCategory,
+    SkillsAndSocialsObject,
     TempPersonalDetails,
     TempProjectErrorData
 } from "@/types";
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import type { DescriptionType } from "@/features/members/schemas/descriptionSchema";
+import type { updateLinkProps } from "@/components/Members/MemberModal/SkillsAndSocials";
 
 const initialState: MembersState = {
     members: [],
@@ -23,11 +25,16 @@ const initialState: MembersState = {
                 errors: null,
             }
         ],
-        tempLanguages: [{ lang: "", level: "", id: nanoid() }],
-        tempStack: [""],
-        tempLinks: [""],
+        tempSkillsAndSocials: {
+            tempLanguages: [{ lang: "", level: "", id: nanoid() }],
+            tempStackAndLinks: {
+                tempStack: [""],
+                tempLinks: [""],
+            }
+        }
     },
     tempMember: {
+        id: nanoid(),
         personalDetails: {
             name: "",
             role: "",
@@ -37,7 +44,18 @@ const initialState: MembersState = {
         description: {
             text: "",
         },
-        projects: []
+        projects: [],
+        skillsAndSocials: {
+            languages: [],
+            stackAndLinks: {
+                stack: [],
+                social: [],
+            }
+        },
+        rating: {
+            avgRating: 0,
+            ratedBy: [],
+        },
     },
 }
 
@@ -47,36 +65,33 @@ export interface ChangeInputData {
     catIdx?: number;
 }
 
-const memebersSlice = createSlice({
+const membersSlice = createSlice({
     name: "members",
     initialState,
     reducers: {
-        addMember: () => {
-            console.log("member added");
+        addMember: (state: MembersState, action: PayloadAction<SkillsAndSocialsObject>) => {
+            const fillMemberData = () => {
+                // fill the skills and socials object
+                const newSkillsAndSocials = { ...action.payload };
+                state.tempMember.skillsAndSocials = { ...newSkillsAndSocials };
+
+                // fill the projects object
+                const projects = state.form.tempProjects;
+                state.tempMember.projects = [...projects];
+            }
+            fillMemberData();
+
+            // add an actual member
+            const newMember = {...state.tempMember};
+            state.members.push(newMember);
         },
         addTempProject: (state: MembersState) => {
-            const emptyProject = {
-                id: nanoid(),
-                category: [""],
-                title: "",
-                description: "",
-                sourceCode: "",
-                liveCode: "",
-                errors: null,
-            }
+            const emptyProject = { ...initialState.form.tempProjects[0] };
             state.form.tempProjects.push(emptyProject);
         },
         removeAllTempProjects: (state: MembersState) => {
 
-            const emptyProject = {
-                id: nanoid(),
-                category: [""],
-                title: "",
-                description: "",
-                sourceCode: "",
-                liveCode: "",
-                errors: null,
-            }
+            const emptyProject = { ...initialState.form.tempProjects[0] };
 
             state.form.tempProjects = [emptyProject];
         },
@@ -101,18 +116,6 @@ const memebersSlice = createSlice({
         },
         removeTempProject: (state: MembersState, action: PayloadAction<number>) => {
             state.form.tempProjects.splice(action.payload, 1);
-        },
-        addTempStack: (state: MembersState) => {
-            state.form.tempStack.push("");
-        },
-        removeTempStack: (state: MembersState, action: PayloadAction<number>) => {
-            state.form.tempStack.splice(action.payload, 1);
-        },
-        addTempLink: (state: MembersState) => {
-            state.form.tempLinks.push("");
-        },
-        removeTempLink: (state: MembersState, action: PayloadAction<number>) => {
-            state.form.tempLinks.splice(action.payload, 1);
         },
         addTempPersonalDetails: (state: MembersState, action: PayloadAction<TempPersonalDetails>) => {
             const personalDetails = action.payload;
@@ -172,8 +175,8 @@ const memebersSlice = createSlice({
             state.tempMember.projects = [...action.payload]
         },
         resetAllTemps: (state: MembersState) => {
-            state.form = initialState.form;
-            state.tempMember = initialState.tempMember;
+            state.form = { ...initialState.form };
+            state.tempMember = { ...initialState.tempMember };
         },
         resetAllErrors: (state: MembersState) => {
             state.form.tempProjects.map((project) => {
@@ -182,7 +185,7 @@ const memebersSlice = createSlice({
         },
         updateLanguageText: (state: MembersState, action: PayloadAction<{ language: string, id: string }>) => {
             const { language, id } = action.payload;
-            const languagesArr = state.form.tempLanguages;
+            const languagesArr = state.form.tempSkillsAndSocials.tempLanguages;
             const chosenRow = languagesArr.find((row) => row.id === id);
             if (chosenRow) {
                 chosenRow.lang = language;
@@ -190,14 +193,14 @@ const memebersSlice = createSlice({
         },
         updateLanguageLevel: (state: MembersState, action: PayloadAction<{ level: string, id: string }>) => {
             const { level, id } = action.payload;
-            const languagesArr = state.form.tempLanguages;
+            const languagesArr = state.form.tempSkillsAndSocials.tempLanguages;
             const chosenRow = languagesArr.find((row) => row.id === id);
             if (chosenRow) {
                 chosenRow.level = level;
             }
         },
         addLanguageObject: (state: MembersState) => {
-            const languagesArr = state.form.tempLanguages;
+            const languagesArr = state.form.tempSkillsAndSocials.tempLanguages;
 
             if (languagesArr.length < 4) {
                 const emptyLanguageObject = { lang: "", level: "", id: nanoid() };
@@ -205,7 +208,7 @@ const memebersSlice = createSlice({
             }
         },
         removeLanguageRow: (state: MembersState, action: PayloadAction<string>) => {
-            const languagesArr = state.form.tempLanguages;
+            const languagesArr = state.form.tempSkillsAndSocials.tempLanguages;
             const chosenRow = languagesArr.find((row) => row.id === action.payload);
             const isFull = languagesArr.find((row) => row.lang === "" || row.level === "") === undefined;
             if (chosenRow) {
@@ -216,9 +219,27 @@ const memebersSlice = createSlice({
                     languagesArr.push(emptyLanguageObject);
                 }
             }
-
-
         },
+        addTempStack: (state: MembersState) => {
+            state.form.tempSkillsAndSocials.tempStackAndLinks.tempStack.push("");
+        },
+        removeTempStack: (state: MembersState, action: PayloadAction<number>) => {
+            state.form.tempSkillsAndSocials.tempStackAndLinks.tempStack.splice(action.payload, 1);
+        },
+        updateTempStack: (state: MembersState, action: PayloadAction<{ idx: number, text: string }>) => {
+            const { idx, text } = action.payload;
+            state.form.tempSkillsAndSocials.tempStackAndLinks.tempStack[idx] = text;
+        },
+        addTempLink: (state: MembersState) => {
+            state.form.tempSkillsAndSocials.tempStackAndLinks.tempLinks.push("");
+        },
+        removeTempLink: (state: MembersState, action: PayloadAction<number>) => {
+            state.form.tempSkillsAndSocials.tempStackAndLinks.tempLinks.splice(action.payload, 1);
+        },
+        updateTempLink: (state: MembersState, action: PayloadAction<updateLinkProps>) => {
+            const { idx, text } = action.payload;
+            state.form.tempSkillsAndSocials.tempStackAndLinks.tempLinks[idx] = text;
+        }
     }
 })
 
@@ -227,10 +248,6 @@ export const {
     addTempProject,
     removeTempProject,
     removeAllTempProjects,
-    addTempStack,
-    removeTempStack,
-    addTempLink,
-    removeTempLink,
     addTempPersonalDetails,
     addTempDescription,
     resetAllTemps,
@@ -251,12 +268,18 @@ export const {
     updateLanguageLevel,
     addLanguageObject,
     removeLanguageRow,
-} = memebersSlice.actions;
+    addTempStack,
+    removeTempStack,
+    updateTempStack,
+    addTempLink,
+    removeTempLink,
+    updateTempLink,
+} = membersSlice.actions;
 export const selectMembers = (state: RootState) => state.members.members;
 export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;
-export const selectTempStack = (state: RootState) => state.members.form.tempStack;
-export const selectTempLinks = (state: RootState) => state.members.form.tempLinks;
+export const selectTempStack = (state: RootState) => state.members.form.tempSkillsAndSocials.tempStackAndLinks.tempStack;
+export const selectTempLinks = (state: RootState) => state.members.form.tempSkillsAndSocials.tempStackAndLinks.tempLinks;
 export const selectPersonalDetails = (state: RootState) => state.members.tempMember.personalDetails;
 export const selectDescription = (state: RootState) => state.members.tempMember.description;
-export const selectLanguages = (state: RootState) => state.members.form.tempLanguages;
-export default memebersSlice.reducer;
+export const selectLanguages = (state: RootState) => state.members.form.tempSkillsAndSocials.tempLanguages;
+export default membersSlice.reducer;

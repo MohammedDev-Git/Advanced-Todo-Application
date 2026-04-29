@@ -6,10 +6,13 @@ import {
     CarouselNext
 } from "@/components/ui/carousel"
 import { MemberCard } from "./MemberCard"
-
-const members: null[] = [null, null, null, null, null];
+import { useSelector } from "react-redux";
+import { selectMembers } from "@/features/members/membersSlice";
 
 export function MembersList({ title = "Members" }: { title?: string }) {
+
+    const members = useSelector(selectMembers);
+
     return (
         <div className="col-span-3 mt-4">
             <div className="flex items-center justify-start gap-5 mb-4">
@@ -29,19 +32,21 @@ export function MembersList({ title = "Members" }: { title?: string }) {
                 </div>
 
                 <CarouselContent className="-ml-6">
-                    {members.map((_, i) => (
-                        <CarouselItem key={i} className="pl-6 lg:basis-1/2">
-                            <MemberCard member={{
-                                name: "Ali",
-                                role: "Frontend Developer",
-                                bio: "I am a frontend developer with 2 years of experience in web development.",
-                                tasks: 10,
-                                rating: 5,
-                                image: "https://github.com/shadcn.png"
-                            }}
-                            />
-                        </CarouselItem>
-                    ))}
+                    {members.map((person, idx) => {
+                        return (
+                            <CarouselItem key={idx} className="pl-6 lg:basis-1/2">
+                                <MemberCard member={{
+                                    name: person.personalDetails.name,
+                                    role: person.personalDetails.role,
+                                    bio: person.description.text || "No Description",
+                                    projects: person.projects.length,
+                                    rating: person.rating.avgRating,
+                                    image: "https://github.com/shadcn.png"
+                                }}
+                                />
+                            </CarouselItem>
+                        )
+                    })}
                 </CarouselContent>
             </Carousel>
         </div>

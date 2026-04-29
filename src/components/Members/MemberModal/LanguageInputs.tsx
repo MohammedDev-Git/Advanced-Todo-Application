@@ -14,47 +14,75 @@ import { addLanguageObject, removeLanguageRow, selectLanguages, updateLanguageLe
 import { useDispatch, useSelector } from "react-redux";
 import type { LanguageObject } from "@/types";
 
-const LanguageInput = () => {
+interface langLenthErrorProps {
+    setLangLengthError: (errorMsg: string | undefined) => void;
+}
+
+const LanguageInputs = ({ setLangLengthError }: langLenthErrorProps) => {
     const tempLanguages = useSelector(selectLanguages);
 
     const dispatch = useDispatch();
+
+    const availableLangs = [
+        { text: "Arabic", value: "arabic" },
+        { text: "English", value: "english" },
+        { text: "French", value: "french" },
+        { text: "German", value: "german" },
+        { text: "Spanish", value: "spanish" },
+        { text: "Italian", value: "italian" },
+        { text: "Chinese", value: "chinese" },
+        { text: "Japanese", value: "japanese" },
+        { text: "Turkish", value: "turkish" },
+    ]
 
     return (
         <>
             {
                 tempLanguages.map((languageObject: LanguageObject) => {
                     const filledRow = languageObject.lang !== "" && languageObject.level !== "";
+
                     return (
                         <div key={languageObject.id} className="flex flex-col relative lg:flex-row justify-between items-start lg:items-center border-2 p-4 mt-2 rounded-xl gap-4 lg:gap-0">
                             <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 flex-1 w-full">
                                 <div className="grid gap-1.5 w-full lg:w-auto">
-                                    <Select onValueChange={(e) => {
-                                        if (languageObject.level && languageObject.lang === "") {
-                                            dispatch(addLanguageObject());
-                                        }
-                                        dispatch(updateLanguageText({ language: e, id: languageObject.id }));
-                                    }}>
+                                    <Select
+                                        value={languageObject.lang}
+                                        onValueChange={(e) => {
+                                            setLangLengthError("");
+                                            if (languageObject.level && languageObject.lang === "") {
+                                                dispatch(addLanguageObject());
+                                            }
+                                            dispatch(updateLanguageText({ language: e, id: languageObject.id }));
+                                        }}>
                                         <SelectTrigger className="w-full lg:w-48">
                                             <SelectValue placeholder="Select a Language" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
                                                 <SelectLabel>Languages</SelectLabel>
-                                                <SelectItem value="arabic">Arabic</SelectItem>
-                                                <SelectItem value="english">English</SelectItem>
-                                                <SelectItem value="french">French</SelectItem>
-                                                <SelectItem value="german">German</SelectItem>
-                                                <SelectItem value="spanish">Spanish</SelectItem>
-                                                <SelectItem value="italian">Italian</SelectItem>
-                                                <SelectItem value="chinese">Chinese</SelectItem>
-                                                <SelectItem value="japanese">Japanese</SelectItem>
-                                                <SelectItem value="turkish">Turkish</SelectItem>
+                                                {
+                                                    availableLangs.map((langObject) => {
+                                                        const alreadySelected = tempLanguages.some((tempLang) => {
+                                                            return tempLang.lang === langObject.value;
+                                                        })
+                                                        return (
+                                                            <SelectItem
+                                                                disabled={alreadySelected}
+                                                                key={langObject.value}
+                                                                value={langObject.value}
+                                                            >
+                                                                {langObject.text}
+                                                            </SelectItem>
+                                                        )
+                                                    })
+                                                }
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="grid gap-1.5 w-full lg:w-auto">
                                     <Select onValueChange={(e) => {
+                                        setLangLengthError("");
                                         if (languageObject.lang && languageObject.level === "") {
                                             dispatch(addLanguageObject());
                                         }
@@ -95,4 +123,4 @@ const LanguageInput = () => {
     )
 }
 
-export default LanguageInput
+export default LanguageInputs
