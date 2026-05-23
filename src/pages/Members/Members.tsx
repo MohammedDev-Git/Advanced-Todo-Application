@@ -24,7 +24,7 @@ export default function Members() {
 
             {/* All Members Section */}
             <section className="space-y-6">
-                <MembersList />
+                <MembersList setOpen={setOpen} />
             </section>
 
             {/* Floating Action Button */}
