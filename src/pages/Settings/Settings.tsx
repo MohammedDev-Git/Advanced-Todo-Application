@@ -1,17 +1,27 @@
-import { useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useModeContext } from '@/contexts/mode/ModeProvider';
 import { useThemeContext } from '@/contexts/theme/ThemeProvider';
-import type { ThemeType } from '@/types';
+import { useTimeContext } from '@/contexts/time/TimeProvider';
 
 const Settings = () => {
-    const [timeFormat, setTimeFormat] = useState('24h');
+    const { timeFormat, setTimeFormat } = useTimeContext();
 
     const { theme, themes, setTheme } = useThemeContext();
 
-    const { setLight, setDark } = useModeContext();
+    const { mode, setLight, setDark } = useModeContext();
+
+    const disabledButton = theme === "first" && timeFormat === "12" && mode === "light"
+
+    const colors = {
+        first: "bg-first",
+        second: "bg-second",
+        third: "bg-third",
+        fourth: "bg-fourth",
+        fifth: "bg-fifth",
+        sixth: "bg-sixth"
+    }
 
     return (
         <div className="xl:mt-12 animate-page">
@@ -31,30 +41,32 @@ const Settings = () => {
                             <h3 className="font-bold text-foreground text-lg">Time format</h3>
                             <div className="flex gap-4">
                                 <button
-                                    onClick={() => setTimeFormat('24h')}
-                                    className={`flex-1 py-4 px-6 rounded-xl transition-all border-2 font-bold ${timeFormat === '24h'
-                                        ? 'border-primary text-foreground'
-                                        : 'border-transparent bg-secondary text-muted-foreground'
-                                        }`}
-                                >
-                                    24 Hours
-                                </button>
-                                <button
-                                    onClick={() => setTimeFormat('12h')}
-                                    className={`flex-1 py-4 px-6 rounded-xl transition-all border-2 font-bold ${timeFormat === '12h'
+                                    onClick={() => setTimeFormat('12')}
+                                    className={`cursor-pointer flex-1 py-4 px-6 rounded-xl transition-all border-2 font-bold ${timeFormat === '12'
                                         ? 'border-primary text-foreground'
                                         : 'border-transparent bg-secondary text-muted-foreground'
                                         }`}
                                 >
                                     12 Hours
                                 </button>
+                                <button
+                                    onClick={() => setTimeFormat('24')}
+                                    className={`cursor-pointer flex-1 py-4 px-6 rounded-xl transition-all border-2 font-bold ${timeFormat === '24'
+                                        ? 'border-primary text-foreground'
+                                        : 'border-transparent bg-secondary text-muted-foreground'
+                                        }`}
+                                >
+                                    24 Hours
+                                </button>
                             </div>
 
                             <div className="pt-8">
                                 <Button
+                                    disabled={disabledButton}
                                     onClick={() => {
                                         setTheme("first");
                                         setLight();
+                                        setTimeFormat("12");
                                     }}
                                     className="transition-none w-full text-white bg-primary hover:opacity-90 py-7 rounded-xl text-lg font-bold shadow-lg shadow-primary/20">
                                     Reset Default
@@ -67,23 +79,16 @@ const Settings = () => {
                             <h3 className="font-bold text-foreground text-lg">Theme</h3>
                             <div className="grid grid-cols-3 gap-4">
                                 {themes.map((color, index) => {
-                                    const localColorName: ThemeType = color;
-                                    const active = localColorName === theme;
+                                    const active = color === theme;
                                     return (
                                         <button
                                             onClick={() => {
-                                                setTheme(localColorName);
+                                                setTheme(color);
                                             }}
                                             key={index}
                                             className={`
-                                                ${color === "first" ? "bg-first" :
-                                                    color === "second" ? "bg-second" :
-                                                        color === "third" ? "bg-third" :
-                                                            color === "fourth" ? "bg-fourth" :
-                                                                color === "fifth" ? "bg-fifth" :
-                                                                    "bg-sixth"
-                                                }
-                                                ${active ? 'opacity-100' : 'opacity-50'} aspect-square rounded-lg cursor-pointer hover:scale-105 transition-transform`}
+                                                ${colors[color]}
+                                                ${active ? 'opacity-100' : 'opacity-20'} aspect-square rounded-lg cursor-pointer hover:scale-105 transition-transform`}
                                         />
                                     );
                                 })}

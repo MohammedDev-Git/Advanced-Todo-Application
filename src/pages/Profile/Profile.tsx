@@ -1,52 +1,55 @@
-import { InfoCard } from "@/components/Profile/InfoCard"
-import { ProjectsSection } from "@/components/Profile/ProjectsSection"
-import { MapPin, Clock, Tag, PenLine } from "lucide-react"
-
+import { InfoCard } from "@/components/Profile/InfoCard";
+import { ProjectsSection } from "@/components/Profile/ProjectsSection";
+import { selectMembers } from "@/features/members/membersSlice";
+import { Clock, Tag, PenLine } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { format, formatDistanceToNowStrict } from "date-fns";
 
 export default function Profile() {
+
+    const { id } = useParams();
+
+    const members = useSelector(selectMembers);
+
+    const member = members.find(m => m.id === id);
+
+    const createDate = format(member?.createdAt || new Date(), "dd MMM yyyy");
+    const createExactDate = format(member?.createdAt || new Date(), "dd MMM yyyy, hh:mm a");
+    const lastOnline = formatDistanceToNowStrict(member?.createdAt || new Date(), { addSuffix: true });
+
     return (
         <div className="flex flex-col gap-8 p-0 animate-page max-w-7xl mx-auto w-full">
             {/* Header Section */}
             <div className="relative w-full rounded-3xl overflow-hidden p-6 md:p-10 min-h-75 flex flex-col justify-end bg-linear-to-br from-primary/70 via-primary/50 to-primary/20">
                 {/* Top Actions (optional placeholder for aesthetics, assumed from context) */}
 
-                <div className="flex flex-col lg:flex-row justify-between items-start md:items-center lg:items-end gap-6 z-10">
-                    {/* Left: Avatar & Title */}
+                <div className="flex flex-col justify-between items-start md:items-center gap-6 z-10">
+                    {/* Avatar & Title */}
                     <div className="flex items-center gap-5">
                         <div className="relative group">
-                            <div className="h-20 w-20 rounded-full bg-[#1c1c1c] flex items-center justify-center shadow-xl border-2 border-white/10">
-                                {/* Logo Placeholder */}
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#ff5c5c]">
-                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
-                            {/* Pin Icon */}
-                            <div className="absolute -top-1 -right-1 bg-black/40 backdrop-blur-md p-1.5 rounded-full border border-white/20 text-white shadow-sm">
-                                <MapPin size={12} fill="white" />
-                            </div>
+                            <img src={member?.avatar} alt={member?.personalDetails?.name?.[0]} className="w-18 rounded-full" />
                         </div>
 
                         <div className="flex flex-col gap-1 text-white">
-                            <h1 className="text-3xl font-bold tracking-tight text-black/80 dark:text-white">Cloth</h1>
-                            <p className=" font-medium text-sm text-black/80 dark:text-white">Small and Consices headline</p>
+                            <h2 className="text-3xl font-bold tracking-tight text-black/80 dark:text-white">{member?.personalDetails.name}</h2>
+                            <p className=" font-medium text-sm text-black/80 dark:text-white">{member?.personalDetails.role}</p>
                         </div>
                     </div>
 
-                    {/* Right: Stats */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 md:gap-12 text-white/90 w-full md:w-auto mt-4 md:mt-0">
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 md:gap-12 text-white/90 w-full md:w-auto mt-4 md:mt-0 items-center">
                         <div className="flex flex-col gap-1">
                             <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white mix-blend-overlay">Created</span>
-                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">Mar 23, 10:34 PM</span>
+                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">{createDate}</span>
                         </div>
                         <div className="flex flex-col gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white  mix-blend-overlay">Deadline</span>
-                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">Jun 02, 04:01 PM</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white  mix-blend-overlay">Closest Deadline</span>
+                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">02 Jun, 04:01 PM</span>
                         </div>
                         <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white  mix-blend-overlay">Tracked Time</span>
-                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">10H 32M</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-black/80 dark:text-white  mix-blend-overlay">online status</span>
+                            <span className="font-semibold text-sm sm:text-base text-black/80 dark:text-white">{lastOnline === "0 seconds ago" ? "Online" : lastOnline}</span>
                         </div>
                     </div>
                 </div>
@@ -63,7 +66,7 @@ export default function Profile() {
                             <Clock className="w-5 h-5 opacity-70" />
                             <span className="font-medium">Created At</span>
                         </div>
-                        <span className="text-foreground/80 font-medium">May, 15 2022 14:23 PM</span>
+                        <span className="text-foreground/80 font-medium">{createExactDate}</span>
                     </div>
 
                     {/* Tags */}
@@ -74,9 +77,12 @@ export default function Profile() {
                         </div>
 
                         <div className="flex flex-wrap gap-2  justify-start lg:justify-start">
-                            <span className="px-3 py-1 rounded-lg bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300 text-xs font-bold">Profitable</span>
-                            <span className="px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300 text-xs font-bold">Ai</span>
-                            <span className="px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs font-bold">1 Person</span>
+                            {
+                                member?.skillsAndSocials?.stackAndLinks?.stack.map((tech, idx) => (
+                                    idx < 3 &&
+                                    <span key={idx} className="px-3 py-1 rounded-lg bg-primary text-white text-xs font-bold">{tech}</span>
+                                ))
+                            }
                         </div>
                     </div>
 
@@ -86,7 +92,7 @@ export default function Profile() {
                             <Clock className="w-5 h-5 opacity-70" />
                             <span className="font-medium">Email</span>
                         </div>
-                        <span className="text-foreground/80 font-medium">ss@gmail.com</span>
+                        <span className="text-foreground/80 font-medium">{member?.personalDetails?.email}</span>
                     </div>
 
                     {/* Phone */}
@@ -95,7 +101,7 @@ export default function Profile() {
                             <Clock className="w-5 h-5 opacity-70" />
                             <span className="font-medium">phone</span>
                         </div>
-                        <span className="text-foreground/80 font-medium">9999999</span>
+                        <span className="text-foreground/80 font-medium">{member?.personalDetails?.phone || "Not Included"}</span>
                     </div>
 
                     {/* Rating */}
@@ -104,36 +110,36 @@ export default function Profile() {
                             <Clock className="w-5 h-5 opacity-70" />
                             <span className="font-medium">rating</span>
                         </div>
-                        <span className="text-foreground/80 font-medium">sssss</span>
+                        <span className="text-foreground/80 font-medium">{member?.rating?.avgRating?.toFixed(1) || "Not rated"}</span>
                     </div>
                 </div>
 
                 {/* Right Column: Description */}
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-foreground">Description</h3>
+                        <h3 className="text-lg font-semibold text-foreground">Bio</h3>
                     </div>
                     <div className="relative group">
                         <p className="text-muted-foreground leading-relaxed text-[15px]">
-                            TaskFlow is an intuitive task management system designed to help teams collaborate and manage their projects with ease. It offers powerful features such as task tracking, project organization, scheduling, and communication tools to keep teams organized and on top of their projects.
+                            {member?.description?.text || "No Bio provided."}
+                            <button className="ml-2 inline-flex items-center gap-2 mt-2 text-foreground/80 hover:text-foreground transition-colors font-medium">
+                                <PenLine className="w-4 h-4" />
+                            </button>
                         </p>
-                        <button className="inline-flex items-center gap-2 mt-2 text-foreground/80 hover:text-foreground transition-colors font-medium">
-                            <PenLine className="w-4 h-4" />
-                        </button>
                     </div>
                 </div>
             </div>
 
             {/* Projects And Skills */}
-            <div className="min-h-screen">
+            <div>
                 <div className="mx-auto flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6 items-start">
 
                     <div className="w-full lg:col-span-8">
-                        <ProjectsSection />
+                        <ProjectsSection member={member} />
                     </div>
 
                     <div className="w-full lg:col-span-4 lg:sticky top-30">
-                        <InfoCard />
+                        <InfoCard member={member}/>
                     </div>
 
                 </div>

@@ -3,10 +3,10 @@ import LanguageInputs from "@/components/Members/MemberModal/LanguageInputs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addMember, addTempLink, addTempStack, removeTempLink, removeTempStack, selectLanguages, selectTempLinks, selectTempStack, updateTempLink, updateTempStack } from "@/features/members/membersSlice"
+import { addMember, addTempLink, addTempStack, removeTempLink, removeTempStack, selectLanguages, selectTempLinks,  selectTempStack, updateTempLink, updateTempStack } from "@/features/members/membersSlice"
 import { skillsSocialsSchema } from "@/features/members/schemas/skillsSocialsSchema"
 import { useError } from "@/hooks/useError"
-import type { SkillsAndSocialsError } from "@/types"
+import type { LanguageObject, SkillsAndSocialsError } from "@/types"
 import { Plus, Share2, X } from "lucide-react"
 import { forwardRef, useImperativeHandle, useRef, useState, type Ref } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -128,7 +128,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
 
         linksLengthError.setErrorMsg("");
 
-        const cleanedTempLanguages = tempLanguages.filter((language) => {
+        const cleanedTempLanguages = tempLanguages.filter((language: LanguageObject) => {
             return language.lang !== "" && language.level !== "";
         })
 
@@ -176,7 +176,6 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
             }
         }
 
-
         const fail = !validationResult.success || sentLangs.length < 1 || emptyStack;
 
         if (fail) {
@@ -186,7 +185,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
             return false;
         }
 
-        const cleanedLinks = tempSkillsAndSocials.tempStackAndLinks.tempLinks.filter((link, idx) => {
+        const cleanedLinks = tempSkillsAndSocials.tempStackAndLinks.tempLinks.filter((link:string, idx:number) => {
             if (idx !== 0) {
                 return link !== ""
             }
@@ -202,11 +201,12 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
         }
 
         dispatch(addMember(cleanedData));
+        
 
         return true;
 
     }
-    
+
     useImperativeHandle(ref, () => ({
         handleStepFour,
     }))

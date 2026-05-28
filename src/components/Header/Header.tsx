@@ -1,6 +1,7 @@
 import { Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import TimeDisplay from "@/components/Header/TimeDisplay"
 
 export function Header() {
     return (
@@ -8,6 +9,7 @@ export function Header() {
             <div>
                 <h1 className="text-2xl font-bold text-foreground tracking-tight">Hi, Skylar Dias</h1>
                 <p className="text-muted-foreground text-sm mt-1">Let's finish your task today!</p>
+                <TimeDisplay />
             </div>
             <div className="flex items-center gap-3">
                 <Button size="icon-lg" variant="ghost" className="rounded-full relative">

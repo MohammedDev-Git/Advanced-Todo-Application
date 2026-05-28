@@ -84,7 +84,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                     e.preventDefault();
                     playModalRefAnimation();
                 }}
-                className={`w-full max-w-[300px] md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 p-2 md:p-6`}>
+                className={`w-full max-w-75 md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 p-2 md:p-6`}>
                 <div className="space-y-2 px-2 md:px-6">
                     <div className="flex justify-between text-xs font-medium text-muted-foreground">
                         <span>Step {progress} of 4</span>

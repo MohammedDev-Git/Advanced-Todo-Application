@@ -13,7 +13,7 @@ const RecentMembersCards = () => {
                 {members.map((member, idx) => (
                     <div key={idx} className="relative pt-4">
                         <div
-                            className="bg-white dark:bg-card prism-shape p-6 pt-10 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
+                            className="bg-white dark:bg-card prism-shape p-6 pt-10 shadow-sm border-none hover:shadow-md transition-shadow cursor-pointer">
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-3">
                                     <div className={`w-9 h-9 ${member.color} rounded-lg flex items-center justify-center shadow-inner`}>

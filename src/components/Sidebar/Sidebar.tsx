@@ -10,7 +10,7 @@ export function Sidebar({ className }: { className?: string }) {
 
     const navItems = [
         { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-        { icon: BookOpen, label: "Projects", path: "/projects" },
+        { icon: BookOpen, label: "Tasks", path: "/tasks" },
         { icon: Users, label: "Members", path: "/members" },
         { icon: MessageSquare, label: "Profile", path: "/profile" },
         { icon: Settings, label: "Settings", path: "/settings" },

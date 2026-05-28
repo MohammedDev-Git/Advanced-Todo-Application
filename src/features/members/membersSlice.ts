@@ -13,6 +13,7 @@ import type { updateLinkProps } from "@/components/Members/MemberModal/SkillsAnd
 
 const initialState: MembersState = {
     members: [],
+    storedEmails: [],
     form: {
         tempProjects: [
             {
@@ -53,9 +54,11 @@ const initialState: MembersState = {
             }
         },
         rating: {
-            avgRating: 0,
+            avgRating: null,
             ratedBy: [],
         },
+        avatar: "",
+        createdAt: new Date(),
     },
 }
 
@@ -74,16 +77,94 @@ const membersSlice = createSlice({
                 // fill the skills and socials object
                 const newSkillsAndSocials = { ...action.payload };
                 state.tempMember.skillsAndSocials = { ...newSkillsAndSocials };
+                state.tempMember.id = nanoid();
 
                 // fill the projects object
                 const projects = state.form.tempProjects;
                 state.tempMember.projects = [...projects];
+                state.tempMember.avatar = `/assets/members/member${((state.members.length) % 9) + 1}.png`;
+                state.tempMember.createdAt = new Date();
             }
             fillMemberData();
 
-            // add an actual member
-            const newMember = {...state.tempMember};
+            const email = state.tempMember.personalDetails.email;
+            if (email) {
+                state.storedEmails.push(email);
+            }
+
+            // add an actual member to fake database
+            const newMember = { ...state.tempMember };
             state.members.push(newMember);
+        },
+        deleteMember: (state: MembersState, action: PayloadAction<string>) => {
+            const id = action.payload;
+            if (!id) return;
+            const memberIdx = state.members.findIndex((mem) => mem.id === id);
+            state.members.splice(memberIdx, 1);
+            if (memberIdx !== -1) {
+                const email = state.members[memberIdx].personalDetails?.email;
+                const emailIdx = state.storedEmails.findIndex((em) => em === email);
+                if (emailIdx !== -1) {
+                    state.storedEmails.splice(emailIdx, 1);
+                }
+            }
+        },
+        editEmail: (state: MembersState, action: PayloadAction<{ oldEmail: string, newEmail: string }>) => {
+            const { oldEmail, newEmail } = action.payload;
+            const emailIdx = state.storedEmails.findIndex((em) => em === oldEmail);
+            if (emailIdx !== -1) {
+                state.storedEmails[emailIdx] = newEmail;
+            }
+        },
+        resetAllTemps: (state: MembersState) => {
+            const newForm = {
+                tempProjects: [
+                    {
+                        id: nanoid(),
+                        category: [""],
+                        title: "",
+                        description: "",
+                        sourceCode: "",
+                        liveCode: "",
+                        errors: null,
+                    }
+                ],
+                tempSkillsAndSocials: {
+                    tempLanguages: [{ lang: "", level: "", id: nanoid() }],
+                    tempStackAndLinks: {
+                        tempStack: [""],
+                        tempLinks: [""],
+                    }
+                }
+            }
+            const newTempMember = {
+                id: nanoid(),
+                personalDetails: {
+                    name: "",
+                    role: "",
+                    email: "",
+                    phone: "",
+                },
+                description: {
+                    text: "",
+                },
+                projects: [],
+                skillsAndSocials: {
+                    languages: [],
+                    stackAndLinks: {
+                        stack: [],
+                        social: [],
+                    }
+                },
+                rating: {
+                    avgRating: null,
+                    ratedBy: [],
+                },
+                avatar: "",
+                createdAt: new Date(),
+            }
+            state.form = { ...newForm };
+            state.tempMember = { ...newTempMember };
         },
         addTempProject: (state: MembersState) => {
             const emptyProject = { ...initialState.form.tempProjects[0] };
@@ -174,10 +255,6 @@ const membersSlice = createSlice({
         addTempMemberProjects: (state: MembersState, action: PayloadAction<MemberProject[]>) => {
             state.tempMember.projects = [...action.payload]
         },
-        resetAllTemps: (state: MembersState) => {
-            state.form = { ...initialState.form };
-            state.tempMember = { ...initialState.tempMember };
-        },
         resetAllErrors: (state: MembersState) => {
             state.form.tempProjects.map((project) => {
                 project.errors = null;
@@ -245,6 +322,8 @@ const membersSlice = createSlice({
 
 export const {
     addMember,
+    deleteMember,
+    editEmail,
     addTempProject,
     removeTempProject,
     removeAllTempProjects,
@@ -275,6 +354,7 @@ export const {
     removeTempLink,
     updateTempLink,
 } = membersSlice.actions;
+export const selectStoredEmails = (state: RootState) => state.members.storedEmails;
 export const selectMembers = (state: RootState) => state.members.members;
 export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;
 export const selectTempStack = (state: RootState) => state.members.form.tempSkillsAndSocials.tempStackAndLinks.tempStack;

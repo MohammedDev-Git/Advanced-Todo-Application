@@ -115,7 +115,7 @@ function VideoPlayer() {
 }
 
 /* ─────────────────────────── Page ─────────────────────────── */
-const Project = () => {
+const Task = () => {
     return (
         <div className="animate-page space-y-8">
             {/* Search bar */}
@@ -211,4 +211,4 @@ const Project = () => {
     );
 };
 
-export default Project;
+export default Task;

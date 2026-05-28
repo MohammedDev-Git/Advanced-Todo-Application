@@ -1,39 +1,52 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Star, FileText } from "lucide-react";
+import type { MemberObject } from "@/types";
+import { Star, FileText, X } from "lucide-react";
+import { useNavigate } from "react-router";
 
 type MemberCardProps = {
-    member: {
-        name?: string;
-        role?: string;
-        bio?: string;
-        projects?: number;
-        rating?: number;
-        image?: string;
-    };
+    member: MemberObject;
+    setDeleteOpen: (open: boolean) => void;
+    setDeletedId: (id: string) => void;
 }
 
-export function MemberCard({ member }: MemberCardProps) {
+export function MemberCard({ member, setDeleteOpen, setDeletedId }: MemberCardProps) {
+
+    const navigate = useNavigate();
+
     return (
-        <Card className="member-card-shape border-none bg-white dark:bg-card p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-lg">
+        <Card className="overflow-hidden group member-card-shape relative border-none bg-white dark:bg-card p-6">
+
+            <div className="deleteMember opacity-30 group-hover:opacity-100 transition-all bg-primary absolute top-0 left-0 size-6 rounded-br-lg rounded-tl-sm cursor-pointer flex justify-center items-center">
+                <X
+                    onClick={() => {
+                        setDeleteOpen(true);
+                        setDeletedId(member.id);
+                    }}
+                    className="size-5 text-white" />
+            </div>
+
             <div className="flex flex-col gap-6">
                 {/* Header: Avatar + Info + Button */}
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
                         <Avatar className="h-14 w-14 ring-2 ring-slate-100 dark:ring-slate-700 ring-offset-2">
-                            <AvatarImage src={member.image} alt={member.name} />
-                            <AvatarFallback>{member?.name?.[0]}</AvatarFallback>
+                            <AvatarImage src={member.avatar} alt={member?.personalDetails?.name?.[0]} />
+                            <AvatarFallback>{member?.personalDetails?.name?.[0]}</AvatarFallback>
                         </Avatar>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200">{member.name}</h3>
-                            <p className="text-sm font-medium text-slate-400 dark:text-slate-500">{member.role}</p>
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-200">{member?.personalDetails?.name}</h3>
+                            <p className="text-sm font-medium text-slate-400 dark:text-slate-500">{member?.personalDetails?.role}</p>
                         </div>
                     </div>
 
                     <Button
                         variant="ghost"
                         className="text-primary font-bold hover:bg-primary/50 px-2"
+                        onClick={() => {
+                            navigate(`/profile/${member.id}`);
+                        }}
                     >
                         View Profile
                     </Button>
@@ -41,7 +54,7 @@ export function MemberCard({ member }: MemberCardProps) {
 
                 {/* Bio Section */}
                 <p className="text-slate-400 dark:text-slate-500 text-sm leading-relaxed line-clamp-2">
-                    {member.bio}
+                    {member?.description?.text && member.description?.text.length > 20 ? member.description?.text.slice(0, 20) + "..." : member?.description.text || "No Bio"}
                 </p>
 
                 {/* Footer Stats */}
@@ -50,17 +63,18 @@ export function MemberCard({ member }: MemberCardProps) {
                         <div className="bg-slate-100 dark:bg-slate-700 p-2 rounded-xl">
                             <FileText className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                         </div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member.projects} Projects</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member?.projects?.length} Projects</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                         <div className="bg-amber-50 p-2 rounded-xl">
                             <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
                         </div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member.rating}</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member?.rating?.avgRating || "No Rating"}</span>
                     </div>
                 </div>
             </div>
+            <div className="glow transition-all group-hover:shadow-[0_0_320px_50px] group-hover:shadow-primary bg-transparent absolute right-0 bottom-0"></div>
         </Card>
     );
 }

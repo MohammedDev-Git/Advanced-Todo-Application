@@ -1,7 +1,7 @@
 import { InputError } from "@/components/custom/InputError"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addTempPersonalDetails, selectPersonalDetails } from "@/features/members/membersSlice"
+import { addTempPersonalDetails, selectPersonalDetails, selectStoredEmails } from "@/features/members/membersSlice"
 import { personalDetailsSchema } from "@/features/members/schemas/personalDetailsSchema"
 import { useError } from "@/hooks/useError"
 import { useInput } from "@/hooks/useInput"
@@ -29,6 +29,8 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
     const roleError = useError("");
     const emailError = useError("");
     const phoneError = useError("");
+
+    const storedEmails = useSelector(selectStoredEmails);
 
     const [renderKey, setRenderKey] = useState<number>(0);
 
@@ -86,15 +88,32 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
 
         const validationResult = personalDetailsSchema.safeParse(personalData);
 
+
+        const duplicatedEmail = storedEmails.some((em:string) => em === personalData.email);
+        if (duplicatedEmail) {
+            setRenderKey(pre => pre + 1);
+            emailError.setErrorMsg("Email already exists");
+            nameError.setErrorMsg("");
+            roleError.setErrorMsg("");
+            phoneError.setErrorMsg("");
+        }
+
         if (!validationResult.success) {
             const error: PersonalDetailsError = validationResult.error.format();
             if (error) {
                 setRenderKey(pre => pre + 1);
                 nameError.setErrorMsg(error.name?._errors[0]);
                 roleError.setErrorMsg(error.role?._errors[0]);
-                emailError.setErrorMsg(error.email?._errors[0]);
+                if (!duplicatedEmail) {
+                    emailError.setErrorMsg(error.email?._errors[0]);
+                }
                 phoneError.setErrorMsg(error.phone?._errors[0]);
             }
+
+            return false;
+        }
+
+        if (duplicatedEmail) {
             return false;
         }
 

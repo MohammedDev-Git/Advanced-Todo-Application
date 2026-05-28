@@ -55,9 +55,11 @@ export interface MemberObject {
     projects: MemberProject[];
     skillsAndSocials: SkillsAndSocialsObject;
     rating: {
-        avgRating: number,
+        avgRating: number | null,
         ratedBy: RatingObject[],
     },
+    avatar: string;
+    createdAt: Date;
 }
 
 export interface TempMemberProject extends MemberProject {
@@ -102,6 +104,7 @@ export interface TempSkillsAndSocialsObject {
 
 export interface MembersState {
     members: MemberObject[],
+    storedEmails: string[],
     form: {
         tempProjects: TempMemberProject[],
         tempSkillsAndSocials: TempSkillsAndSocialsObject,

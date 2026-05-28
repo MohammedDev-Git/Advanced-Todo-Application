@@ -1,4 +1,5 @@
 import AddMemberModal from '@/components/Members/MemberModal/AddMemberModal';
+import DeleteMemberModal from '@/components/Members/MemberModal/DeleteMemberModal';
 import { MembersList } from '@/components/Members/MembersList';
 import RecentMemberCard from '@/components/Members/RecentMembersCards';
 import { Search, Plus } from 'lucide-react';
@@ -6,7 +7,10 @@ import { useState } from 'react';
 
 export default function Members() {
 
-    const [open, setOpen] = useState<boolean>(false);
+    const [addOpen, setAddOpen] = useState<boolean>(false);
+    const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
+
+    const [deletedId, setDeletedId] = useState<string>("");
 
     return (
         <div className="space-y-12 animate-page">
@@ -24,17 +28,18 @@ export default function Members() {
 
             {/* All Members Section */}
             <section className="space-y-6">
-                <MembersList setOpen={setOpen} />
+                <MembersList setAddOpen={setAddOpen} setDeleteOpen={setDeleteOpen} setDeletedId={setDeletedId} />
             </section>
 
             {/* Floating Action Button */}
             <button
-                onClick={() => setOpen(true)}
+                onClick={() => setAddOpen(true)}
                 className="animate-fade-in cursor-pointer sticky bottom-4 left-4 z-40 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center">
                 <Plus className="h-6 w-6 text-white" />
             </button>
 
-            <AddMemberModal open={open} onOpenChange={setOpen} />
+            <AddMemberModal open={addOpen} onOpenChange={setAddOpen} />
+            <DeleteMemberModal open={deleteOpen} onOpenChange={setDeleteOpen} deletedId={deletedId} setDeletedId={setDeletedId} />
 
         </div>
     );

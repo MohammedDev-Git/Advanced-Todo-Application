@@ -12,6 +12,7 @@ import { PersistGate } from 'redux-persist/integration/react'
 // Context API
 import ModeProvider from '@/contexts/mode/ModeProvider'
 import ThemeProvider from './contexts/theme/ThemeProvider'
+import TimeProvider from './contexts/time/TimeProvider'
 
 createRoot(document.getElementById('root')!).render(
 
@@ -19,9 +20,11 @@ createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <ModeProvider>
         <ThemeProvider>
-          <PersistGate loading={null} persistor={persistor}>
-            <RouterProvider router={router} />
-          </PersistGate>
+          <TimeProvider>
+            <PersistGate loading={null} persistor={persistor}>
+              <RouterProvider router={router} />
+            </PersistGate>
+          </TimeProvider>
         </ThemeProvider>
       </ModeProvider>
     </Provider>

@@ -1,12 +1,12 @@
 import { createBrowserRouter } from "react-router";
 import RootLayout from "@/layouts/RootLayout";
 import Dashboard from "@/pages/Dashboard/Dashboard";
-import Projects from "@/pages/Projects/Projects";
+import Tasks from "@/pages/Tasks/Tasks";
 import Members from "@/pages/Members/Members";
 import Settings from "@/pages/Settings/Settings";
 import Profile from "@/pages/Profile/Profile";
 import NotFound from "@/pages/NotFound/NotFound";
-import Project from "@/pages/Projects/Project/Project";
+import Task from "@/pages/Tasks/Task/Task";
 
 export const router = createBrowserRouter([
     {
@@ -15,16 +15,14 @@ export const router = createBrowserRouter([
         children: [
             { index: true, element: <Dashboard /> },
             {
-                path: "projects",
+                path: "tasks",
                 children: [
-                    { index: true, element: <Projects /> },
-                    { path: ":id", element: <Project /> },
+                    { index: true, element: <Tasks /> },
+                    { path: ":id", element: <Task /> },
                 ]
-
             },
-
             { path: "members", element: <Members /> },
-            { path: "profile", element: <Profile /> },
+            { path: "profile/:id", element: <Profile /> },
             { path: "settings", element: <Settings /> },
         ]
     },

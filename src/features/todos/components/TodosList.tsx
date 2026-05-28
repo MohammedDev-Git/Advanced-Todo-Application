@@ -15,12 +15,12 @@ import {
 import { Ellipsis } from "lucide-react"
 import type { todoObject } from "@/types";
 
-import sadSwing from "@/assets/lottie/SadSwing.json";
-import sadSwingGreen from "@/assets/lottie/SadSwingGreen.json";
-import sadSwingOrange from "@/assets/lottie/SadSwingOrange.json";
-import sadSwingPink from "@/assets/lottie/SadSwingPink.json";
-import sadSwingRed from "@/assets/lottie/SadSwingRed.json";
-import sadSwingCyan from "@/assets/lottie/SadSwingCyan.json";
+import sadSwing from "@/assets/lottie/sadSwing.json";
+import sadSwingGreen from "@/assets/lottie/sadSwingGreen.json";
+import sadSwingOrange from "@/assets/lottie/sadSwingOrange.json";
+import sadSwingPink from "@/assets/lottie/sadSwingPink.json";
+import sadSwingRed from "@/assets/lottie/sadSwingRed.json";
+import sadSwingCyan from "@/assets/lottie/sadSwingCyan.json";
 import NoData from "@/components/custom/NoData";
 import { useThemeContext } from "@/contexts/theme/ThemeProvider";
 
@@ -49,6 +49,15 @@ const TodosList = ({
     ]
 
     const { theme } = useThemeContext();
+
+    const lottieSrc = {
+        first: sadSwing,
+        second: sadSwingGreen,
+        third: sadSwingOrange,
+        fourth: sadSwingPink,
+        fifth: sadSwingRed,
+        sixth: sadSwingCyan
+    }
 
     return (
         <>
@@ -105,7 +114,7 @@ const TodosList = ({
                     :
                     <NoData
                         setAddOpen={setAddTodoOpen}
-                        animationData={theme === "first" ? sadSwing : theme === "second" ? sadSwingGreen : theme === "third" ? sadSwingOrange : theme === "fourth" ? sadSwingPink : theme === "fifth" ? sadSwingRed : sadSwingCyan}
+                        animationData={lottieSrc[theme]}
                         message="No Todos yet? start grinding!"
                     />
             }

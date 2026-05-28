@@ -3,20 +3,21 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 interface ModeContextType {
     setLight: () => void;
     setDark: () => void;
+    mode: string;
 }
 
 const ModeContext = createContext<ModeContextType | undefined>(undefined);
 
 const ModeProvider = ({ children }: { children: ReactNode }) => {
     const [mode, setMode] = useState<string>(() => {
-        return localStorage.getItem("nuegus-mode") || "light";
+        return localStorage.getItem("nuegas-mode") || "light";
     })
 
     useEffect(() => {
         const root = document.documentElement;
         root.classList.remove("dark");
         if (mode === "dark") root.classList.add("dark");
-        localStorage.setItem("nuegus-mode", mode);
+        localStorage.setItem("nuegas-mode", mode);
     }, [mode])
 
     const setLight = () => {
@@ -28,7 +29,7 @@ const ModeProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <ModeContext.Provider value={{ setDark, setLight }}>
+        <ModeContext.Provider value={{ mode, setDark, setLight }}>
             {children}
         </ModeContext.Provider>
     )

@@ -28,7 +28,7 @@ const RootLayout = () => {
 
                 {/* Main Content Area - Flex Grow */}
                 <div ref={scrollContainerRef} className="flex-1 transition-all flex flex-col min-w-0 bg-gray-50/50 dark:bg-gray-900/50 overflow-y-auto scrollbar-hide">
-                    <header className="shrink-0 px-8 bg-gray-50/50 transition-all dark:bg-gray-900/50 sticky top-0 z-50 backdrop-blur-sm">
+                    <header className="shrink-0 px-8 bg-background/20 sticky top-0 z-50 backdrop-blur-sm">
                         <Header />
                     </header>
 

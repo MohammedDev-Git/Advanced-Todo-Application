@@ -5,18 +5,21 @@ import {
     CarouselPrevious,
     CarouselNext
 } from "@/components/ui/carousel"
-import { MemberCard } from "./MemberCard"
+import { MemberCard } from "@/components/Members/MemberCard"
 import { useSelector } from "react-redux";
 import { selectMembers } from "@/features/members/membersSlice";
 
 import people from "@/assets/images/people.png";
+import type { MemberObject } from "@/types";
 
 interface MembersListProps {
     title?: string;
-    setOpen: (open: boolean) => void;
+    setAddOpen: (open: boolean) => void;
+    setDeleteOpen: (open: boolean) => void;
+    setDeletedId: (id: string) => void;
 }
 
-export function MembersList({ title = "Members", setOpen }: MembersListProps) {
+export function MembersList({ title = "Members", setAddOpen, setDeleteOpen, setDeletedId }: MembersListProps) {
 
     const members = useSelector(selectMembers);
 
@@ -41,17 +44,13 @@ export function MembersList({ title = "Members", setOpen }: MembersListProps) {
                         </div>
 
                         <CarouselContent className="-ml-6">
-                            {members.map((person, idx) => {
+                            {members.map((person:MemberObject) => {
                                 return (
-                                    <CarouselItem key={idx} className="pl-6 lg:basis-1/2">
-                                        <MemberCard member={{
-                                            name: person.personalDetails.name,
-                                            role: person.personalDetails.role,
-                                            bio: person.description.text || "No Description",
-                                            projects: person.projects.length,
-                                            rating: person.rating.avgRating,
-                                            image: "https://github.com/shadcn.png"
-                                        }}
+                                    <CarouselItem key={person.id} className="pl-6 lg:basis-1/2">
+                                        <MemberCard
+                                            member={{ ...person }}
+                                            setDeleteOpen={setDeleteOpen}
+                                            setDeletedId={setDeletedId}
                                         />
                                     </CarouselItem>
                                 )
@@ -61,12 +60,12 @@ export function MembersList({ title = "Members", setOpen }: MembersListProps) {
                     :
                     <div
                         onClick={() => {
-                            setOpen(true);
+                            setAddOpen(true);
                         }}
                         className="cursor-pointer w-full h-48 relative overflow-hidden flex items-center justify-center bg-primary/10 rounded-lg border-primary border-2 border-dotted">
-                        <img src={people} alt="No Members" className="w-full opacity-50" />
-                        <div className="flex flex-col gap-2 justify-center items-center bg-background/40 p-2 rounded-2xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                            <p className="text-primary text-xl font-bold">No Members? Start Adding!</p>
+                        <img src={people} alt="No Members" className="w-full opacity-20" />
+                        <div className="flex flex-col gap-2 justify-center items-center p-2 rounded-2xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <p className="text-primary text-center text-sm md:text-xl font-bold">No Members? Start Adding!</p>
                         </div>
                     </div>
             }

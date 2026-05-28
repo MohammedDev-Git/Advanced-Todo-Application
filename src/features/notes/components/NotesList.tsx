@@ -43,6 +43,15 @@ const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNo
         { action: "delete", text: "Delete", icon: <TrashIcon /> }
     ]
 
+    const noDataSrc = {
+        first: sadNote,
+        second: sadNoteGreen,
+        third: sadNoteOrange,
+        fourth: sadNotePink,
+        fifth: sadNoteRed,
+        sixth: sadNoteCyan
+    }
+
     return (
         <>
             {
@@ -100,15 +109,7 @@ const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNo
                     ))
                     :
                     <NoData
-                        src={
-                            theme === "first" ? sadNote :
-                                theme === "second" ? sadNoteGreen :
-                                    theme === "third" ? sadNoteOrange :
-                                        theme === "fourth" ? sadNotePink :
-                                            theme === "fifth" ? sadNoteRed :
-                                                sadNoteCyan
-
-                        }
+                        src={noDataSrc[theme]}
                         message="No Notes? put your thoughts!"
                         image={true}
                         setAddOpen={setAddNoteOpen}

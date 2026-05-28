@@ -2,7 +2,7 @@ import { Search, MoreHorizontal, Plus } from 'lucide-react';
 import { ProjectsList } from '@/components/Dashboard/ProjectsList';
 import ProgressModal from '@/components/projects/ProgressModal';
 
-export default function Projects() {
+export default function Tasks() {
 
     const folders = [
         { label: 'Team projects', color: 'bg-pink-500' },
@@ -25,7 +25,7 @@ export default function Projects() {
                     {folders.map((folder, i) => (
                         <div key={i} className="relative pt-4">
                             <div
-                                className="bg-white dark:bg-card folder-shape p-6 pt-10 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
+                                className="bg-white dark:bg-card folder-shape p-6 pt-10 shadow-sm dark:border-slate-700 hover:shadow-md transition-shadow cursor-pointer">
                                 <div className="flex items-center justify-between mb-8">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-9 h-9 ${folder.color} rounded-lg flex items-center justify-center shadow-inner`}>
