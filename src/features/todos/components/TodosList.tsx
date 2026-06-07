@@ -115,7 +115,7 @@ const TodosList = ({
                     <NoData
                         setAddOpen={setAddTodoOpen}
                         animationData={lottieSrc[theme]}
-                        message="No Todos yet? start grinding!"
+                        message="No Todos yet? start grinding."
                     />
             }
         </>

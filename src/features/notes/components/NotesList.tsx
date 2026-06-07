@@ -110,7 +110,7 @@ const NotesList = ({ setAddNoteOpen, setEditNoteOpen, setEditedNote, setDeleteNo
                     :
                     <NoData
                         src={noDataSrc[theme]}
-                        message="No Notes? put your thoughts!"
+                        message="No Notes? put your thoughts."
                         image={true}
                         setAddOpen={setAddNoteOpen}
                     />

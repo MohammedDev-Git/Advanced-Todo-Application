@@ -2,7 +2,7 @@ import type z from "zod";
 import type { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
 import type { personalDetailsSchema } from "@/features/members/schemas/personalDetailsSchema";
 import type { projectContributionSchema } from "./features/members/schemas/projectContributionSchema";
-import type { skillsSocialsSchema } from "./features/members/schemas/skillsSocialsSchema";
+import type { skillsSocialsSchema, tempStackSchema } from "./features/members/schemas/skillsSocialsSchema";
 
 export interface todoObject {
     id: string;
@@ -134,6 +134,8 @@ export type PersonalDetailsError = z.inferFormattedError<typeof personalDetailsS
 export type TempProjectError = z.inferFormattedError<typeof projectContributionSchema>;
 
 export type SkillsAndSocialsError = z.inferFormattedError<typeof skillsSocialsSchema>
+
+export type tempStackError = z.inferFormattedError<typeof tempStackSchema>;
 
 export type TempProjectErrorData = {
     error: TempProjectError,

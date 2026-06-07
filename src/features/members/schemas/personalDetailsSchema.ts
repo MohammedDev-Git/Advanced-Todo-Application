@@ -8,6 +8,19 @@ export const personalDetailsSchema = z.object({
 
     // @gmail.com = 10 characters
     // 30 - 10 = 20 characters maximum
-    email: z.email().max(30, "Maximum 20 Characters"),
+    email: z.email().max(30, "Max username 20 chars"),
     phone: z.string().regex(egyptianNumberRegex, "Enter a valid Egyptian number"),
+})
+
+export const roleAndNameSchema = personalDetailsSchema.pick({
+    name: true,
+    role: true,
+})
+
+export const emailSchema = personalDetailsSchema.pick({
+    email: true,
+})
+
+export const phoneSchema = personalDetailsSchema.pick({
+    phone: true,
 })

@@ -109,11 +109,50 @@ const membersSlice = createSlice({
                 }
             }
         },
-        editEmail: (state: MembersState, action: PayloadAction<{ oldEmail: string, newEmail: string }>) => {
-            const { oldEmail, newEmail } = action.payload;
+        editNameAndRole: (state: MembersState, action: PayloadAction<{ id: string | undefined, data: { name: string | undefined, role: string | undefined } }>) => {
+            const { id, data } = action.payload;
+
+            const member = state.members.find((mem) => mem.id === id);
+            if (member) {
+                member.personalDetails.name = data.name;
+                member.personalDetails.role = data.role;
+            }
+        },
+        editDescription: (state: MembersState, action: PayloadAction<{ id: string | undefined, data: { text: string | undefined } }>) => {
+            const { id, data } = action.payload;
+            const member = state.members.find((mem) => mem.id === id);
+            if (member) {
+                member.description.text = data.text;
+            }
+
+        },
+        editEmail: (state: MembersState, action: PayloadAction<{ id: string | undefined, data: { email: string | undefined } }>) => {
+            const { id, data } = action.payload;
+            if (!id || !data.email) return;
+            const member = state.members.find((mem) => mem.id === id);
+            const oldEmail = member?.personalDetails.email;
+            const newEmail = data.email;
+            if (member) {
+                member.personalDetails.email = newEmail;
+            }
             const emailIdx = state.storedEmails.findIndex((em) => em === oldEmail);
             if (emailIdx !== -1) {
                 state.storedEmails[emailIdx] = newEmail;
+            }
+        },
+        editPhone: (state: MembersState, action: PayloadAction<{ id: string | undefined, data: { phone: string | undefined } }>) => {
+            const { id, data } = action.payload;
+            if (!id) return;
+            const member = state.members.find((mem) => mem.id === id);
+            if (member) {
+                member.personalDetails.phone = data.phone;
+            }
+        },
+        editSkills: (state: MembersState, action: PayloadAction<{ id: string | undefined, tempstack: string[] }>) => {
+            const { id, tempstack } = action.payload;
+            const member = state.members.find((mem) => mem.id === id);
+            if(member) {
+                member.skillsAndSocials.stackAndLinks.stack = tempstack;
             }
         },
         resetAllTemps: (state: MembersState) => {
@@ -323,7 +362,11 @@ const membersSlice = createSlice({
 export const {
     addMember,
     deleteMember,
+    editNameAndRole,
+    editDescription,
     editEmail,
+    editPhone,
+    editSkills,
     addTempProject,
     removeTempProject,
     removeAllTempProjects,
