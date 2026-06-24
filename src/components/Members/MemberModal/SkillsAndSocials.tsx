@@ -3,16 +3,16 @@ import LanguageInputs from "@/components/Members/MemberModal/LanguageInputs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addMember, addTempLink, addTempStack, removeTempLink, removeTempStack, selectLanguages, selectTempLinks,  selectTempStack, updateTempLink, updateTempStack } from "@/features/members/membersSlice"
+import { addMember, addTempLink, addTempStack, removeTempLink, removeTempStack, selectLanguages, selectTempLinks, selectTempStack, updateTempLink, updateTempStack } from "@/features/members/membersSlice"
 import { skillsSocialsSchema } from "@/features/members/schemas/skillsSocialsSchema"
 import { useError } from "@/hooks/useError"
 import type { LanguageObject, SkillsAndSocialsError } from "@/types"
-import { Plus, Share2, X } from "lucide-react"
+import { Link, Plus, X } from "lucide-react"
 import { forwardRef, useImperativeHandle, useRef, useState, type Ref } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 export interface SkillsAndSocialsRef {
-    handleStepFour: () => boolean;
+    handleStep: () => boolean;
 }
 
 export interface updateLinkProps {
@@ -124,7 +124,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
     }
 
     // submit handler
-    const handleStepFour = () => {
+    const handleStep = () => {
 
         linksLengthError.setErrorMsg("");
 
@@ -142,7 +142,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
 
         // custom validation
         const sentLangs = tempSkillsAndSocials.tempLanguages;
-        const cleanedStack = tempSkillsAndSocials.tempStackAndLinks.tempStack.filter((stack) => stack !== "");
+        const cleanedStack = tempSkillsAndSocials.tempStackAndLinks.tempStack.filter((stack:string) => stack !== "");
 
         const emptyStack = cleanedStack.length === 0;
 
@@ -185,7 +185,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
             return false;
         }
 
-        const cleanedLinks = tempSkillsAndSocials.tempStackAndLinks.tempLinks.filter((link:string, idx:number) => {
+        const cleanedLinks = tempSkillsAndSocials.tempStackAndLinks.tempLinks.filter((link: string, idx: number) => {
             if (idx !== 0) {
                 return link !== ""
             }
@@ -201,14 +201,13 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
         }
 
         dispatch(addMember(cleanedData));
-        
 
         return true;
 
     }
 
     useImperativeHandle(ref, () => ({
-        handleStepFour,
+        handleStep,
     }))
 
     return (
@@ -295,7 +294,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
                     tempLinks.map((link, idx) => (
                         <div key={idx} className="relative mt-3">
                             <div className="relative">
-                                <Share2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Link className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     value={link}
                                     onChange={(e) => {
@@ -304,7 +303,7 @@ const SkillsAndSocials = ({ }, ref: Ref<SkillsAndSocialsRef>) => {
                                         clearLinksZodErrors();
                                     }}
 
-                                    placeholder={`https://www.${placeholdersLinksArr[idx]}.com`} className="pl-10 " />
+                                    placeholder={`eg. https://www.${placeholdersLinksArr[idx]}.com`} className="pl-10 " />
                                 <InputError className="mt-2" message={zodError?.tempLinks?.[idx]?._errors[0]} keyErr={errorKey} />
                             </div>
                             {

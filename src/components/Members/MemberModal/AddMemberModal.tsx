@@ -7,10 +7,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ChevronRight, Check, Plus, Trash } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { ModalProps } from "@/types";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addTempProject, removeAllTempProjects, resetAllErrors, resetAllTemps, selectTempProjects } from "@/features/members/membersSlice";
@@ -18,10 +17,15 @@ import PersonalDetails, { type PersonalDetailsRef } from "@/components/Members/M
 import Description, { type DescriptionRef } from "@/components/Members/MemberModal/Description";
 import ProjectsContribution, { type ProjectsContributionRef } from "@/components/Members/MemberModal/ProjectsContribution";
 import SkillsAndSocials, { type SkillsAndSocialsRef } from "@/components/Members/MemberModal/SkillsAndSocials";
-
+import MemberPhoto, { type MemberPhotoRef } from "@/components/Members/MemberModal/MemberPhoto";
 type DivElementType = HTMLDivElement | null;
 
-const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
+interface AddMemberModalProps {
+    setOpen: (open: boolean) => void;
+    open: boolean;
+}
+
+const AddMemberModal = ({ setOpen, open }: AddMemberModalProps) => {
 
     const dispatch = useDispatch();
 
@@ -47,8 +51,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
         if (prevProgress.current === 2 && progress === 3) {
             dispatch(resetAllErrors());
         }
-        if (progress > 4) {
-            onOpenChange?.(false);
+        if (progress > 5) {
+            setOpen(false);
         }
         prevProgress.current = progress;
     }, [progress])
@@ -69,10 +73,16 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
     const personalDetailsRef = useRef<PersonalDetailsRef | null>(null);
     const detailsRef = useRef<DescriptionRef | null>(null);
     const projectsContributionRef = useRef<ProjectsContributionRef | null>(null);
-    const SkillsAndSocialsRef = useRef<SkillsAndSocialsRef | null>(null);
+    const skillsAndSocialsRef = useRef<SkillsAndSocialsRef | null>(null);
+    const memberPhotoRef = useRef<MemberPhotoRef | null>(null);
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="animate-fade-in sticky bottom-4 left-4 z-40 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center">
+                    <Plus className="h-6 w-6 text-white" />
+                </Button>
+            </DialogTrigger>
             <DialogContent
                 ref={modalRef}
                 aria-describedby="member modal"
@@ -87,9 +97,9 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                 className={`w-full max-w-75 md:max-w-xl lg:max-w-2xl shadow-2xl max-h-148 p-2 md:p-6`}>
                 <div className="space-y-2 px-2 md:px-6">
                     <div className="flex justify-between text-xs font-medium text-muted-foreground">
-                        <span>Step {progress} of 4</span>
+                        <span>Step {progress} of 5</span>
                     </div>
-                    <Progress value={progress * (100 / 4)} className="h-2" />
+                    <Progress value={progress * (100 / 5)} className="h-2" />
                 </div>
                 <div className="custom-scrollbar max-h-100 overflow-y-auto">
 
@@ -99,13 +109,14 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                                 <CardTitle className="text-2xl">Add a Member</CardTitle>
                                 <CardDescription>
                                     {progress === 1 && "Personal Details"}
-                                    {progress === 2 && ""}
-                                    {progress === 3 && "Project Contribution"}
-                                    {progress === 4 && "Skills & Socials"}
+                                    {progress === 2 && "Add Personal Photo"}
+                                    {progress === 3 && ""}
+                                    {progress === 4 && "Project Contribution"}
+                                    {progress === 5 && "Skills & Socials"}
                                 </CardDescription>
                             </DialogTitle>
                             {
-                                progress === 3 &&
+                                progress === 4 &&
                                 <div className="flex justify-center items-center gap-2">
                                     {
                                         tempProjects.length > 1 &&
@@ -144,15 +155,18 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         )}
 
                         {progress === 2 && (
+                            <MemberPhoto ref={memberPhotoRef} />
+                        )}
+                        {progress === 3 && (
                             <Description ref={detailsRef} />
                         )}
 
-                        {progress === 3 && (
+                        {progress === 4 && (
                             <ProjectsContribution ref={projectsContributionRef} />
                         )}
 
-                        {progress === 4 && (
-                            <SkillsAndSocials ref={SkillsAndSocialsRef} />
+                        {progress === 5 && (
+                            <SkillsAndSocials ref={skillsAndSocialsRef} />
                         )}
 
                     </CardContent>
@@ -164,7 +178,7 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         if (progress > 1) {
                             setProgress(pre => pre - 1);
                         } else {
-                            onOpenChange?.(false);
+                            setOpen?.(false);
                         }
                     }} variant="ghost">{progress > 1 ? "Previous" : "Cancel"}
                     </Button>
@@ -172,13 +186,15 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         onClick={() => {
 
                             const condition =
-                                (progress === 1 && personalDetailsRef.current?.handleStepOne())
+                                (progress === 1 && personalDetailsRef.current?.handleStep())
                                 ||
-                                (progress === 2 && detailsRef.current?.handleStepTwo())
+                                (progress === 2 && memberPhotoRef.current?.handleStep())
                                 ||
-                                (progress === 3 && projectsContributionRef.current?.handleStepThree())
+                                (progress === 3 && detailsRef.current?.handleStep())
                                 ||
-                                (progress === 4 && SkillsAndSocialsRef.current?.handleStepFour())
+                                (progress === 4 && projectsContributionRef.current?.handleStep())
+                                ||
+                                (progress === 5 && skillsAndSocialsRef.current?.handleStep())
 
                             if (condition) {
                                 setProgress(pre => pre + 1);
@@ -187,8 +203,8 @@ const AddMemberModal = ({ open, onOpenChange }: ModalProps) => {
                         }}
                         className="gap-2 text-white"
                     >
-                        {progress === 4 ? 'Submit' : 'Next Step'}
-                        {progress === 4 ? <Check className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        {progress === 5 ? 'Submit' : 'Next Step'}
+                        {progress === 5 ? <Check className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                     </Button>
                 </CardFooter>
                 <div ref={closeRef} className="absolute right-3 top-3 transition-all rounded-2xl w-6 h-6" />

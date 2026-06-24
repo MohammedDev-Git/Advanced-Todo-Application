@@ -2,7 +2,8 @@ import type z from "zod";
 import type { noteSchema, tempCategoriesSchema } from "@/features/notes/schemas/noteSchema";
 import type { personalDetailsSchema } from "@/features/members/schemas/personalDetailsSchema";
 import type { projectContributionSchema } from "./features/members/schemas/projectContributionSchema";
-import type { skillsSocialsSchema, tempStackSchema } from "./features/members/schemas/skillsSocialsSchema";
+import { tempLinksSchema, type skillsSocialsSchema, type tempStackSchema } from "./features/members/schemas/skillsSocialsSchema";
+import type { taskDetailsSchema } from "./features/tasks/schemas/taskSchema";
 
 export interface todoObject {
     id: string;
@@ -62,17 +63,18 @@ export interface MemberObject {
     createdAt: Date;
 }
 
-export interface TempMemberProject extends MemberProject {
-    errors: TempProjectError | null;
-}
 
 export interface MemberProject {
-    category: string[]
+    category: (string | undefined)[]
     id: string;
-    title: string;
-    description: string;
-    sourceCode: string;
-    liveCode: string;
+    title?: string;
+    description?: string;
+    sourceCode?: string;
+    liveCode?: string;
+}
+
+export interface TempMemberProject extends MemberProject {
+    errors: TempProjectError | null;
 }
 
 export interface LanguageObject {
@@ -137,6 +139,10 @@ export type SkillsAndSocialsError = z.inferFormattedError<typeof skillsSocialsSc
 
 export type tempStackError = z.inferFormattedError<typeof tempStackSchema>;
 
+export type LinksError = z.inferFormattedError<typeof tempLinksSchema>;
+
+export type projectContributionError = z.inferFormattedError<typeof projectContributionSchema>;
+
 export type TempProjectErrorData = {
     error: TempProjectError,
     projectIdx: number,
@@ -169,7 +175,36 @@ export interface deleteModalProps {
 
 export type ThemeType = 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth';
 
+
+export interface taskByUserId {
+    [userId: string]: string[];
+}
+
 export interface NestedCategory {
     projectIdx: number,
     catIdx: number
 }
+
+export interface taskDetailsObject {
+    title: string,
+    categories: string[],
+    description: string,
+    deadline: string,
+}
+
+export interface taskObject extends taskDetailsObject {
+    id: string,
+    progress: number,
+    media: string[],
+    associatedMembersIDs: string[],
+    tasksByUserId: taskByUserId[],
+    createdAt: string;
+
+}
+
+export interface tasksState {
+    tasks: taskObject[];
+    tempTaskDetails: taskObject;
+}
+
+export type TaskError = z.inferFormattedError<typeof taskDetailsSchema>;

@@ -1,16 +1,17 @@
 import AddMemberModal from '@/components/Members/MemberModal/AddMemberModal';
 import DeleteMemberModal from '@/components/Members/MemberModal/DeleteMemberModal';
 import { MembersList } from '@/components/Members/MembersList';
-import RecentMemberCard from '@/components/Members/RecentMembersCards';
-import { Search, Plus } from 'lucide-react';
+import RecentMembersCards from '@/components/Members/RecentMembersCards';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Members() {
 
-    const [addOpen, setAddOpen] = useState<boolean>(false);
     const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
     const [deletedId, setDeletedId] = useState<string>("");
+
+    const [addMemberOpen, setAddMemberOpen] = useState<boolean>(false);
 
     return (
         <div className="space-y-12 animate-page">
@@ -23,22 +24,15 @@ export default function Members() {
             {/* Recent Members */}
             <section className="space-y-6">
                 <h2 className="text-2xl font-bold text-[#111827] dark:text-slate-200">Recent Members</h2>
-                <RecentMemberCard />
+                <RecentMembersCards setAddOpen={setAddMemberOpen} setDeleteOpen={setDeleteOpen} setDeletedId={setDeletedId} />
             </section>
 
             {/* All Members Section */}
             <section className="space-y-6">
-                <MembersList setAddOpen={setAddOpen} setDeleteOpen={setDeleteOpen} setDeletedId={setDeletedId} />
+                <MembersList setAddOpen={setAddMemberOpen} setDeleteOpen={setDeleteOpen} setDeletedId={setDeletedId} />
             </section>
 
-            {/* Floating Action Button */}
-            <button
-                onClick={() => setAddOpen(true)}
-                className="animate-fade-in cursor-pointer sticky bottom-4 left-4 z-40 p-4 bg-primary text-primary-foreground rounded-full shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all flex items-center justify-center">
-                <Plus className="h-6 w-6 text-white" />
-            </button>
-
-            <AddMemberModal open={addOpen} onOpenChange={setAddOpen} />
+            <AddMemberModal open={addMemberOpen} setOpen={setAddMemberOpen} />
             <DeleteMemberModal open={deleteOpen} onOpenChange={setDeleteOpen} deletedId={deletedId} setDeletedId={setDeletedId} />
 
         </div>

@@ -9,17 +9,21 @@ import {
     PictureInPicture2,
     Volume2,
     CheckCircle2,
+    PenLine,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useParams } from "react-router";
+import { useSelector } from "react-redux";
+import { selectAllTasks } from "@/features/tasks/tasksSlice";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
-/* ─────────────────────────── helpers ─────────────────────────── */
 function formatTime(seconds: number) {
     const m = Math.floor(seconds / 60);
     const s = Math.floor(seconds % 60);
     return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-/* ─────────────────────────── data ─────────────────────────── */
 const assessmentItems = [
     "Understanding the tools in Figma",
     "Understand the basics of making designs",
@@ -27,11 +31,10 @@ const assessmentItems = [
     "Presenting the design flow",
 ];
 
-/* ─────────────────────────── VideoPlayer ─────────────────────────── */
 function VideoPlayer() {
     const [playing, setPlaying] = useState(false);
-    const [progress, setProgress] = useState(0.387); // ~2:20 of 10:00
-    const totalSeconds = 600; // 10:00
+    const [progress, setProgress] = useState(0.387);
+    const totalSeconds = 600;
     const currentSeconds = Math.round(progress * totalSeconds);
     const barRef = useRef<HTMLDivElement>(null);
 
@@ -114,8 +117,12 @@ function VideoPlayer() {
     );
 }
 
-/* ─────────────────────────── Page ─────────────────────────── */
 const Task = () => {
+
+    const { id } = useParams();
+
+    const task = useSelector(selectAllTasks).find((task) => task.id === id);
+
     return (
         <div className="animate-page space-y-8">
             {/* Search bar */}
@@ -136,38 +143,40 @@ const Task = () => {
                 {/* Text content */}
                 <div className="p-5 sm:p-6 space-y-5">
                     {/* Title */}
-                    <h1 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
-                        Creating Awesome Mobile Apps
-                    </h1>
+                    <h2 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
+                        {task?.title}
+                    </h2>
 
                     {/* Tags */}
                     <div className="flex flex-wrap items-center gap-2">
-                        <Badge
-                            variant="secondary"
-                            className="text-xs font-medium px-2.5 py-0.5 rounded-md"
-                        >
-                            UI UX Design
-                        </Badge>
-                        <Badge
-                            variant="secondary"
-                            className="text-xs font-medium px-2.5 py-0.5 rounded-md"
-                        >
-                            Apps Design
-                        </Badge>
-                        <button className="text-xs font-semibold text-primary hover:underline transition-all">
-                            + Get Mentors
-                        </button>
+                        {
+                            task?.categories.map((cat, idx) => (
+                                cat &&
+                                <Badge
+                                    key={idx}
+                                    variant="secondary"
+                                    className="text-xs font-medium px-2.5 py-0.5 rounded-md"
+                                >
+                                    {cat}
+                                </Badge>
+                            )
+                            )
+                        }
+                        <Button className="text-xs font-semibold text-white transition-all">
+                            <PenLine className="size-4" />
+                            Edit / Add tag
+                        </Button>
                     </div>
 
                     {/* Stats */}
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1.5">
                             <Users className="w-4 h-4" />
-                            <span>200 Students Involved</span>
+                            <span>{task?.associatedMembersIDs.length} {task?.associatedMembersIDs.length === 1 ? "Member" : "Members"} Involved</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <Clock className="w-4 h-4" />
-                            <span>1 Hour</span>
+                            <span> {task ? "Due " + format(new Date(task.deadline), "dd-MMM-yy") : "No deadline"}</span>
                         </div>
                     </div>
 
@@ -180,11 +189,7 @@ const Task = () => {
                             Description
                         </h2>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                            Follow the video tutorial above. Understand how to use each tool in
-                            the Figma application. Also learn how to make a good and correct
-                            design. Starting from spacing, typography, content, and many other
-                            design hierarchies. Then try to make it yourself with your imagination
-                            and inspiration.
+                            {task?.description || "No Description"}
                         </p>
                     </section>
 

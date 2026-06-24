@@ -1,4 +1,4 @@
-import type { LanguageObject, MemberObject, tempStackError } from '@/types';
+import type { LanguageObject, LinksError, MemberObject, tempStackError } from '@/types';
 import {
     Github,
     Linkedin,
@@ -13,14 +13,24 @@ import {
     PenLine,
     Plus,
     Check,
+    Link,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, type ChangeEvent } from 'react';
 import { Input } from '@/components/ui/input';
-import { tempStackSchema } from '@/features/members/schemas/skillsSocialsSchema';
+import { tempLinksSchema, tempStackSchema } from '@/features/members/schemas/skillsSocialsSchema';
 import { InputError } from '@/components/custom/InputError';
-import { useDispatch } from 'react-redux';
-import { editSkills } from '@/features/members/membersSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addLanguageObject, editSkills, fillLanguagesArr, removeLanguageRow, resetTempLangs, selectTempLangs, updateLanguageLevel, updateLanguageText, updateMemberLanguages, updateMemberLinks } from '@/features/members/membersSlice';
+import {
+    Select,
+    SelectValue,
+    SelectTrigger,
+    SelectContent,
+    SelectGroup,
+    SelectLabel,
+    SelectItem,
+} from '@/components/ui/select';
 
 interface infoCardProps {
     member: MemberObject | undefined;
@@ -29,6 +39,8 @@ interface infoCardProps {
     setStackEditMode: (mode: boolean) => void;
     langsEditMode: boolean;
     setLangsEditMode: (mode: boolean) => void;
+    linksEditMode: boolean;
+    setLinksEditMode: (mode: boolean) => void;
 }
 
 export const InfoCard = ({
@@ -38,9 +50,18 @@ export const InfoCard = ({
     setStackEditMode,
     langsEditMode,
     setLangsEditMode,
+    linksEditMode,
+    setLinksEditMode
 }: infoCardProps) => {
 
     const dispatch = useDispatch();
+
+    const placeholdersLinksArr = [
+        "github",
+        "linkedin",
+        "portfolio",
+        "facebook",
+    ]
 
     const logos = [
         { key: "github", text: "GitHub", Icon: <Github /> },
@@ -58,25 +79,47 @@ export const InfoCard = ({
         { key: "mail", text: "Email", Icon: <Mail /> },
     ]
 
-    let skills: string[] = [];
-    let languages: LanguageObject[] = [];
-    if (member) {
-        skills = [...member?.skillsAndSocials?.stackAndLinks?.stack];
-        languages = [...member?.skillsAndSocials.languages];
-    }
+    const availableLangs = [
+        { text: "Arabic", value: "arabic" },
+        { text: "English", value: "english" },
+        { text: "French", value: "french" },
+        { text: "German", value: "german" },
+        { text: "Spanish", value: "spanish" },
+        { text: "Italian", value: "italian" },
+        { text: "Chinese", value: "chinese" },
+        { text: "Japanese", value: "japanese" },
+        { text: "Turkish", value: "turkish" },
+    ]
 
-    const memberSocials = member?.skillsAndSocials?.stackAndLinks?.social;
-    const memberSocialsFiltered = memberSocials?.filter((link) => {
+    const availableLevels = [
+        { text: "Beginner", value: "beginner" },
+        { text: "Intermediate", value: "intermediate" },
+        { text: "Professional", value: "professional" },
+        { text: "Advanced", value: "advanced" },
+        { text: "Native", value: "native" },
+    ]
+
+    const skills: string[] = member ? [...member.skillsAndSocials.stackAndLinks.stack] : [];
+    const languages: LanguageObject[] = member ? [...member.skillsAndSocials.languages] : [];
+
+    const memberLinks = member?.skillsAndSocials?.stackAndLinks?.social;
+    const memberLinksFiltered = memberLinks?.filter((link) => {
         return link.trim() !== "";
     });
 
-    const [localTempStack, setLocalTempStack] = useState<string[]>(skills);
+    const [tempLinks, setTempLinks] = useState<string[] | undefined>(memberLinks);
 
-    const [errorKey, setErrorKey] = useState<number>(0);
+    const [localTempStack, setLocalTempStack] = useState<string[]>(skills);
+    const tempLangs = useSelector(selectTempLangs);
+
+    const [stackErrorKey, setStackErrorKey] = useState<number>(0);
     const [stackError, setStackError] = useState<tempStackError | null>(null);
     const [stackLengthError, setStackLengthError] = useState<string | undefined>(undefined);
 
-    const reseStacktErrors = () => {
+    const [linksErrorKey, setLinksErrorKey] = useState<number>(0);
+    const [linksError, setLinksError] = useState<LinksError | null>(null);
+
+    const resetStackErrors = () => {
         setStackError(null);
         setStackLengthError(undefined);
     }
@@ -101,7 +144,7 @@ export const InfoCard = ({
         if (!validationResult.success) {
             const error = validationResult.error.format();
             if (error) {
-                setErrorKey(prev => prev + 1);
+                setStackErrorKey(prev => prev + 1);
                 setStackLengthError(undefined);
                 setStackError(error);
             }
@@ -112,7 +155,7 @@ export const InfoCard = ({
 
         if (cleanedData.length === 0) {
             setStackError(null);
-            setErrorKey(prev => prev + 1);
+            setStackErrorKey(prev => prev + 1);
             setStackLengthError("add at least one skill");
             return;
         }
@@ -121,16 +164,85 @@ export const InfoCard = ({
 
         dispatch(editSkills({ id: member?.id, tempstack: cleanedData }));
         setStackEditMode(false);
-        reseStacktErrors();
+        resetStackErrors();
 
     }
 
-    const handleUpdatelangs = () => {
-        // code
+    const handleLangChange = (obj: { prevLanguage: string, language: string, level: string, id: string }) => {
+        const { level, prevLanguage, id, language } = obj;
+        if (level && prevLanguage === "") {
+            dispatch(addLanguageObject());
+        }
+
+        dispatch(updateLanguageText({ language, id }));
+    }
+
+    const handleLevelChange = (obj: { prevLevel: string, language: string, level: string, id: string }) => {
+        const { language, prevLevel, id, level } = obj;
+        if (language && prevLevel === "") {
+            dispatch(addLanguageObject());
+        }
+
+        dispatch(updateLanguageLevel({ level, id }));
+    }
+
+    const handleUpdatelangs = (data: { id: string | undefined, langs: LanguageObject[] }) => {
+        const { langs, id } = data;
+        const cleanedLangs = langs.filter((langObj) => {
+            return langObj.lang && langObj.level;
+        })
+        const cleanedData = { langs: cleanedLangs, id };
+        if (id) {
+            dispatch(updateMemberLanguages(cleanedData));
+        }
+    }
+
+
+    const handleUpdateLinks = () => {
+        if (tempLinks) {
+            const currentLinks = [...tempLinks];
+            const data = {
+                tempLinks: currentLinks,
+            }
+
+            if (data) {
+
+                const validationResult = tempLinksSchema.safeParse(data);
+                if (!validationResult.success) {
+                    const error: LinksError = validationResult.error.format();
+                    if (error) {
+                        setLinksErrorKey(p => p + 1);
+                        setLinksError(error);
+                    }
+                    return;
+                }
+
+            }
+
+            const cleanedData = currentLinks?.filter((link) => link?.trim() !== "");
+            dispatch(updateMemberLinks({ id: member?.id, links: cleanedData }));
+            setLinksEditMode(false);
+        }
+    }
+
+
+    const handleRemoveTempLink = (removedIdx: number) => {
+        if (tempLinks) {
+            const newTempLinks = [...tempLinks].filter((_, idx) => removedIdx !== idx);
+            setTempLinks(newTempLinks);
+        }
+    }
+
+    const handleLinkChange = (idx: number, e: ChangeEvent<HTMLInputElement>) => {
+        if (tempLinks) {
+            const newTempLinks = [...tempLinks];
+            newTempLinks[idx] = e.target.value;
+            setTempLinks(newTempLinks);
+        }
     }
 
     return (
-        <aside className="w-full bg-white dark:bg-card rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-8 top-24">
+        <aside className="w-full bg-white dark:bg-card rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 p-4 md:p-8 lg:p-4 top-24">
 
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">{member?.personalDetails?.name}</h2>
 
@@ -140,13 +252,14 @@ export const InfoCard = ({
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex gap-2 flex-col">
                         <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase">Tech Stack</h3>
-                        <InputError className='text-xs!' keyErr={errorKey} message={stackLengthError} />
+                        <InputError className='text-xs!' keyErr={stackErrorKey} message={stackLengthError} />
                     </div>
                     {
                         stackEditMode ?
                             <div className="flex gap-2">
                                 <Button className="size-6" onClick={() => {
                                     setStackEditMode(false);
+                                    setStackLengthError(undefined);
                                     setLocalTempStack(skills);
                                 }}>
                                     <X className="text-white" />
@@ -160,6 +273,7 @@ export const InfoCard = ({
                             :
                             <Button className="size-6" onClick={() => {
                                 resetEditModes();
+                                setStackError(null);
                                 setStackEditMode(true);
                             }}>
                                 <PenLine className="text-white" />
@@ -193,7 +307,7 @@ export const InfoCard = ({
                                             </Button>
                                         }
                                     </div>
-                                    <InputError className='text-xs!' keyErr={errorKey} message={stackError?.tempStack?.[idx]?._errors[0]} />
+                                    <InputError className='text-xs!' keyErr={stackErrorKey} message={stackError?.tempStack?.[idx]?._errors[0]} />
                                 </div>
                             ))}
                             {
@@ -228,12 +342,18 @@ export const InfoCard = ({
                         langsEditMode ?
                             <div className="flex gap-2">
                                 <Button className="size-6" onClick={() => {
+                                    dispatch(resetTempLangs());
                                     setLangsEditMode(false);
                                 }}>
                                     <X className="text-white" />
                                 </Button>
                                 <Button className="size-6" onClick={() => {
-                                    handleUpdatelangs();
+                                    const data = {
+                                        id: member?.id,
+                                        langs: tempLangs,
+                                    }
+                                    handleUpdatelangs(data);
+                                    setLangsEditMode(false);
                                 }}>
                                     <Check className="text-white" />
                                 </Button>
@@ -242,6 +362,7 @@ export const InfoCard = ({
                             <Button className="size-6" onClick={() => {
                                 resetEditModes();
                                 setLangsEditMode(true);
+                                dispatch(fillLanguagesArr(languages));
                             }}>
                                 <PenLine className="text-white" />
                             </Button>
@@ -249,38 +370,200 @@ export const InfoCard = ({
 
                 </div>
                 <div className="space-y-3">
-                    {languages.map((lang) => (
-                        <div key={lang?.lang} className="flex justify-between items-center">
-                            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{lang.lang}</span>
-                            <span className="text-xs text-primary dark:text-primary bg-primary/20 dark:bg-primary/20 px-2 py-0.5 hover:bg-primary/20 dark:hover:bg-primary/20 rounded-md font-semibold">
-                                {lang.level}
-                            </span>
-                        </div>
-                    ))}
+                    {
+                        langsEditMode ?
+                            <>
+                                {
+                                    tempLangs.map((lang, idx) => {
+                                        const isFullRow = lang.lang && lang.level;
+                                        return (
+                                            <div
+                                                key={lang.id}
+                                                className='relative grid grid-cols-2 gap-2 bg-primary/10 rounded-sm border-dotted border-2 border-primary/50 p-2'>
+                                                {
+                                                    idx !== 0 && isFullRow &&
+                                                    <Button
+                                                        onClick={() => {
+                                                            dispatch(removeLanguageRow(lang.id));
+                                                        }}
+                                                        className='absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 bg-red-500 hover:bg-red-600 rounded-full size-5 '>
+                                                        <X className='size-3 text-white' />
+                                                    </Button>
+                                                }
+                                                <Select
+                                                    onValueChange={(e) => {
+                                                        handleLangChange({ prevLanguage: lang.lang, language: e, level: lang.level, id: lang.id });
+                                                    }}
+                                                    defaultValue={lang.lang.toLowerCase()}>
+                                                    <SelectTrigger className="w-full max-w-48">
+                                                        <SelectValue placeholder="lang" />
+                                                    </SelectTrigger>
+                                                    <SelectContent position='popper'>
+                                                        <SelectGroup>
+                                                            {
+                                                                availableLangs.map((availableLangObject) => {
+                                                                    const alreadySelected = tempLangs.some((tempLangObj) => {
+                                                                        return tempLangObj.lang === availableLangObject.value;
+                                                                    })
+                                                                    return (
+                                                                        <SelectItem
+                                                                            disabled={alreadySelected}
+                                                                            key={availableLangObject.value}
+                                                                            value={availableLangObject.value}
+                                                                        >
+                                                                            {availableLangObject.text}
+                                                                        </SelectItem>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+                                                <Select
+                                                    onValueChange={(e) => {
+                                                        handleLevelChange({ prevLevel: lang.level, language: lang.lang, level: e, id: lang.id });
+                                                    }}
+                                                    defaultValue={lang.level.toLowerCase()}>
+                                                    <SelectTrigger className="w-full max-w-48">
+                                                        <SelectValue placeholder="level" />
+                                                    </SelectTrigger>
+                                                    <SelectContent position='popper'>
+                                                        <SelectGroup>
+                                                            <SelectLabel>Levels</SelectLabel>
+                                                            {
+                                                                availableLevels.map((level) => {
+                                                                    return (
+                                                                        <SelectItem key={level.value} value={level.value}>
+                                                                            {level.text}
+                                                                        </SelectItem>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </SelectGroup>
+                                                    </SelectContent>
+                                                </Select>
+
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </>
+                            :
+                            <>
+                                {languages.map((lang) => (
+                                    <div key={lang?.lang} className="flex justify-between items-center">
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{lang.lang}</span>
+                                        <span className="text-xs text-primary dark:text-primary bg-primary/20 dark:bg-primary/20 px-2 py-0.5 hover:bg-primary/20 dark:hover:bg-primary/20 rounded-md font-semibold">
+                                            {lang.level}
+                                        </span>
+                                    </div>
+                                ))}
+                            </>
+
+                    }
                 </div>
             </div>
 
             <hr className="border-gray-100" />
 
             <div className="pt-6">
-                <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase mb-4">Social Media</h3>
+                <div className='flex justify-between items-center mb-4'>
+                    <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase">Social Media</h3>
+
+                    {
+                        linksEditMode ?
+                            <div className="flex gap-2">
+                                <Button className="size-6" onClick={() => {
+                                    setLinksEditMode(false);
+
+                                }}>
+                                    <X className="text-white" />
+                                </Button>
+                                <Button className="size-6" onClick={() => {
+                                    handleUpdateLinks()
+                                }}>
+                                    <Check className="text-white" />
+                                </Button>
+                            </div>
+                            :
+                            <Button className="size-6" onClick={() => {
+                                resetEditModes();
+                                setTempLinks(memberLinks);
+                                setLinksError(null);
+                                setLinksEditMode(true);
+                            }}>
+                                <PenLine className="text-white" />
+                            </Button>
+                    }
+
+                </div>
                 {
-                    memberSocialsFiltered && memberSocialsFiltered.length >= 1 ?
-                        <div className="grid grid-cols-2 gap-3">
+                    linksEditMode ?
+                        <>
+                            <div className='flex flex-col gap-2'>
+                                {
+                                    tempLinks?.map((link, idx) => (
+                                        <div key={idx}>
+                                            <div className="relative">
+                                                <Link className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    name={`tempLink-${idx}`}
+                                                    placeholder={`eg. https://www.${placeholdersLinksArr[idx]}.com`} className="pl-10"
+                                                    value={link}
+                                                    onChange={(e) => {
+                                                        handleLinkChange(idx, e);
+                                                    }}
+                                                />
+                                                {
+                                                    tempLinks.length > 1 &&
+                                                    <Button
+                                                        onClick={() => {
+                                                            handleRemoveTempLink(idx);
+                                                        }}
+                                                        className='absolute rounded-full size-5 bg-red-500 hover:bg-red-600 top-0 right-0 translate-x-1/2 -translate-y-1/2'>
+                                                        <X className='size-4 text-white' />
+                                                    </Button>
+                                                }
+                                            </div>
+                                            <InputError keyErr={linksErrorKey} message={linksError?.tempLinks?.[idx]?._errors[0]} />
+                                        </div>
+                                    ))
+                                }
+                            </div>
                             {
-                                memberSocialsFiltered?.map((link, idx) => {
-                                    const chosenLogo = logos.find((logo) => link.includes(logo.key))
-                                    return (
-                                        <a key={idx} href={link} target='_blank' className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-primary/10 dark:hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary/50" >
-                                            {chosenLogo ? chosenLogo.Icon : <Globe />}
-                                            <span className="text-xs font-medium">{chosenLogo ? chosenLogo.text : "External"}</span>
-                                        </a>
-                                    )
-                                })
+                                tempLinks && tempLinks?.length < 4 &&
+                                <Button
+                                    onClick={() => {
+                                        setTempLinks((p) => {
+                                            return [...(p || []), ""];
+                                        })
+                                    }}
+                                    className='bg-primary/20 p-3 hover:bg-primary/40 border-dotted border-2 border-primary w-full mt-2'>
+                                    <Plus className='size-4 text-primary' />
+                                </Button>
                             }
-                        </div>
+                        </>
                         :
-                        <p className="text-gray-400 dark:text-gray-500">No Socials Provided</p>
+                        <>
+                            {
+                                memberLinksFiltered && memberLinksFiltered.length >= 1 ?
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {
+                                            memberLinksFiltered?.map((link, idx) => {
+                                                const chosenLogo = logos.find((logo) => link.includes(logo.key))
+                                                return (
+                                                    <a key={idx} href={link} target='_blank' className="flex items-center gap-2 p-2 rounded-lg border border-gray-100 dark:border-slate-700 hover:bg-primary/10 dark:hover:bg-primary/10 transition-all text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary/50" >
+                                                        {chosenLogo ? chosenLogo.Icon : <Globe />}
+                                                        <span className="text-xs font-medium">{chosenLogo ? chosenLogo.text : "External"}</span>
+                                                    </a>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                    :
+                                    <p className="text-gray-400 dark:text-gray-500">No Socials Provided</p>
+                            }
+                        </>
                 }
             </div>
         </aside >

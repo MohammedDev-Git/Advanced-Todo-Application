@@ -9,7 +9,7 @@ import { forwardRef, useImperativeHandle, useState, type Ref } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export interface DescriptionRef {
-    handleStepTwo: () => boolean;
+    handleStep: () => boolean;
 }
 
 const Description = ({ }, ref: Ref<DescriptionRef>) => {
@@ -24,7 +24,7 @@ const Description = ({ }, ref: Ref<DescriptionRef>) => {
 
     const dispatch = useDispatch();
 
-    const handleStepTwo = () => {
+    const handleStep = () => {
 
         const tempDescription = {
             text: descriptionInput.value,
@@ -46,7 +46,7 @@ const Description = ({ }, ref: Ref<DescriptionRef>) => {
     }
 
     useImperativeHandle(ref, () => ({
-        handleStepTwo,
+        handleStep,
     }))
 
     return (

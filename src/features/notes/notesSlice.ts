@@ -57,7 +57,8 @@ const notesSlice = createSlice({
 
 export const selectNotes = (state: RootState) => state.notes.notes;
 export const selectTempCategories = (state: RootState) => state.notes.tempCategories;
-export const { deleteAllNotes,
+export const {
+    deleteAllNotes,
     deleteNote,
     addTempCategory,
     removeTempCategory,

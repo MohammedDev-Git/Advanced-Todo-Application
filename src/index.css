@@ -56,6 +56,7 @@
   --animate-scale-in-out: scaleInOut 0.5s ease-in-out;
 }
 
+
 @keyframes shake {
 
   0%,
@@ -238,10 +239,6 @@
 
   .folder-shape {
     clip-path: polygon(0% 0%, 40% 0%, 45% 12%, 100% 12%, 100% 100%, 0% 100%);
-  }
-
-  .prism-shape {
-    clip-path: polygon(0% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 80%);
   }
 
   .member-card-shape {

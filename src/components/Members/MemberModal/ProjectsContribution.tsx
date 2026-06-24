@@ -25,7 +25,7 @@ import { forwardRef, useImperativeHandle, useState, type Ref } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 export interface ProjectsContributionRef {
-    handleStepThree: () => boolean;
+    handleStep: () => boolean;
 }
 
 const ProjectsContribution = ({ }, ref: Ref<ProjectsContributionRef>) => {
@@ -36,7 +36,7 @@ const ProjectsContribution = ({ }, ref: Ref<ProjectsContributionRef>) => {
 
     const dispatch = useDispatch();
 
-    const handleStepThree = () => {
+    const handleStep = () => {
         let allValid = true;
 
         tempProjects.forEach((project, projectIdx) => {
@@ -60,7 +60,7 @@ const ProjectsContribution = ({ }, ref: Ref<ProjectsContributionRef>) => {
         if (allValid) {
             const result = tempProjects.map((project) => {
                 const newProject = { ...project };
-                newProject.category = newProject.category.filter((cat) => cat.trim() !== "");
+                newProject.category = newProject.category.filter((cat) => cat?.trim() !== "");
                 return newProject;
             })
             dispatch(addTempMemberProjects(result));
@@ -72,7 +72,7 @@ const ProjectsContribution = ({ }, ref: Ref<ProjectsContributionRef>) => {
     }
 
     useImperativeHandle(ref, () => ({
-        handleStepThree,
+        handleStep,
     }))
 
     return (
@@ -80,7 +80,7 @@ const ProjectsContribution = ({ }, ref: Ref<ProjectsContributionRef>) => {
             className="flex flex-col justify-center gap-10"
             onSubmit={(e) => {
                 e.preventDefault();
-                handleStepThree();
+                handleStep();
             }}>
             {
                 tempProjects.map((project, projectIdx) => (

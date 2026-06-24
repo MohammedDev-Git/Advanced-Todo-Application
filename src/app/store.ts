@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage"
 import { persistReducer, persistStore } from "redux-persist"
 import notesReducer from "@/features/notes/notesSlice";
 import membersReducer from "@/features/members/membersSlice";
+import tasksReducer from "@/features/tasks/tasksSlice";
 
 const persistConfig = {
     key: "root",
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
     todos: todosReducer,
     notes: notesReducer,
     members: membersReducer,
+    tasks: tasksReducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -25,6 +27,6 @@ export const store = configureStore({
     })
 })
 
-export type RootState = ReturnType<typeof rootReducer>
+export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 export const persistor = persistStore(store);

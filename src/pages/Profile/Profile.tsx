@@ -14,6 +14,10 @@ import { useError } from "@/hooks/useError";
 import { InputError } from "@/components/custom/InputError";
 import { Textarea } from "@/components/ui/textarea";
 import { descriptionSchema } from "@/features/members/schemas/descriptionSchema";
+import { Label } from "@/components/ui/label";
+import DeleteProjectsModal from "@/components/Profile/DeleteProjectsModal";
+import AddProjectModal from "@/components/Profile/AddProjectModal";
+import DeleteOneProjectModal from "@/components/Profile/DeleteOneProjectModal";
 
 export default function Profile() {
 
@@ -28,6 +32,13 @@ export default function Profile() {
     const createDate = format(member?.createdAt || new Date(), "dd MMM yyyy");
     const createExactDate = format(member?.createdAt || new Date(), "dd MMM yyyy, hh:mm a");
     const lastOnline = formatDistanceToNowStrict(member?.createdAt || new Date(), { addSuffix: true });
+
+    // modals
+    const [deleteProjectsModalOpen, setDeleteProjectsModalOpen] = useState<boolean>(false);
+    const [addProjectModalOpen, setAddProjectModalOpen] = useState<boolean>(false);
+    const [deleteOneProjectModal, setDeleteOneProjectModal] = useState<boolean>(false);
+
+    const [deletingProjectIdx, setDeleteingProjectIdx] = useState<number>(-1);
 
     // Refs 
     const nameInputRef = useRef<null | HTMLInputElement>(null);
@@ -52,6 +63,8 @@ export default function Profile() {
     const [phoneEditMode, setPhoneEditMode] = useState<boolean>(false);
     const [stackEditMode, setStackEditMode] = useState<boolean>(false);
     const [langsEditMode, setLangsEditMode] = useState<boolean>(false);
+    const [linksEditMode, setLinksEditMode] = useState<boolean>(false);
+    const [projectsEditMode, setProjectsEditMode] = useState<boolean>(false);
 
     // Editing / Updating Functions
 
@@ -61,6 +74,9 @@ export default function Profile() {
         setEmailEditMode(false);
         setPhoneEditMode(false);
         setStackEditMode(false);
+        setLangsEditMode(false);
+        setLinksEditMode(false);
+        setProjectsEditMode(false);
     }
 
     const handleHeaderEdit = () => {
@@ -116,9 +132,9 @@ export default function Profile() {
             email: emailInputRef.current?.value.trim(),
         }
 
-        const validationResiult = emailSchema.safeParse(data);
-        if (!validationResiult.success) {
-            const error = validationResiult.error.format();
+        const validationResult = emailSchema.safeParse(data);
+        if (!validationResult.success) {
+            const error = validationResult.error.format();
             if (error) {
                 setErrorKey((pre) => pre + 1);
                 emailError.setErrorMsg(error.email?._errors[0]);
@@ -136,9 +152,9 @@ export default function Profile() {
             phone: phoneInputRef.current?.value.trim(),
         }
 
-        const validationResiult = phoneSchema.safeParse(data);
-        if (!validationResiult.success) {
-            const error = validationResiult.error.format();
+        const validationResult = phoneSchema.safeParse(data);
+        if (!validationResult.success) {
+            const error = validationResult.error.format();
             if (error) {
                 setErrorKey((pre) => pre + 1);
                 phoneError.setErrorMsg(error.phone?._errors[0]);
@@ -158,20 +174,20 @@ export default function Profile() {
                 {/* Header Edit Button */}
                 {
                     headerEditMode ?
-                        <div className="absolute top-4 right-4 flex gap-2">
+                        <div className="absolute top-4 right-4 flex gap-2 z-50">
                             <Button
                                 onClick={() => {
                                     setHeaderEditMode(false);
                                 }}
                                 className="text-white">
-                                Cancel
+                                Close
                             </Button>
                             <Button
                                 onClick={() => {
                                     handleHeaderEdit();
                                 }}
                                 className="text-white">
-                                Confirm
+                                Save
                             </Button>
                         </div>
                         :
@@ -203,10 +219,12 @@ export default function Profile() {
                             {
                                 headerEditMode ?
                                     <>
+                                        <Label>Name</Label>
                                         <Input placeholder="Enter your name" ref={nameInputRef} defaultValue={member?.personalDetails.name} />
-                                        <InputError keyErr={errorKey} message={nameError.errorMsg} className="text-red-400!" />
+                                        <InputError keyErr={errorKey} message={nameError.errorMsg} className="text-red-700! dark:text-red-100!" />
+                                        <Label>Role</Label>
                                         <Input placeholder="Enter your role" ref={roleInputRef} defaultValue={member?.personalDetails.role} />
-                                        <InputError keyErr={errorKey} message={roleError.errorMsg} className="text-red-400!" />
+                                        <InputError keyErr={errorKey} message={roleError.errorMsg} className="text-red-700! dark:text-red-100!" />
                                     </>
                                     :
                                     <>
@@ -258,7 +276,7 @@ export default function Profile() {
 
                         <div className="flex flex-wrap gap-2  justify-start lg:justify-start">
                             {
-                                member?.skillsAndSocials?.stackAndLinks?.stack.map((tech, idx) => (
+                                member?.skillsAndSocials?.stackAndLinks?.stack.map((tech, idx: number) => (
                                     idx < 3 &&
                                     <span key={idx} className="px-3 py-1 rounded-lg bg-primary text-white text-xs font-bold">{tech}</span>
                                 ))
@@ -320,7 +338,7 @@ export default function Profile() {
 
                     {/* Phone */}
                     <div className="flex gap-x-5 gap-y-2 justify-start items-center flex-wrap">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-start gap-2">
                             <Phone className="w-5 h-5 opacity-70" />
                             <span className="font-medium">phone</span>
                             {
@@ -382,60 +400,62 @@ export default function Profile() {
                 </div>
 
                 {/* Description */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-foreground">Bio</h3>
-                    </div>
-                    <div className="relative group flex flex-wrap gap-2 items-end">
-                        {
-                            descriptionEditMode ?
-                                <>
-                                    <Textarea
-                                        defaultValue={member?.description.text}
-                                        placeholder="Tell us about yourself"
-                                        className="max-h-40 max-w-full"
-                                        ref={descriptionRef}
-                                    />
-                                    <div>
-                                        <InputError keyErr={errorKey} message={descriptionError.errorMsg} className="mb-2" />
-                                        <div className="flex gap-2 items-end justify-start">
-                                            <Button
-                                                onClick={() => {
-                                                    setDescriptionEditMode(false);
-                                                }}
-                                                className="w-6 h-6 text-white">
-                                                <X className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                onClick={() => {
-                                                    handleDescriptionEdit();
-                                                }}
-                                                className="w-6 h-6 text-white">
-                                                <Check className="w-4 h-4" />
-                                            </Button>
+                <div className="space-y-4 lg:flex lg:justify-center">
+                    <div className="lg:w-[70%]">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold text-foreground">Bio</h3>
+                        </div>
+                        <div className="relative group flex flex-wrap gap-2 items-end">
+                            {
+                                descriptionEditMode ?
+                                    <>
+                                        <Textarea
+                                            defaultValue={member?.description.text}
+                                            placeholder="Tell the world about yourself"
+                                            className="max-h-40 max-w-full"
+                                            ref={descriptionRef}
+                                        />
+                                        <div>
+                                            <InputError keyErr={errorKey} message={descriptionError.errorMsg} className="mb-2" />
+                                            <div className="flex gap-2 items-end justify-start">
+                                                <Button
+                                                    onClick={() => {
+                                                        setDescriptionEditMode(false);
+                                                    }}
+                                                    className="w-6 h-6 text-white">
+                                                    <X className="w-4 h-4" />
+                                                </Button>
+                                                <Button
+                                                    onClick={() => {
+                                                        handleDescriptionEdit();
+                                                    }}
+                                                    className="w-6 h-6 text-white">
+                                                    <Check className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                </>
-                                :
-                                <>
-                                    <p className="break-all text-muted-foreground leading-relaxed text-[15px]">
-                                        {member?.description?.text || "No Bio provided."}
-                                    </p>
-                                    <Button
-                                        onClick={() => {
-                                            resetEditModes();
-                                            descriptionError.setErrorMsg(undefined);
-                                            setDescriptionEditMode(true);
-                                            setTimeout(() => {
-                                                descriptionRef.current?.focus();
-                                            }, 0);
-                                        }}
-                                        className="w-6 h-6 text-white">
-                                        <PenLine className="w-4 h-4" />
-                                    </Button>
-                                </>
-                        }
+                                    </>
+                                    :
+                                    <>
+                                        <p className="break-all text-muted-foreground leading-relaxed text-[15px]">
+                                            {member?.description?.text || "No Bio provided."}
+                                        </p>
+                                        <Button
+                                            onClick={() => {
+                                                resetEditModes();
+                                                descriptionError.setErrorMsg(undefined);
+                                                setDescriptionEditMode(true);
+                                                setTimeout(() => {
+                                                    descriptionRef.current?.focus();
+                                                }, 0);
+                                            }}
+                                            className="w-6 h-6 text-white">
+                                            <PenLine className="w-4 h-4" />
+                                        </Button>
+                                    </>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -445,7 +465,19 @@ export default function Profile() {
                 <div className="mx-auto flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6 items-start">
 
                     <div className="w-full lg:col-span-8">
-                        <ProjectsSection member={member} />
+                        <ProjectsSection
+                            setDeleteingProjectIdx={setDeleteingProjectIdx}
+                            deleteOneProjectModal={deleteOneProjectModal}
+                            setDeleteOneProjectModal={setDeleteOneProjectModal}
+                            deleteProjectsModalOpen={deleteProjectsModalOpen}
+                            setDeleteProjectsModalOpen={setDeleteProjectsModalOpen}
+                            addProjectModalOpen={addProjectModalOpen}
+                            setAddProjectModalOpen={setAddProjectModalOpen}
+                            member={member}
+                            resetEditModes={resetEditModes}
+                            projectsEditMode={projectsEditMode}
+                            setProjectsEditMode={setProjectsEditMode}
+                        />
                     </div>
 
                     <div className="w-full lg:col-span-4 lg:sticky top-30">
@@ -456,11 +488,32 @@ export default function Profile() {
                             setStackEditMode={setStackEditMode}
                             langsEditMode={langsEditMode}
                             setLangsEditMode={setLangsEditMode}
+                            linksEditMode={linksEditMode}
+                            setLinksEditMode={setLinksEditMode}
                         />
                     </div>
 
                 </div>
             </div>
+
+            <DeleteProjectsModal
+                memberId={member ? member.id : ""}
+                open={deleteProjectsModalOpen}
+                setOpen={setDeleteProjectsModalOpen}
+            />
+
+            <AddProjectModal
+                memberId={member ? member.id : ""}
+                open={addProjectModalOpen}
+                setOpen={setAddProjectModalOpen}
+            />
+
+            <DeleteOneProjectModal
+                open={deleteOneProjectModal}
+                setOpen={setDeleteOneProjectModal}
+                memberId={member ? member.id : ""}
+                projectIdx={deletingProjectIdx}
+            />
         </div>
     )
 }

@@ -43,7 +43,7 @@ export function MemberCard({ member, setDeleteOpen, setDeletedId }: MemberCardPr
 
                     <Button
                         variant="ghost"
-                        className="text-primary font-bold hover:bg-primary/50 px-2"
+                        className="text-primary font-bold hover:bg-primary/50 dark:hover:text-primary hover:text-white px-2"
                         onClick={() => {
                             navigate(`/profile/${member.id}`);
                         }}
@@ -63,7 +63,9 @@ export function MemberCard({ member, setDeleteOpen, setDeletedId }: MemberCardPr
                         <div className="bg-slate-100 dark:bg-slate-700 p-2 rounded-xl">
                             <FileText className="h-4 w-4 text-slate-600 dark:text-slate-300" />
                         </div>
-                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">{member?.projects?.length} Projects</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">
+                            {member.projects.length === 0 ? "" : member?.projects?.length} {member.projects.length === 0 ? "No Projects" : member.projects.length > 1 ? "Projects" : "Project"}
+                        </span>
                     </div>
 
                     <div className="flex items-center gap-2">

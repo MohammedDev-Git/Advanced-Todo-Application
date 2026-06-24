@@ -11,7 +11,7 @@ import { forwardRef, useImperativeHandle, useState, type Ref } from "react"
 import { useDispatch, useSelector } from "react-redux"
 
 export interface PersonalDetailsRef {
-    handleStepOne: () => boolean;
+    handleStep: () => boolean;
 }
 
 const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
@@ -77,7 +77,7 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
         return inputData.find((data) => data.id === id)?.value.trim();
     }
 
-    const handleStepOne = () => {
+    const handleStep = () => {
 
         const personalData: TempPersonalDetails = {
             name: getValueOf("name"),
@@ -92,7 +92,7 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
         const duplicatedEmail = storedEmails.some((em:string) => em === personalData.email);
         if (duplicatedEmail) {
             setRenderKey(pre => pre + 1);
-            emailError.setErrorMsg("Email already exists");
+            emailError.setErrorMsg("Email is already taken");
             nameError.setErrorMsg("");
             roleError.setErrorMsg("");
             phoneError.setErrorMsg("");
@@ -123,7 +123,7 @@ const PersonalDetails = ({ }, ref: Ref<PersonalDetailsRef>) => {
     }
 
     useImperativeHandle(ref, () => ({
-        handleStepOne,
+        handleStep,
     }))
 
     return (

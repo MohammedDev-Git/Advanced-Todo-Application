@@ -8,3 +8,7 @@ export const skillsSocialsSchema = z.object({
 export const tempStackSchema = skillsSocialsSchema.pick({
     tempStack: true,
 })
+
+export const tempLinksSchema = skillsSocialsSchema.pick({
+    tempLinks: true,
+})

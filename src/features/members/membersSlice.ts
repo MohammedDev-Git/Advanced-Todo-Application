@@ -1,5 +1,6 @@
 import type { RootState } from "@/app/store";
 import type {
+    LanguageObject,
     MemberProject,
     MembersState,
     NestedCategory,
@@ -82,7 +83,8 @@ const membersSlice = createSlice({
                 // fill the projects object
                 const projects = state.form.tempProjects;
                 state.tempMember.projects = [...projects];
-                state.tempMember.avatar = `/assets/members/member${((state.members.length) % 9) + 1}.png`;
+                const randomFrom1To9 = Math.floor(Math.random() * 9) + 1;
+                state.tempMember.avatar = `/assets/members/member${randomFrom1To9}.png` || "";
                 state.tempMember.createdAt = new Date();
             }
             fillMemberData();
@@ -92,7 +94,7 @@ const membersSlice = createSlice({
                 state.storedEmails.push(email);
             }
 
-            // add an actual member to fake database
+            // add an actual member
             const newMember = { ...state.tempMember };
             state.members.push(newMember);
         },
@@ -102,7 +104,7 @@ const membersSlice = createSlice({
             const memberIdx = state.members.findIndex((mem) => mem.id === id);
             state.members.splice(memberIdx, 1);
             if (memberIdx !== -1) {
-                const email = state.members[memberIdx].personalDetails?.email;
+                const email = state.members[memberIdx]?.personalDetails?.email;
                 const emailIdx = state.storedEmails.findIndex((em) => em === email);
                 if (emailIdx !== -1) {
                     state.storedEmails.splice(emailIdx, 1);
@@ -151,7 +153,7 @@ const membersSlice = createSlice({
         editSkills: (state: MembersState, action: PayloadAction<{ id: string | undefined, tempstack: string[] }>) => {
             const { id, tempstack } = action.payload;
             const member = state.members.find((mem) => mem.id === id);
-            if(member) {
+            if (member) {
                 member.skillsAndSocials.stackAndLinks.stack = tempstack;
             }
         },
@@ -315,6 +317,14 @@ const membersSlice = createSlice({
                 chosenRow.level = level;
             }
         },
+        updateMemberLanguages: (state: MembersState, action: PayloadAction<{ id: string | undefined, langs: LanguageObject[] }>) => {
+            const { id, langs } = action.payload;
+
+            const member = state.members.find((mem) => mem.id === id);
+            if (member) {
+                member.skillsAndSocials.languages = [...langs];
+            }
+        },
         addLanguageObject: (state: MembersState) => {
             const languagesArr = state.form.tempSkillsAndSocials.tempLanguages;
 
@@ -323,13 +333,25 @@ const membersSlice = createSlice({
                 languagesArr.push(emptyLanguageObject);
             }
         },
+        fillLanguagesArr: (state: MembersState, action: PayloadAction<LanguageObject[]>) => {
+            const passedLanguagesArr = action.payload;
+            state.form.tempSkillsAndSocials.tempLanguages = [...passedLanguagesArr];
+            if (passedLanguagesArr.length < 4) {
+                const emptyLanguageObject = { lang: "", level: "", id: nanoid() };
+                state.form.tempSkillsAndSocials.tempLanguages.push(emptyLanguageObject);
+            }
+        },
+        resetTempLangs: (state: MembersState) => {
+            state.form.tempSkillsAndSocials.tempLanguages = [{ lang: "", level: "", id: nanoid() }];
+        },
         removeLanguageRow: (state: MembersState, action: PayloadAction<string>) => {
+            const id = action.payload;
             const languagesArr = state.form.tempSkillsAndSocials.tempLanguages;
-            const chosenRow = languagesArr.find((row) => row.id === action.payload);
-            const isFull = languagesArr.find((row) => row.lang === "" || row.level === "") === undefined;
+            const chosenRow = languagesArr.find((row) => row.id === id);
             if (chosenRow) {
                 const idx = languagesArr.indexOf(chosenRow);
                 languagesArr.splice(idx, 1);
+                const isFull = languagesArr.find((row) => row.lang === "" || row.level === "") === undefined;
                 if (languagesArr.length === 3 && isFull) {
                     const emptyLanguageObject = { lang: "", level: "", id: nanoid() };
                     languagesArr.push(emptyLanguageObject);
@@ -355,7 +377,55 @@ const membersSlice = createSlice({
         updateTempLink: (state: MembersState, action: PayloadAction<updateLinkProps>) => {
             const { idx, text } = action.payload;
             state.form.tempSkillsAndSocials.tempStackAndLinks.tempLinks[idx] = text;
-        }
+        },
+        updateMemberLinks: (state: MembersState, action: PayloadAction<{ id: string | undefined, links: string[] | undefined }>) => {
+            const { id, links } = action.payload;
+            const member = state.members.find((mem) => mem.id === id);
+            if (member && links) {
+                if (links.length === 0) {
+                    member.skillsAndSocials.stackAndLinks.social = [""];
+                } else {
+                    member.skillsAndSocials.stackAndLinks.social = [...links];
+                }
+            }
+        },
+        editMemberProject: (state: MembersState, action: PayloadAction<{ data: MemberProject, memberId: string | undefined }>) => {
+            const { data, memberId } = action.payload;
+            const member = state.members.find((mem) => (mem.id === memberId));
+            const chosenProject = member?.projects.find((proj) => proj.id === data.id);
+            if (chosenProject) {
+                chosenProject.category = data.category;
+                chosenProject.description = data.description;
+                chosenProject.liveCode = data.liveCode;
+                chosenProject.sourceCode = data.sourceCode;
+                chosenProject.title = data.title;
+            }
+        },
+        deleteAllMemberProjects: (state: MembersState, action: PayloadAction<string | undefined>) => {
+            const memberId = action.payload;
+            if (!memberId) return;
+
+            const member = state.members.find((mem) => mem.id === memberId);
+            if (member) {
+                member.projects = [];
+            }
+        },
+        addMemberProject: (state: MembersState, action: PayloadAction<{ memberId: string | undefined, project: MemberProject }>) => {
+            const { memberId, project } = action.payload;
+            if (!memberId) return;
+
+            const member = state.members.find((mem) => mem.id === memberId);
+            if (member) {
+                member.projects.push(project);
+            }
+        },
+        deleteMemberProject: (state: MembersState, action: PayloadAction<{ memberId: string | undefined, projectIdx: number }>) => {
+            const { memberId, projectIdx } = action.payload;
+            const member = state.members.find((mem) => mem.id === memberId);
+            if (member) {
+                member.projects.splice(projectIdx, 1);
+            }
+        },
     }
 })
 
@@ -388,7 +458,10 @@ export const {
     resetAllErrors,
     updateLanguageText,
     updateLanguageLevel,
+    updateMemberLanguages,
     addLanguageObject,
+    fillLanguagesArr,
+    resetTempLangs,
     removeLanguageRow,
     addTempStack,
     removeTempStack,
@@ -396,10 +469,16 @@ export const {
     addTempLink,
     removeTempLink,
     updateTempLink,
+    updateMemberLinks,
+    editMemberProject,
+    deleteAllMemberProjects,
+    addMemberProject,
+    deleteMemberProject,
 } = membersSlice.actions;
 export const selectStoredEmails = (state: RootState) => state.members.storedEmails;
 export const selectMembers = (state: RootState) => state.members.members;
 export const selectTempProjects = (state: RootState) => state.members.form.tempProjects;
+export const selectTempLangs = (state: RootState) => state.members.form.tempSkillsAndSocials.tempLanguages;
 export const selectTempStack = (state: RootState) => state.members.form.tempSkillsAndSocials.tempStackAndLinks.tempStack;
 export const selectTempLinks = (state: RootState) => state.members.form.tempSkillsAndSocials.tempStackAndLinks.tempLinks;
 export const selectPersonalDetails = (state: RootState) => state.members.tempMember.personalDetails;

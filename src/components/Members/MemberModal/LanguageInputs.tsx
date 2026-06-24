@@ -35,6 +35,14 @@ const LanguageInputs = ({ setLangLengthError }: langLenthErrorProps) => {
         { text: "Turkish", value: "turkish" },
     ]
 
+    const availableLevels = [
+        { text: "Beginner", value: "beginner" },
+        { text: "Intermediate", value: "intermediate" },
+        { text: "Professional", value: "professional" },
+        { text: "Advanced", value: "advanced" },
+        { text: "Native", value: "native" },
+    ]
+
     return (
         <>
             {
@@ -57,7 +65,7 @@ const LanguageInputs = ({ setLangLengthError }: langLenthErrorProps) => {
                                         <SelectTrigger className="w-full lg:w-48">
                                             <SelectValue placeholder="Select a Language" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent position='popper'>
                                             <SelectGroup>
                                                 <SelectLabel>Languages</SelectLabel>
                                                 {
@@ -92,14 +100,18 @@ const LanguageInputs = ({ setLangLengthError }: langLenthErrorProps) => {
                                         <SelectTrigger className="w-full lg:w-48">
                                             <SelectValue placeholder="Select a Level" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent position='popper'>
                                             <SelectGroup>
                                                 <SelectLabel>Level</SelectLabel>
-                                                <SelectItem value="beginner">Beginner</SelectItem>
-                                                <SelectItem value="intermediate">Intermediate</SelectItem>
-                                                <SelectItem value="professional">Professional</SelectItem>
-                                                <SelectItem value="advanced">Advanced</SelectItem>
-                                                <SelectItem value="native">Native</SelectItem>
+                                                {
+                                                    availableLevels.map((level) => {
+                                                        return (
+                                                            <SelectItem key={level.value} value={level.value}>
+                                                                {level.text}
+                                                            </SelectItem>
+                                                        )
+                                                    })
+                                                }
                                             </SelectGroup>
                                         </SelectContent>
                                     </Select>
