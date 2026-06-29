@@ -1,7 +1,7 @@
 import { InfoCard } from "@/components/Profile/InfoCard";
 import { ProjectsSection } from "@/components/Profile/ProjectsSection";
 import { editDescription, editEmail, editNameAndRole, editPhone, selectMembers } from "@/features/members/membersSlice";
-import { Clock, Tag, PenLine, Mail, Phone, Star, X, Check } from "lucide-react";
+import { Clock, Tag, PenLine, Mail, Phone, Star, X, Check, Upload } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { format, formatDistanceToNowStrict } from "date-fns";
@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import DeleteProjectsModal from "@/components/Profile/DeleteProjectsModal";
 import AddProjectModal from "@/components/Profile/AddProjectModal";
 import DeleteOneProjectModal from "@/components/Profile/DeleteOneProjectModal";
+import EditMemberPhotoModal from "@/components/Profile/EditMemberPhotoModal";
 
 export default function Profile() {
 
@@ -37,6 +38,7 @@ export default function Profile() {
     const [deleteProjectsModalOpen, setDeleteProjectsModalOpen] = useState<boolean>(false);
     const [addProjectModalOpen, setAddProjectModalOpen] = useState<boolean>(false);
     const [deleteOneProjectModal, setDeleteOneProjectModal] = useState<boolean>(false);
+    const [editPhotoModalOpen, setEditPhotoModalOpen] = useState<boolean>(false);
 
     const [deletingProjectIdx, setDeleteingProjectIdx] = useState<number>(-1);
 
@@ -211,8 +213,17 @@ export default function Profile() {
 
                     {/* Avatar & Title */}
                     <div className="flex items-center gap-5">
-                        <div className="relative group">
-                            <img src={member?.avatar} alt={member?.personalDetails?.name?.[0]} className="w-18 rounded-full" />
+                        <div className="relative group w-18 rounded-full overflow-hidden">
+                            <img src={member?.avatar} alt={member?.personalDetails?.name?.[0]} className="w-full" />
+                            <div
+                                onClick={() => {
+                                    resetEditModes();
+                                    setEditPhotoModalOpen(true);
+                                }}
+                                className="overlay cursor-pointer flex justify-center items-center transition-all size-full absolute inset-0 bg-black opacity-0 group-hover:opacity-50"
+                            >
+                                <Upload className="text-white" />
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-1 text-white">
@@ -492,7 +503,6 @@ export default function Profile() {
                             setLinksEditMode={setLinksEditMode}
                         />
                     </div>
-
                 </div>
             </div>
 
@@ -503,9 +513,17 @@ export default function Profile() {
             />
 
             <AddProjectModal
+            resetEditModes={resetEditModes}
                 memberId={member ? member.id : ""}
                 open={addProjectModalOpen}
                 setOpen={setAddProjectModalOpen}
+            />
+
+            <EditMemberPhotoModal
+                activeImage={member?.avatar}
+                memberId={member?.id}
+                open={editPhotoModalOpen}
+                setOpen={setEditPhotoModalOpen}
             />
 
             <DeleteOneProjectModal

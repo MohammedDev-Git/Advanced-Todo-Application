@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import TaskDetailsForm, { type TaskDetailsRefType } from "@/components/Tasks/TaskDetailsForm";
 import MembersChoose from "@/components/Tasks/MembersChoose";
-import Media, { type MediaRefType } from "@/components/Tasks/Media";
+import TaskMedia, { type MediaRefType } from "@/components/Tasks/TaskMedia";
 import { selectMembers } from "@/features/members/membersSlice";
 import type { MemberObject } from "@/types";
 import { addAssociatedMembers, addNewTask, resetTempTask } from "@/features/tasks/tasksSlice";
 import { InputError } from "@/components/custom/InputError";
 import { useError } from "@/hooks/useError";
+import TaskThumbnail, { type TaskThumbnailRef } from "@/components/Tasks/TaskThumbnail";
 
 type DivElementType = HTMLDivElement | null;
 
@@ -28,11 +29,12 @@ const AddTaskModal = ({ open, setOpen }: AddTaskModalProps) => {
 
     const selectedCount = modifiedMembers.filter((member) => member.selected).length;
 
-    const progressWidth = `${(progress / 3) * 100}%`;
+    const progressWidth = `${(progress / 4) * 100}%`;
 
     const taskDetailsFormRef = useRef<TaskDetailsRefType | null>(null);
 
     const mediaRef = useRef<MediaRefType | null>(null);
+    const taskThumbnailRef = useRef<TaskThumbnailRef | null>(null);
 
     const dispatch = useDispatch();
 
@@ -88,7 +90,14 @@ const AddTaskModal = ({ open, setOpen }: AddTaskModalProps) => {
         }
 
         if (progress === 3) {
-            if (!mediaRef.current?.handleStepThree()) return;
+            if (!taskThumbnailRef.current?.handleStepThree()) return;
+            setProgress(p => p + 1);
+            return;
+        }
+
+
+        if (progress === 4) {
+            if (!mediaRef.current?.handleStepFour()) return;
         }
 
         dispatch(addNewTask());
@@ -145,7 +154,7 @@ const AddTaskModal = ({ open, setOpen }: AddTaskModalProps) => {
                 className={`w-full max-w-75 md:max-w-xl lg:max-w-2xl shadow-2xl p-2 md:p-6`}>
                 <div className="space-y-4">
                     <div className="flex mt-4 items-center justify-between text-xs font-medium text-muted-foreground">
-                        <span>Step {progress} of 3</span>
+                        <span>Step {progress} of 4</span>
                         <div className="flex-1 mx-3 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                             <div className="h-full rounded-full bg-primary transition-all" style={{ width: progressWidth }} />
                         </div>
@@ -177,7 +186,9 @@ const AddTaskModal = ({ open, setOpen }: AddTaskModalProps) => {
                                 modifiedMembers={modifiedMembers}
                                 setModifiedMembers={setModifiedMembers}
                             />
-                        ) : <Media ref={mediaRef} />
+                        ) : progress === 3 ? (
+                            <TaskThumbnail ref={taskThumbnailRef} />
+                        ) : <TaskMedia ref={mediaRef} />
                         }
                         <div ref={closeRef} className="absolute right-3 top-3 transition-all rounded-2xl w-6 h-6" />
                     </form>
@@ -191,8 +202,8 @@ const AddTaskModal = ({ open, setOpen }: AddTaskModalProps) => {
                             )}
                         </Button>
                         <Button type="button" className="gap-2 text-white" onClick={handleNext}>
-                            {progress === 1 || progress === 2 ? "Next Step" : "Submit"}
-                            {progress === 1 || progress === 2 ? <ChevronRight className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+                            {progress < 4 ? "Next Step" : "Submit"}
+                            {progress < 4 ? <ChevronRight className="h-4 w-4" /> : <Check className="h-4 w-4" />}
                         </Button>
                     </DialogFooter>
                 </div>

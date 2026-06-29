@@ -13,8 +13,9 @@ import { selectMembers } from "@/features/members/membersSlice"
 import { selectAllTasks } from "@/features/tasks/tasksSlice"
 import { differenceInDays, differenceInHours, differenceInMinutes, parseISO } from "date-fns"
 import noTasks from '@/assets/images/noTasks.png'
-import { Clock, X } from 'lucide-react'
+import { Clock,  EyeIcon, X } from 'lucide-react'
 import { useNavigate } from "react-router"
+import type { taskObject } from "@/types"
 
 interface TasksListProps {
     title?: string;
@@ -30,8 +31,7 @@ export function TasksList({ title, setAddOpen, setDeletedTaskId, setDeleteOpen }
     const members = useSelector(selectMembers);
 
     const tasks = useSelector(selectAllTasks);
-    console.log(tasks);
-    const usersImgs = tasks.map((task) => {
+    const usersImgs = tasks.map((task: taskObject) => {
         return task.associatedMembersIDs.map((memberID) => {
             return members.find((mem) => mem.id === memberID)?.avatar;
         })
@@ -92,12 +92,26 @@ export function TasksList({ title, setAddOpen, setDeletedTaskId, setDeleteOpen }
                                                 onClick={() => {
                                                     navigate(task.id);
                                                 }}
-                                                className="h-32 w-full bg-slate-100 dark:bg-slate-800 rounded-xl mb-4 relative overflow-hidden">
-                                                <img
-                                                    src={task.media[0] || undefined}
-                                                    alt={task.title}
-                                                    className="object-cover w-full h-full opacity-90 cursor-pointer"
-                                                />
+                                                className="h-32 flex items-center justify-center w-full cursor-pointer bg-primary/20 rounded-xl mb-4 relative overflow-hidden">
+                                                {
+                                                    task.thumbnail ?
+                                                        <>
+                                                            <img
+                                                                src={task.thumbnail}
+                                                                alt={task.title}
+                                                                className="object-cover w-full h-full opacity-90 cursor-pointer"
+                                                            />
+                                                            <div className="absolute bg-black/50 right-2 top-2 rounded-full p-2 overflow-hidden border-2 border-primary">
+                                                                <EyeIcon className="text-primary size-4 ">
+                                                                </EyeIcon>
+                                                            </div>
+                                                        </>
+                                                        :
+                                                        <div className="absolute right-2 top-2 rounded-full p-2 overflow-hidden border-2 border-white">
+                                                            <EyeIcon className="text-white size-4 ">
+                                                            </EyeIcon>
+                                                        </div>
+                                                }
                                             </div>
 
                                             <h4 className="font-bold text-base text-primary line-clamp-1">{task.title}</h4>

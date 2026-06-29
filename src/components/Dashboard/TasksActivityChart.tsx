@@ -25,7 +25,7 @@ export function TasksActivityChart() {
             <CardHeader className="p-0 pb-6 xl:pb-4 xl:px-2">
                 <CardTitle className="text-base font-semibold">Tasks Activity</CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 w-full p-0 relative min-h-[250px]">
+            <CardContent className="flex-1 w-full p-0 relative min-h-62.5">
                 <ChartContainer config={chartConfig} className="absolute inset-0 w-full h-full pb-0 pr-6">
                     <LineChart
                         data={chartData}

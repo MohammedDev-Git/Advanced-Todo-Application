@@ -83,8 +83,9 @@ const membersSlice = createSlice({
                 // fill the projects object
                 const projects = state.form.tempProjects;
                 state.tempMember.projects = [...projects];
-                const randomFrom1To9 = Math.floor(Math.random() * 9) + 1;
-                state.tempMember.avatar = `/assets/members/member${randomFrom1To9}.png` || "";
+                if(!state.tempMember.avatar){
+                    state.tempMember.avatar = `/assets/members/userDummy.webp`;
+                }
                 state.tempMember.createdAt = new Date();
             }
             fillMemberData();
@@ -426,6 +427,17 @@ const membersSlice = createSlice({
                 member.projects.splice(projectIdx, 1);
             }
         },
+        addMemberImage: (state: MembersState, action: PayloadAction<{ chosenImage: string }>) => {
+            const {chosenImage} = action.payload;
+            state.tempMember.avatar = chosenImage;
+        },
+        editMemberImage: (state: MembersState, action: PayloadAction<{ memberId: string | undefined, chosenImage: string }>) => {
+            const { memberId, chosenImage } = action.payload;
+            const member = state.members.find((mem) => mem.id === memberId);
+            if (member) {
+                member.avatar = chosenImage;
+            }
+        }
     }
 })
 
@@ -474,6 +486,8 @@ export const {
     deleteAllMemberProjects,
     addMemberProject,
     deleteMemberProject,
+    addMemberImage,
+    editMemberImage,
 } = membersSlice.actions;
 export const selectStoredEmails = (state: RootState) => state.members.storedEmails;
 export const selectMembers = (state: RootState) => state.members.members;

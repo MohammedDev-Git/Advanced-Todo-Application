@@ -1,127 +1,179 @@
-import { useState, useRef } from "react";
 import {
     Search,
     Users,
     Clock,
-    Play,
-    Pause,
-    Maximize2,
-    PictureInPicture2,
-    Volume2,
-    CheckCircle2,
     PenLine,
+    Edit,
+    X,
+    Plus,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "react-router";
-import { useSelector } from "react-redux";
-import { selectAllTasks } from "@/features/tasks/tasksSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectAllTasks, editTaskTitle, editTaskCategories, editTaskDescription } from "@/features/tasks/tasksSlice";
+import { selectMembers } from "@/features/members/membersSlice";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-
-function formatTime(seconds: number) {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${String(s).padStart(2, "0")}`;
-}
-
-const assessmentItems = [
-    "Understanding the tools in Figma",
-    "Understand the basics of making designs",
-    "Designing a mobile application using figma",
-    "Presenting the design flow",
-];
-
-function VideoPlayer() {
-    const [playing, setPlaying] = useState(false);
-    const [progress, setProgress] = useState(0.387);
-    const totalSeconds = 600;
-    const currentSeconds = Math.round(progress * totalSeconds);
-    const barRef = useRef<HTMLDivElement>(null);
-
-    const seek = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!barRef.current) return;
-        const rect = barRef.current.getBoundingClientRect();
-        const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
-        setProgress(ratio);
-    };
-
-    return (
-        <div className="relative w-full rounded-2xl overflow-hidden bg-black select-none">
-            {/* Thumbnail */}
-            <div className="w-full aspect-video bg-linear-to-br from-slate-700 to-slate-900 relative">
-                {/* Mock thumbnail image using CSS */}
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        background:
-                            "url('https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&q=80') center/cover no-repeat",
-                    }}
-                />
-
-                {/* Dark overlay when paused */}
-                {!playing && (
-                    <div className="absolute inset-0 bg-black/20" />
-                )}
-            </div>
-
-            {/* Controls bar */}
-            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent px-4 pb-3 pt-8">
-                {/* Progress bar */}
-                <div
-                    ref={barRef}
-                    className="w-full h-1.5 bg-white/30 rounded-full mb-3 cursor-pointer group"
-                    onClick={seek}
-                >
-                    <div
-                        className="h-full bg-white rounded-full relative"
-                        style={{ width: `${progress * 100}%` }}
-                    >
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
-                </div>
-
-                {/* Bottom controls */}
-                <div className="flex items-center justify-between">
-                    {/* Left: play + time */}
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setPlaying((p) => !p)}
-                            className="text-white hover:text-white/80 transition-colors"
-                        >
-                            {playing ? (
-                                <Pause className="w-5 h-5 fill-white" />
-                            ) : (
-                                <Play className="w-5 h-5 fill-white" />
-                            )}
-                        </button>
-                        <span className="text-white text-xs font-medium tracking-wide">
-                            {formatTime(currentSeconds)}/{formatTime(totalSeconds)}
-                        </span>
-                    </div>
-
-                    {/* Right: extra controls */}
-                    <div className="flex items-center gap-3 text-white">
-                        <button className="hover:text-white/80 transition-colors">
-                            <Maximize2 className="w-4 h-4" />
-                        </button>
-                        <button className="hover:text-white/80 transition-colors">
-                            <PictureInPicture2 className="w-4 h-4" />
-                        </button>
-                        <button className="hover:text-white/80 transition-colors">
-                            <Volume2 className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
+import { useEffect, useState } from "react";
+import EditTaskThumbnailModal from "@/components/Tasks/EditTaskThumbnailModal";
+import AssignMemberTaskModal from "@/pages/Tasks/Task/AssignMemberTaskModal";
+import { taskDetailsSchema } from "@/features/tasks/schemas/taskSchema";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useError } from "@/hooks/useError";
+import { InputError } from "@/components/custom/InputError";
+import EditDeadlineModal from "@/pages/Tasks/Task/EditDeadlineModal";
+import type { taskObject } from "@/types";
 
 const Task = () => {
-
     const { id } = useParams();
+    const dispatch = useDispatch();
+    const members = useSelector(selectMembers);
+    const task = useSelector(selectAllTasks).find((task: taskObject) => task.id === id);
 
-    const task = useSelector(selectAllTasks).find((task) => task.id === id);
+    const tasksByUserIdArr = Object.entries(task?.tasksByUserId || {});
+
+    const [editThumbnailModalOpen, setEditThumbnailModalOpen] = useState<boolean>(false);
+    const [titleEditMode, setTitleEditMode] = useState<boolean>(false);
+    const [categoriesEditMode, setCategoriesEditMode] = useState<boolean>(false);
+    const [descriptionEditMode, setDescriptionEditMode] = useState<boolean>(false);
+    const [deadlineModalOpen, setDeadlineModalOpen] = useState<boolean>(false);
+    const [assignTaskModalOpen, setAssignTaskModalOpen] = useState<boolean>(false);
+    const [selectedMemberId, setSelectedMemberId] = useState<string>("");
+
+    const [titleValue, setTitleValue] = useState<string>("");
+    const [descriptionValue, setDescriptionValue] = useState<string>("");
+    const [deadlineDate, setDeadlineDate] = useState<Date | undefined>(undefined);
+    const [categoriesValue, setCategoriesValue] = useState<string[]>([""]);
+    const [categoryErrors, setCategoryErrors] = useState<(string | undefined)[]>([]);
+
+    const titleError = useError(undefined);
+    const descriptionError = useError(undefined);
+    const deadlineError = useError(undefined);
+    const [errorKey, setErrorKey] = useState<number>(0);
+
+    useEffect(() => {
+        if (deadlineModalOpen) {
+            const taskDeadlineDate = new Date(task ? task.deadline : new Date().toISOString());
+            setDeadlineDate(taskDeadlineDate);
+        }
+    }, [deadlineModalOpen])
+
+    useEffect(() => {
+        if (!task) return;
+        setTitleValue(task.title);
+        setDescriptionValue(task.description);
+        setCategoriesValue(task.categories.length > 0 ? task.categories : [""]);
+        setDeadlineDate(task.deadline ? new Date(task.deadline) : undefined);
+    }, [task]);
+
+    const existingFilteredCategories = task?.categories.filter((cat) => cat.trim() !== "") || [];
+
+    const resetEditModes = () => {
+        setTitleEditMode(false);
+        setCategoriesEditMode(false);
+        setDescriptionEditMode(false);
+        setDeadlineModalOpen(false);
+        if (task) setTitleValue(task.title);
+    };
+
+    const handleTitleEdit = () => {
+        if (!task) return;
+
+        const data = {
+            title: titleValue.trim(),
+            categories: task.categories,
+            description: task.description,
+            deadline: task.deadline,
+        };
+
+        const validationResult = taskDetailsSchema.safeParse(data);
+
+        if (!validationResult.success) {
+            const formatted = validationResult.error.format();
+            setErrorKey((pre) => pre + 1);
+            titleError.setErrorMsg(formatted.title?._errors[0]);
+            return;
+        }
+
+        dispatch(editTaskTitle({ taskId: task.id, title: data.title }));
+        setTitleEditMode(false);
+    };
+
+    const handleCategoriesEdit = () => {
+        if (!task) return;
+
+        const data = {
+            title: task.title,
+            categories: categoriesValue,
+            description: task.description,
+            deadline: task.deadline,
+        };
+
+        const validationResult = taskDetailsSchema.safeParse(data);
+
+        if (!validationResult.success) {
+            const formatted = validationResult.error.format();
+            setErrorKey((pre) => pre + 1);
+            const errors = categoriesValue.map((_, index) => {
+                const itemError = formatted.categories?.[index]?._errors?.[0];
+                return itemError ? String(itemError) : undefined;
+            });
+            setCategoryErrors(errors);
+            return;
+        }
+
+        setCategoryErrors([]);
+        const filteredCategories = categoriesValue.filter((cat) => cat.trim() !== "");
+        dispatch(editTaskCategories({ taskId: task.id, categories: filteredCategories }));
+        setCategoriesEditMode(false);
+    };
+
+    const handleDescriptionEdit = () => {
+        if (!task) return;
+
+        const data = {
+            title: task.title,
+            categories: task.categories,
+            description: descriptionValue.trim(),
+            deadline: task.deadline,
+        };
+
+        const validationResult = taskDetailsSchema.safeParse(data);
+
+        if (!validationResult.success) {
+            const formatted = validationResult.error.format();
+            setErrorKey((pre) => pre + 1);
+            descriptionError.setErrorMsg(formatted.description?._errors[0]);
+            return;
+        }
+
+        dispatch(editTaskDescription({ taskId: task.id, description: data.description }));
+        setDescriptionEditMode(false);
+    };
+
+    const handleAddCategory = () => {
+        if (categoriesValue.length >= 6) {
+            setErrorKey((pre) => pre + 1);
+            return;
+        }
+
+        setCategoriesValue((prev) => [...prev, ""]);
+        setCategoryErrors((prev) => [...prev, undefined]);
+    };
+
+    const handleRemoveCategory = (index: number) => {
+        if (categoriesValue.length <= 1) return;
+        setCategoriesValue((prev) => prev.filter((_, idx) => idx !== index));
+        setCategoryErrors((prev) => prev.filter((_, idx) => idx !== index));
+    };
+
+    const handleOpenAssignTaskModal = (memberId: string) => {
+        resetEditModes();
+        setSelectedMemberId(memberId);
+        setAssignTaskModalOpen(true);
+    };
 
     return (
         <div className="animate-page space-y-8">
@@ -136,83 +188,335 @@ const Task = () => {
             </div>
 
             {/* Main content card */}
-            <div className="bg-white dark:bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-                {/* Video player */}
-                <VideoPlayer />
-
-                {/* Text content */}
-                <div className="p-5 sm:p-6 space-y-5">
-                    {/* Title */}
-                    <h2 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
-                        {task?.title}
-                    </h2>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap items-center gap-2">
-                        {
-                            task?.categories.map((cat, idx) => (
-                                cat &&
-                                <Badge
-                                    key={idx}
-                                    variant="secondary"
-                                    className="text-xs font-medium px-2.5 py-0.5 rounded-md"
-                                >
-                                    {cat}
-                                </Badge>
-                            )
-                            )
-                        }
-                        <Button className="text-xs font-semibold text-white transition-all">
-                            <PenLine className="size-4" />
-                            Edit / Add tag
+            <div className="bg-white dark:bg-card rounded-2xl shadow-sm overflow-hidden">
+                {task?.thumbnail ? (
+                    <div className="relative">
+                        <img src={task.thumbnail} className="w-full h-88 object-cover" draggable="false" />
+                        <div
+                            onClick={() => {
+                                resetEditModes();
+                                setEditThumbnailModalOpen(true);
+                            }}
+                            className="overlay cursor-pointer bg-black opacity-50 absolute inset-0 size-full"
+                        />
+                        <Button
+                            onClick={() => {
+                                resetEditModes();
+                                setEditThumbnailModalOpen(true);
+                            }}
+                            className="absolute right-0 bottom-0 rounded-tl-4xl! text-white rounded-none"
+                        >
+                            <Edit />
                         </Button>
                     </div>
+                ) : (
+                    <div
+                        onClick={() => {
+                            resetEditModes();
+                            setEditThumbnailModalOpen(true);
+                        }}
+                        className="h-88 p-4 w-full bg-primary/10 hover:bg-primary/20 transition-all shadow-md flex items-center justify-center cursor-pointer"
+                    >
+                        <div className="border-2 gap-2 rounded-2xl border-primary border-dashed h-40 w-64 flex flex-col items-center justify-center">
+                            <Edit className="text-primary size-10" />
+                            <span className="text-primary">Add a thumbnail</span>
+                        </div>
+                    </div>
+                )}
 
-                    {/* Stats */}
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                <div className="p-5 sm:p-6 space-y-5">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-end gap-4 flex-wrap">
+                            <div>
+                                {titleEditMode ? (
+                                    <div className="space-y-3">
+                                        <Label htmlFor="task-title">Title</Label>
+                                        <Input
+                                            id="task-title"
+                                            placeholder="Enter task title"
+                                            value={titleValue}
+                                            onChange={(e) => setTitleValue(e.target.value)}
+                                            className="md:w-60 lg:w-80 transition-all"
+                                        />
+                                        <InputError keyErr={errorKey} message={titleError.errorMsg} />
+
+                                    </div>
+                                ) : (
+                                    <h2 className="text-xl sm:text-2xl font-bold text-foreground leading-tight">
+                                        {task?.title}
+                                    </h2>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                {titleEditMode ? (
+                                    <>
+                                        <Button type="button" variant="outline" onClick={() => setTitleEditMode(false)}>
+                                            Close
+                                        </Button>
+                                        <Button className="text-white" type="button" onClick={handleTitleEdit}>
+                                            Save
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <Button
+                                        type="button"
+                                        onClick={() => {
+                                            titleError.setErrorMsg(undefined);
+                                            resetEditModes();
+                                            setTitleEditMode(true);
+                                        }}
+                                        className="text-xs"
+                                    >
+                                        <PenLine className="size-4 text-white" />
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+
+
+                        <div className="space-y-4">
+                            <div className="flex flex-wrap items-center gap-2">
+                                {!categoriesEditMode && (
+                                    <>
+                                        {task?.categories.map((cat, idx) => (
+                                            cat ? (
+                                                <Badge
+                                                    key={idx}
+                                                    variant="secondary"
+                                                    className="text-xs font-medium px-2.5 py-0.5 rounded-md"
+                                                >
+                                                    {cat}
+                                                </Badge>
+                                            ) : null
+                                        ))}
+                                        <Button
+                                            type="button"
+                                            className="text-xs font-semibold text-white transition-all"
+                                            onClick={() => {
+                                                setCategoryErrors([]);
+                                                resetEditModes();
+                                                setCategoriesValue(existingFilteredCategories.length > 0 ? existingFilteredCategories : [""]);
+                                                setCategoriesEditMode(true);
+                                            }}
+                                        >
+                                            {existingFilteredCategories.length === 0 ? (
+                                                <>
+                                                    <Plus className="h-4 w-4" />
+                                                    <span className="ml-2">Add tags</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <PenLine className="size-4" />
+                                                    <span className="ml-2">Edit tags</span>
+                                                </>
+                                            )}
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                            {categoriesEditMode && (
+                                <div>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        {categoriesValue.map((category, index) => (
+                                            <div key={index} className="relative min-w-24">
+                                                <div className="relative">
+
+                                                    <Input
+                                                        placeholder={`Category ${index + 1}`}
+                                                        value={category}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setCategoriesValue((prev) => {
+                                                                const next = [...prev];
+                                                                next[index] = value;
+                                                                return next;
+                                                            });
+                                                            setCategoryErrors((prev) => {
+                                                                const next = [...prev];
+                                                                next[index] = undefined;
+                                                                return next;
+                                                            });
+                                                        }}
+                                                        className="pr-8 transition-all h-8 w-full "
+                                                    />
+
+                                                    {categoriesValue.length > 1 ? (
+                                                        <Button
+                                                            type="button"
+                                                            className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-transparent text-destructive hover:bg-destructive/10"
+                                                            onClick={() => handleRemoveCategory(index)}
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </Button>
+                                                    ) : null}
+                                                </div>
+
+                                                <InputError keyErr={errorKey + index} message={categoryErrors[index]} />
+                                            </div>
+                                        ))}
+                                        {
+                                            categoriesValue.length < 6 && (
+                                                <Button type="button" size="sm" className="text-white bg-primary/50 border-2 border-dotted border-primary" onClick={handleAddCategory}>
+                                                    <Plus className="h-4 w-4" />
+                                                </Button>
+                                            )
+                                        }
+                                    </div>
+                                    <div className="flex items-center gap-2 my-3">
+                                        <Button type="button" variant="outline" onClick={() => { setCategoriesEditMode(false); setTitleValue(task?.title || ""); }}>
+                                            Close
+                                        </Button>
+                                        <Button className="text-white" type="button" onClick={handleCategoriesEdit}>
+                                            Save
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1.5">
                             <Users className="w-4 h-4" />
-                            <span>{task?.associatedMembersIDs.length} {task?.associatedMembersIDs.length === 1 ? "Member" : "Members"} Involved</span>
+                            <span>{tasksByUserIdArr.length} {tasksByUserIdArr.length === 1 ? "Member" : "Members"} Involved</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                             <Clock className="w-4 h-4" />
-                            <span> {task ? "Due " + format(new Date(task.deadline), "dd-MMM-yy") : "No deadline"}</span>
+                            <div className="flex items-center gap-2">
+                                <span>{task?.deadline ? "Due " + format(new Date(task.deadline), "dd-MMM-yy") : "No deadline"}</span>
+                                <Button
+                                    type="button"
+                                    className="text-xs"
+                                    onClick={() => {
+                                        deadlineError.setErrorMsg(undefined);
+                                        resetEditModes();
+                                        setDeadlineModalOpen(true);
+                                    }}
+                                >
+                                    <PenLine className="size-4 text-white" />
+                                </Button>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Divider */}
                     <hr className="border-border" />
 
-                    {/* Description */}
                     <section className="space-y-2">
-                        <h2 className="text-base sm:text-lg font-bold text-foreground">
-                            Description
-                        </h2>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                            {task?.description || "No Description"}
-                        </p>
+                        <div className="flex items-center gap-4">
+                            <h2 className="text-base sm:text-lg font-bold text-foreground">Description</h2>
+                            {!descriptionEditMode && (
+                                <Button
+                                    type="button"
+                                    className="text-xs"
+                                    onClick={() => {
+                                        descriptionError.setErrorMsg(undefined);
+                                        resetEditModes();
+                                        setDescriptionEditMode(true);
+                                    }}
+                                >
+                                    <PenLine className="text-white size-4" />
+                                </Button>
+                            )}
+                        </div>
+                        {descriptionEditMode ? (
+                            <div className="space-y-3">
+                                <Textarea
+                                    value={descriptionValue}
+                                    onChange={(e) => setDescriptionValue(e.target.value)}
+                                    className="min-h-32 max-h-64 transition-all"
+                                    placeholder="Describe your task requirements"
+                                />
+                                <InputError keyErr={errorKey} message={descriptionError.errorMsg} />
+                                <div className="flex gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                            setDescriptionValue(task?.description || "");
+                                            setDescriptionEditMode(false);
+                                        }}
+                                    >
+                                        Close
+                                    </Button>
+                                    <Button className="text-white" type="button" onClick={handleDescriptionEdit}>
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground leading-relaxed">{task?.description || "No Description"}</p>
+                        )}
                     </section>
 
-                    {/* Divider */}
-                    <hr className="border-border" />
-
-                    {/* Essence of Assessment */}
                     <section className="space-y-3">
-                        <h2 className="text-base sm:text-lg font-bold text-foreground">
-                            Essence of Assessment
-                        </h2>
-                        <ul className="space-y-3">
-                            {assessmentItems.map((item, i) => (
-                                <li key={i} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-px" />
-                                    <span>{item}</span>
-                                </li>
-                            ))}
-                        </ul>
+                        <h2 className="text-base sm:text-lg font-bold text-foreground">Members tasks</h2>
+                        <div className="grid gap-3">
+                            {task ? (
+                                tasksByUserIdArr.map(([memberId, memberTasks]) => {
+                                    const member = members.find((mem) => mem.id === memberId);
+                                    return (
+                                        <button
+                                            key={memberId}
+                                            type="button"
+                                            onClick={() => handleOpenAssignTaskModal(memberId)}
+                                            className="cursor-pointer group w-full rounded-3xl border border-border p-4 text-left transition hover:border-primary hover:bg-primary/10"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <img
+                                                    src={member?.avatar}
+                                                    alt={member?.personalDetails.name || "Member avatar"}
+                                                    className="h-12 w-12 rounded-full object-cover"
+                                                />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-semibold text-foreground truncate">{member?.personalDetails.name || "Unnamed member"}</p>
+                                                    <p className="text-xs text-muted-foreground">{memberTasks.length ? `${memberTasks.length} task${memberTasks.length === 1 ? "" : "s"}` : "No tasks yet"}</p>
+                                                </div>
+                                            </div>
+                                            <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                                                {memberTasks.length ? (
+                                                    [...memberTasks].map((taskItem, idx) => (
+                                                        <p key={idx}>- {taskItem}</p>
+                                                    ))
+                                                ) : (
+                                                    <p className="text-sm text-muted-foreground">No tasks assigned</p>
+                                                )}
+                                            </ul>
+                                        </button>
+                                    );
+                                })
+                            ) : (
+                                <></>
+                            )}
+                        </div>
                     </section>
                 </div>
-            </div>
-        </div>
+            </div >
+
+            <EditTaskThumbnailModal
+                activeImage={task?.thumbnail}
+                taskId={task?.id}
+                open={editThumbnailModalOpen}
+                setOpen={setEditThumbnailModalOpen}
+            />
+
+            <EditDeadlineModal
+                deadlineDate={deadlineDate}
+                setDeadlineDate={setDeadlineDate}
+                deadlineModalOpen={deadlineModalOpen}
+                setDeadlineModalOpen={setDeadlineModalOpen}
+                task={task}
+            />
+
+            <AssignMemberTaskModal
+                open={assignTaskModalOpen}
+                setOpen={setAssignTaskModalOpen}
+                taskId={task?.id}
+                memberId={selectedMemberId}
+                resetEditModes={resetEditModes}
+            />
+
+        </div >
     );
 };
 

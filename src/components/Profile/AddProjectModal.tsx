@@ -17,9 +17,10 @@ interface AddProjectsModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   memberId: string;
+  resetEditModes: () => void;
 }
 
-const AddProjectModal = ({ open, setOpen, memberId }: AddProjectsModalProps) => {
+const AddProjectModal = ({ open, setOpen, memberId, resetEditModes }: AddProjectsModalProps) => {
 
   const dispatch = useDispatch();
 
@@ -37,6 +38,11 @@ const AddProjectModal = ({ open, setOpen, memberId }: AddProjectsModalProps) => 
     if (zodError) {
       setZodError(null);
     }
+
+    if (open) {
+      resetEditModes();
+    }
+
   }, [open])
 
   const categoryLengthError = useError(undefined);

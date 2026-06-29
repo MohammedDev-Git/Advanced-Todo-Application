@@ -109,7 +109,7 @@ const AddMemberModal = ({ setOpen, open }: AddMemberModalProps) => {
                                 <CardTitle className="text-2xl">Add a Member</CardTitle>
                                 <CardDescription>
                                     {progress === 1 && "Personal Details"}
-                                    {progress === 2 && "Add Personal Photo"}
+                                    {progress === 2 && "Add Personal Photo (Optional)"}
                                     {progress === 3 && ""}
                                     {progress === 4 && "Project Contribution"}
                                     {progress === 5 && "Skills & Socials"}

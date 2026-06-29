@@ -1,6 +1,6 @@
 import type { RootState } from "@/app/store";
 import type { taskDetailsObject, tasksState } from "@/types";
-import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: tasksState = {
     tasks: [],
@@ -13,7 +13,8 @@ const initialState: tasksState = {
         deadline: "",
         associatedMembersIDs: [],
         media: [""],
-        tasksByUserId: [],
+        thumbnail: "",
+        tasksByUserId: {},
         createdAt: "",
     },
 }
@@ -44,8 +45,9 @@ const tasksSlice = createSlice({
                 deadline: "",
                 associatedMembersIDs: [],
                 media: [""],
-                tasksByUserId: [],
+                tasksByUserId: {},
                 createdAt: "",
+                thumbnail: "",
             };
         },
         addAssociatedMembers: (state: tasksState, action: PayloadAction<{ selected: string[] }>) => {
@@ -57,13 +59,62 @@ const tasksSlice = createSlice({
         },
         addNewTask: (state: tasksState) => {
             state.tempTaskDetails.createdAt = new Date().toISOString();
+            const associatedMembersIDs = [...state.tempTaskDetails.associatedMembersIDs];
+
+            associatedMembersIDs.forEach((id: string) => {
+                state.tempTaskDetails.tasksByUserId[id] = [];
+            })
+
             state.tasks.push({ ...state.tempTaskDetails });
         },
-        assignRandomImage: (state: tasksState) => {
-            const randomFrom1To6 = Math.floor(Math.random() * 6) + 1;
-
-            const randomImage = `/assets/tasks/task${randomFrom1To6}.png` || "";
-            state.tempTaskDetails.media[0] = randomImage;
+        addTaskThumbnail: (state: tasksState, action: PayloadAction<{ chosenImage: string }>) => {
+            const { chosenImage } = action.payload;
+            state.tempTaskDetails.thumbnail = chosenImage;
+        },
+        editTaskTitle: (state: tasksState, action: PayloadAction<{ taskId: string | undefined, title: string }>) => {
+            const { taskId, title } = action.payload;
+            const task = state.tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.title = title;
+            }
+        },
+        editTaskCategories: (state: tasksState, action: PayloadAction<{ taskId: string | undefined, categories: string[] }>) => {
+            const { taskId, categories } = action.payload;
+            const task = state.tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.categories = categories;
+            }
+        },
+        editTaskDescription: (state: tasksState, action: PayloadAction<{ taskId: string | undefined, description: string }>) => {
+            const { taskId, description } = action.payload;
+            const task = state.tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.description = description;
+            }
+        },
+        editTaskDeadline: (state: tasksState, action: PayloadAction<{ taskId: string | undefined, deadline: string }>) => {
+            const { taskId, deadline } = action.payload;
+            const task = state.tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.deadline = deadline;
+            }
+        },
+        editTaskMemberTasks: (state: tasksState, action: PayloadAction<{ taskId: string | undefined, memberId: string, tasks: string[] }>) => {
+            const { taskId, memberId, tasks } = action.payload;
+            const task = state.tasks.find((task) => task.id === taskId);
+            if (!task) return;
+            const taskEntry = task.tasksByUserId;
+            if (taskEntry) {
+                taskEntry[memberId] = tasks;
+                return;
+            }
+        },
+        editTaskThumbnail: (state: tasksState, action: PayloadAction<{ taskId: string | undefined, chosenImage: string }>) => {
+            const { taskId, chosenImage } = action.payload;
+            const task = state.tasks.find((task) => task.id === taskId);
+            if (task) {
+                task.thumbnail = chosenImage;
+            }
         }
     }
 })
@@ -74,7 +125,13 @@ export const {
     addAssociatedMembers,
     deleteTask,
     addNewTask,
-    assignRandomImage
+    addTaskThumbnail,
+    editTaskTitle,
+    editTaskCategories,
+    editTaskDescription,
+    editTaskDeadline,
+    editTaskMemberTasks,
+    editTaskThumbnail
 } = tasksSlice.actions;
 
 export const selectTempTaskDetails = (state: RootState) => state.tasks.tempTaskDetails;

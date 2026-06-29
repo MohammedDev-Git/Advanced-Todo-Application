@@ -90,7 +90,7 @@ export const ProjectsSection = ({
                             setAddProjectModalOpen(true);
                         }}
                         className="w-full cursor-pointer flex flex-col items-center justify-center gap-5 rounded-2xl border-2 border-dotted border-primary bg-primary/10 backdrop-blur-sm p-6 text-center shadow-[0_0_15px_rgba(var(--primary),0.3)] dark:shadow-[0_0_25px_rgba(var(--primary),0.2)] transition-all duration-300">
-                        <img className='size-40 animate-up-down' src={imgRender[theme.theme]} />
+                        <img className='size-40' src={imgRender[theme.theme]} />
                         <div className="space-y-2 relative z-10">
                             <p className="text-sm max-w-sm mx-auto">
                                 There are no projects yet.

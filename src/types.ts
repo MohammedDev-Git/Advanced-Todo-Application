@@ -197,9 +197,9 @@ export interface taskObject extends taskDetailsObject {
     progress: number,
     media: string[],
     associatedMembersIDs: string[],
-    tasksByUserId: taskByUserId[],
+    tasksByUserId: taskByUserId,
     createdAt: string;
-
+    thumbnail: string;
 }
 
 export interface tasksState {
