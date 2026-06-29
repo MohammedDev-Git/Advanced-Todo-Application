@@ -25,12 +25,14 @@ import { useError } from "@/hooks/useError";
 import { InputError } from "@/components/custom/InputError";
 import EditDeadlineModal from "@/pages/Tasks/Task/EditDeadlineModal";
 import type { taskObject } from "@/types";
+import TasksSearchBar from "@/components/Tasks/TasksSearchBar";
 
 const Task = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const members = useSelector(selectMembers);
-    const task = useSelector(selectAllTasks).find((task: taskObject) => task.id === id);
+    const tasks = useSelector(selectAllTasks)
+    const task = tasks.find((task: taskObject) => task.id === id);
 
     const tasksByUserIdArr = Object.entries(task?.tasksByUserId || {});
 
@@ -52,6 +54,7 @@ const Task = () => {
     const descriptionError = useError(undefined);
     const deadlineError = useError(undefined);
     const [errorKey, setErrorKey] = useState<number>(0);
+
 
     useEffect(() => {
         if (deadlineModalOpen) {
@@ -178,14 +181,7 @@ const Task = () => {
     return (
         <div className="animate-page space-y-8">
             {/* Search bar */}
-            <div className="bg-white dark:bg-card rounded-xl border border-border px-4 py-2.5 flex items-center shadow-sm">
-                <input
-                    type="text"
-                    placeholder="Search Task"
-                    className="bg-transparent outline-none flex-1 text-sm text-foreground placeholder:text-muted-foreground"
-                />
-                <Search className="h-5 w-5 text-muted-foreground shrink-0" />
-            </div>
+            <TasksSearchBar tasks={tasks} />
 
             {/* Main content card */}
             <div className="bg-white dark:bg-card rounded-2xl shadow-sm overflow-hidden">

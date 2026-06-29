@@ -22,7 +22,7 @@ interface MembersListProps {
 export function MembersList({ title = "Members", setAddOpen, setDeleteOpen, setDeletedId }: MembersListProps) {
 
     const members = useSelector(selectMembers);
-
+    
     return (
         <div className="col-span-3 mt-4">
             <div className="flex items-center justify-start gap-5 mb-4">
@@ -44,7 +44,7 @@ export function MembersList({ title = "Members", setAddOpen, setDeleteOpen, setD
                         </div>
 
                         <CarouselContent className="-ml-6">
-                            {members.map((person:MemberObject) => {
+                            {members.map((person: MemberObject) => {
                                 return (
                                     <CarouselItem key={person.id} className="pl-6 lg:basis-1/2">
                                         <MemberCard

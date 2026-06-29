@@ -1,4 +1,4 @@
-import { Search, MoreHorizontal, Plus } from 'lucide-react';
+import { MoreHorizontal, Plus } from 'lucide-react';
 import { TasksList } from '@/components/Tasks/TasksList';
 import AddTaskModal from '@/components/Tasks/AddTaskModal';
 import DeleteTaskModal from '@/components/Tasks/DeleteTaskModal';
@@ -15,6 +15,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import TasksSearchBar from '@/components/Tasks/TasksSearchBar';
 
 export default function Tasks() {
 
@@ -37,12 +38,9 @@ export default function Tasks() {
     }
 
     return (
-        <div className="space-y-12 animate-page relative ">
+        <div className="space-y-12 animate-page relative">
             {/* Search Header */}
-            <div className="bg-white dark:bg-card rounded-xl border border-slate-100 dark:border-slate-700 px-4 py-2.5 flex items-center shadow-sm">
-                <Search className="h-5 w-5 text-slate-400 dark:text-slate-300 mr-2" />
-                <input type="text" placeholder="Search Task" className="bg-transparent outline-none w-full text-sm text-slate-600 dark:text-slate-300" />
-            </div>
+            <TasksSearchBar tasks={tasks} />
 
             {/* Recent Tasks */}
             <section className="space-y-6">
